@@ -34,6 +34,9 @@ git merge upstream/publish master
 # Ubuntu
 sudo apt-get install ruby
 sudo gem install bundler
+
+# Gemfile needed
+cd ./path/to/LangmuirSim.github.io
 bundle install
 ```
 
