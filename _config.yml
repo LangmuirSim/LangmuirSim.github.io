@@ -11,8 +11,9 @@ permalink: / ## disables post output
 timezone: null
 lsi: false
 markdown: redcarpet
+redcarpet:
+  extensions: ["tables"]
 highlighter: pygments
-
 
 ### content configuration ###
 title:       "Langmuir"
