@@ -1,0 +1,717 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ivcurve &mdash; Langmuir Python 2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <link rel="top" title="Langmuir Python 2.0 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for ivcurve</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. note::</span>
+<span class="sd">    Functions for analyzing current voltage data.</span>
+
+<span class="sd">.. moduleauthor:: Adam Gagorik &lt;adam.gagorik@gmail.com&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">langmuir</span> <span class="kn">import</span> <span class="n">units</span><span class="p">,</span> <span class="n">Quantity</span>
+<span class="kn">import</span> <span class="nn">langmuir</span> <span class="kn">as</span> <span class="nn">lm</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">StringIO</span>
+
+<div class="viewcode-block" id="IVCurve"><a class="viewcode-back" href="../modules/ivcurve.html#ivcurve.IVCurve">[docs]</a><span class="k">class</span> <span class="nc">IVCurve</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to analyze IV curves.</span>
+
+<span class="sd">    ======== ==========================</span>
+<span class="sd">    Attr     Description</span>
+<span class="sd">    ======== ==========================</span>
+<span class="sd">    **i**    current</span>
+<span class="sd">    **v**    voltage</span>
+<span class="sd">    **p**    power</span>
+<span class="sd">    **a**    area</span>
+<span class="sd">    **j**    current density</span>
+<span class="sd">    **r**    irradiance</span>
+<span class="sd">    ======== ==========================</span>
+
+<span class="sd">    .. seealso::</span>
+<span class="sd">        :py:class:`IVCurveSolar`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">class</span> <span class="nc">units</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">pass</span>
+
+        <span class="n">i</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">nA</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">V</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">nW</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">nm</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">mA</span><span class="o">/</span><span class="n">units</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">units</span><span class="o">.</span><span class="n">mW</span><span class="o">/</span><span class="n">units</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span>
+
+    <span class="k">class</span> <span class="nc">latex</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">pass</span>
+
+        <span class="n">i</span> <span class="o">=</span> <span class="s">r&#39;\ensuremath{nA}&#39;</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="s">r&#39;\ensuremath{V}&#39;</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="s">r&#39;\ensuremath{nW}&#39;</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="s">r&#39;\ensuremath{nm^{2}}&#39;</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="s">r&#39;\ensuremath{mA\,cm^{-2}}&#39;</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="s">r&#39;\ensuremath{mW\,cm^{-2}}&#39;</span>
+
+    <span class="k">class</span> <span class="nc">string</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">pass</span>
+
+        <span class="n">i</span> <span class="o">=</span> <span class="s">r&#39;nA&#39;</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="s">r&#39;V&#39;</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="s">r&#39;nW&#39;</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="s">r&#39;nm**2&#39;</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="s">r&#39;mA/cm**2&#39;</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="s">r&#39;mW/cm**2&#39;</span>
+
+    <span class="k">class</span> <span class="nc">columns</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">pass</span>
+
+        <span class="n">i</span> <span class="o">=</span> <span class="s">r&#39;drain:current&#39;</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="s">r&#39;voltage.right&#39;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="s">r&#39;grid.x&#39;</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="s">r&#39;grid.y&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">ierr</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct IV curve.</span>
+
+<span class="sd">        :param i: current</span>
+<span class="sd">        :param v: voltage</span>
+<span class="sd">        :param a: area</span>
+<span class="sd">        :param ierr: std of current</span>
+
+<span class="sd">        :type i: :py:class:`numpy.ndarray`</span>
+<span class="sd">        :type v: :py:class:`numpy.ndarray`</span>
+<span class="sd">        :type a: :py:class:`numpy.ndarray` or :py:class:`float`</span>
+
+<span class="sd">        &gt;&gt;&gt; v = np.linspace(0, 100, 10)</span>
+<span class="sd">        &gt;&gt;&gt; i = np.tanh(v)</span>
+<span class="sd">        &gt;&gt;&gt; a = 1024 * 256</span>
+<span class="sd">        &gt;&gt;&gt; ivcurve = lm.ivcurve.IVCurve(i, v, a)</span>
+
+<span class="sd">        .. seealso::</span>
+<span class="sd">            :py:meth:`IVCurve.from_dataframe`</span>
+<span class="sd">            :py:meth:`IVCurve.from_panel`</span>
+<span class="sd">            :py:meth:`IVCurve.load_pkl`</span>
+<span class="sd">            :py:meth:`IVCurve.load_pkls`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">*</span> <span class="n">a</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">i</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">v</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">a</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="c">### &lt;&lt;&lt; units on</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">i</span><span class="p">)</span>          <span class="c"># current</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">v</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">v</span><span class="p">)</span>          <span class="c"># voltage</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">a</span><span class="p">)</span>          <span class="c"># area</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">i</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">p</span><span class="p">)</span> <span class="c"># power</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">j</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">i</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">j</span><span class="p">)</span> <span class="c"># density</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">r</span><span class="p">)</span> <span class="c"># irradiance</span>
+
+        <span class="k">if</span> <span class="n">ierr</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">ierr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ierr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">ierr</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ierr</span> <span class="o">=</span> <span class="n">Quantity</span><span class="p">(</span><span class="n">ierr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">i</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">perr</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ierr</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">p</span><span class="p">)</span> <span class="c"># power</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jerr</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ierr</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">j</span><span class="p">)</span> <span class="c"># density</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rerr</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">perr</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">r</span><span class="p">)</span> <span class="c"># irradiance</span>
+
+        <span class="c">### &lt;&lt;&lt; units off</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">j</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ierr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ierr</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">perr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">perr</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jerr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jerr</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rerr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rerr</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+
+        <span class="k">class</span> <span class="nc">stats</span><span class="p">:</span>
+            <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="k">pass</span>
+
+            <span class="n">i</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">analyze</span><span class="o">.</span><span class="n">Stats</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="p">,</span> <span class="s">&#39;i&#39;</span><span class="p">)</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">analyze</span><span class="o">.</span><span class="n">Stats</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">,</span> <span class="s">&#39;v&#39;</span><span class="p">)</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">analyze</span><span class="o">.</span><span class="n">Stats</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="s">&#39;p&#39;</span><span class="p">)</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">analyze</span><span class="o">.</span><span class="n">Stats</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">)</span>
+            <span class="n">j</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">analyze</span><span class="o">.</span><span class="n">Stats</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="s">&#39;j&#39;</span><span class="p">)</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">analyze</span><span class="o">.</span><span class="n">Stats</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span>
+            <span class="n">ierr</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">analyze</span><span class="o">.</span><span class="n">Stats</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ierr</span><span class="p">,</span> <span class="s">&#39;ierr&#39;</span><span class="p">)</span>
+            <span class="n">jerr</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">analyze</span><span class="o">.</span><span class="n">Stats</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jerr</span><span class="p">,</span> <span class="s">&#39;jerr&#39;</span><span class="p">)</span>
+            <span class="n">perr</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">analyze</span><span class="o">.</span><span class="n">Stats</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">perr</span><span class="p">,</span> <span class="s">&#39;perr&#39;</span><span class="p">)</span>
+            <span class="n">rerr</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">analyze</span><span class="o">.</span><span class="n">Stats</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rerr</span><span class="p">,</span> <span class="s">&#39;rerr&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stats</span> <span class="o">=</span> <span class="n">stats</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="IVCurve.from_dataframe"><a class="viewcode-back" href="../modules/ivcurve.html#ivcurve.IVCurve.from_dataframe">[docs]</a>    <span class="k">def</span> <span class="nf">from_dataframe</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct IV curve from pandas DataFrame.</span>
+
+<span class="sd">        :param frame: dataframe object</span>
+<span class="sd">        :type frame: :py:class:`pandas.DataFrame`</span>
+
+<span class="sd">        &gt;&gt;&gt; frame = lm.common.load_pkl(&#39;calculated.pkl.gz&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; ivcurve = lm.ivcurve.IVCurve(frame)</span>
+
+<span class="sd">        .. seealso::</span>
+<span class="sd">            :py:meth:`IVCurve.load_pkl`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="n">cls</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="n">cls</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">v</span><span class="p">])</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="n">cls</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">x</span><span class="p">])</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="n">cls</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">y</span><span class="p">])</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span>
+
+        <span class="n">IVCurve</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">IVCurve</span>
+</div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="IVCurve.from_panel"><a class="viewcode-back" href="../modules/ivcurve.html#ivcurve.IVCurve.from_panel">[docs]</a>    <span class="k">def</span> <span class="nf">from_panel</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">panel</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct IV curve from pandas Panel.</span>
+
+<span class="sd">        :param panel: panel object</span>
+<span class="sd">        :type panel: :py:class:`pandas.Panel`</span>
+
+<span class="sd">        &gt;&gt;&gt; pkls = lm.find.pkls(&#39;.&#39;, stub=&#39;gathered*&#39;, r=True)</span>
+<span class="sd">        &gt;&gt;&gt; panel = lm.analyze.create_panel(lm.common.load_pkls(pkls))</span>
+<span class="sd">        &gt;&gt;&gt; ivcurve = lm.ivcurve.IVCurve.from_panel(panel)</span>
+
+<span class="sd">        .. seealso::</span>
+<span class="sd">            :py:meth:`IVCurve.load_pkls`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span>
+            <span class="n">panel</span><span class="o">.</span><span class="n">minor_xs</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span>
+            <span class="n">panel</span><span class="o">.</span><span class="n">minor_xs</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+
+        <span class="n">grid_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">panel</span><span class="o">.</span><span class="n">minor_xs</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">grid_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">panel</span><span class="o">.</span><span class="n">minor_xs</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">y</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">grid_x</span> <span class="o">*</span> <span class="n">grid_y</span>
+
+        <span class="n">ierr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span>
+            <span class="n">panel</span><span class="o">.</span><span class="n">minor_xs</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+
+        <span class="n">IVCurve</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">ierr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">IVCurve</span>
+</div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="IVCurve.load_pkl"><a class="viewcode-back" href="../modules/ivcurve.html#ivcurve.IVCurve.load_pkl">[docs]</a>    <span class="k">def</span> <span class="nf">load_pkl</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">pkl</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct IV curve from pkl file.</span>
+
+<span class="sd">        :param pkl: name of file</span>
+<span class="sd">        :type pkl: str</span>
+
+<span class="sd">        &gt;&gt;&gt; ivcurve = lm.ivcurve.IVCurve.load_pkl(&#39;gathered.pkl.gz&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pkl</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">load_pkl</span><span class="p">(</span><span class="n">pkl</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">from_dataframe</span><span class="p">(</span><span class="n">pkl</span><span class="p">)</span>
+</div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="IVCurve.load_pkls"><a class="viewcode-back" href="../modules/ivcurve.html#ivcurve.IVCurve.load_pkls">[docs]</a>    <span class="k">def</span> <span class="nf">load_pkls</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">pkls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct IV curve from a list of pkl files.</span>
+
+<span class="sd">        :param pkls: list of filenames.</span>
+<span class="sd">        :type pkls: list</span>
+
+<span class="sd">        &gt;&gt;&gt; pkls = lm.find.pkls(&#39;.&#39;, stub=&#39;gathered*&#39;, r=True)</span>
+<span class="sd">        &gt;&gt;&gt; ivcurve = lm.ivcurve.IVCurve.load_pkls(pkls)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">panel</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">analyze</span><span class="o">.</span><span class="n">create_panel</span><span class="p">(</span><span class="n">lm</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">load_pkls</span><span class="p">(</span><span class="n">pkls</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">from_panel</span><span class="p">(</span><span class="n">panel</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="IVCurve.to_dict"><a class="viewcode-back" href="../modules/ivcurve.html#ivcurve.IVCurve.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get data as dict.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="n">d</span><span class="p">[</span><span class="s">&#39;v&#39;</span>   <span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">v</span>
+        <span class="n">d</span><span class="p">[</span><span class="s">&#39;i&#39;</span>   <span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">i</span>
+        <span class="n">d</span><span class="p">[</span><span class="s">&#39;ierr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ierr</span>
+        <span class="n">d</span><span class="p">[</span><span class="s">&#39;p&#39;</span>   <span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span>
+        <span class="n">d</span><span class="p">[</span><span class="s">&#39;perr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">perr</span>
+        <span class="n">d</span><span class="p">[</span><span class="s">&#39;a&#39;</span>   <span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span>
+        <span class="n">d</span><span class="p">[</span><span class="s">&#39;j&#39;</span>   <span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">j</span>
+        <span class="n">d</span><span class="p">[</span><span class="s">&#39;jerr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jerr</span>
+        <span class="n">d</span><span class="p">[</span><span class="s">&#39;r&#39;</span>   <span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">r</span>
+        <span class="n">d</span><span class="p">[</span><span class="s">&#39;rerr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rerr</span>
+        <span class="k">return</span> <span class="n">d</span>
+</div>
+<div class="viewcode-block" id="IVCurve.to_dataframe"><a class="viewcode-back" href="../modules/ivcurve.html#ivcurve.IVCurve.to_dataframe">[docs]</a>    <span class="k">def</span> <span class="nf">to_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert data into a :py:class:`pandas.DataFrame`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+</div>
+<div class="viewcode-block" id="IVCurve.save_csv"><a class="viewcode-back" href="../modules/ivcurve.html#ivcurve.IVCurve.save_csv">[docs]</a>    <span class="k">def</span> <span class="nf">save_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handle</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save data to a CSV file.</span>
+
+<span class="sd">        :param handle: filename</span>
+<span class="sd">        :type handle: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">handle</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">zhandle</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s">&#39;wb&#39;</span><span class="p">)</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dataframe</span><span class="p">()</span>
+        <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">frame</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+        <span class="n">handle</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;#</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+        <span class="n">series</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_series</span><span class="p">()</span>
+        <span class="n">series</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="IVCurve.summary"><a class="viewcode-back" href="../modules/ivcurve.html#ivcurve.IVCurve.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get summary of all calculated results as a dictionary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">i</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">p</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">j</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">r</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">ierr</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">jerr</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">perr</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">rerr</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">d</span>
+</div>
+<div class="viewcode-block" id="IVCurve.to_series"><a class="viewcode-back" href="../modules/ivcurve.html#ivcurve.IVCurve.to_series">[docs]</a>    <span class="k">def</span> <span class="nf">to_series</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert data into a :py:class:`pandas.Series`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+</div>
+<div class="viewcode-block" id="IVCurve.save_pkl"><a class="viewcode-back" href="../modules/ivcurve.html#ivcurve.IVCurve.save_pkl">[docs]</a>    <span class="k">def</span> <span class="nf">save_pkl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handle</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save results and data to a PKL file.</span>
+
+<span class="sd">        :param handle: filename</span>
+<span class="sd">        :type handle: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+        <span class="n">lm</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">save_pkl</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">handle</span><span class="p">)</span>
+</div></div>
+<div class="viewcode-block" id="IVCurveSolar"><a class="viewcode-back" href="../modules/ivcurve.html#ivcurve.IVCurveSolar">[docs]</a><span class="k">class</span> <span class="nc">IVCurveSolar</span><span class="p">(</span><span class="n">IVCurve</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to analyze IV curves for solar cells.  Calculates the fill factor.</span>
+
+<span class="sd">    ======== ==========================</span>
+<span class="sd">    Attr     Description</span>
+<span class="sd">    ======== ==========================</span>
+<span class="sd">    **v_oc** open circuit voltage</span>
+<span class="sd">    **v_mp** voltage at max power</span>
+<span class="sd">    **i_sc** short circuit current</span>
+<span class="sd">    **i_mp** current at max power</span>
+<span class="sd">    **p_th** theoretical power</span>
+<span class="sd">    **p_mp** max power</span>
+<span class="sd">    **fill** fill factor</span>
+<span class="sd">    ======== ==========================</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">class</span> <span class="nc">latex</span><span class="p">(</span><span class="n">IVCurve</span><span class="o">.</span><span class="n">latex</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">pass</span>
+
+        <span class="n">f</span>    <span class="o">=</span> <span class="s">r&#39;\%&#39;</span>
+        <span class="n">v_oc</span> <span class="o">=</span> <span class="s">r&#39;\ensuremath{v_{oc}}&#39;</span>
+        <span class="n">i_sc</span> <span class="o">=</span> <span class="s">r&#39;\ensuremath{i_{sc}}&#39;</span>
+        <span class="n">p_th</span> <span class="o">=</span> <span class="s">r&#39;\ensuremath{p_{th}}&#39;</span>
+        <span class="n">j_sc</span> <span class="o">=</span> <span class="s">r&#39;\ensuremath{j_{sc}}&#39;</span>
+        <span class="n">r_th</span> <span class="o">=</span> <span class="s">r&#39;\ensuremath{r_{th}}&#39;</span>
+        <span class="n">i_mp</span> <span class="o">=</span> <span class="s">r&#39;\ensuremath{i_{mp}}&#39;</span>
+        <span class="n">v_mp</span> <span class="o">=</span> <span class="s">r&#39;\ensuremath{v_{mp}}&#39;</span>
+        <span class="n">p_mp</span> <span class="o">=</span> <span class="s">r&#39;\ensuremath{p_{mp}}&#39;</span>
+        <span class="n">j_mp</span> <span class="o">=</span> <span class="s">r&#39;\ensuremath{j_{mp}}&#39;</span>
+        <span class="n">r_mp</span> <span class="o">=</span> <span class="s">r&#39;\ensuremath{r_{mp}}&#39;</span>
+        <span class="n">fill</span> <span class="o">=</span> <span class="s">r&#39;\ensuremath{FF}&#39;</span>
+
+    <span class="k">class</span> <span class="nc">string</span><span class="p">(</span><span class="n">IVCurve</span><span class="o">.</span><span class="n">string</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">pass</span>
+
+        <span class="n">f</span>    <span class="o">=</span> <span class="s">r&#39;%&#39;</span>
+        <span class="n">v_oc</span> <span class="o">=</span> <span class="s">r&#39;v_oc&#39;</span>
+        <span class="n">i_sc</span> <span class="o">=</span> <span class="s">r&#39;i_sc&#39;</span>
+        <span class="n">p_th</span> <span class="o">=</span> <span class="s">r&#39;p_th&#39;</span>
+        <span class="n">j_sc</span> <span class="o">=</span> <span class="s">r&#39;j_sc&#39;</span>
+        <span class="n">r_th</span> <span class="o">=</span> <span class="s">r&#39;r_th&#39;</span>
+        <span class="n">i_mp</span> <span class="o">=</span> <span class="s">r&#39;i_mp&#39;</span>
+        <span class="n">v_mp</span> <span class="o">=</span> <span class="s">r&#39;v_mp&#39;</span>
+        <span class="n">p_mp</span> <span class="o">=</span> <span class="s">r&#39;p_mp&#39;</span>
+        <span class="n">j_mp</span> <span class="o">=</span> <span class="s">r&#39;j_mp&#39;</span>
+        <span class="n">r_mp</span> <span class="o">=</span> <span class="s">r&#39;r_mp&#39;</span>
+        <span class="n">fill</span> <span class="o">=</span> <span class="s">r&#39;fill&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">ierr</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">v_shift</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct IV curve.  See arguments for :py:class:`IVCurve`.</span>
+
+<span class="sd">        :param v_shift: amount to shift voltage axis by</span>
+<span class="sd">        :type v_shift: float</span>
+
+<span class="sd">        &gt;&gt;&gt; v = np.linspace(0, 100, 10)</span>
+<span class="sd">        &gt;&gt;&gt; i = np.tanh(v)</span>
+<span class="sd">        &gt;&gt;&gt; a = 1024 * 256</span>
+<span class="sd">        &gt;&gt;&gt; ivcurve = lm.ivcurve.IVCurveSolar(i, v, a)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">v_shift</span> <span class="o">=</span> <span class="n">v_shift</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">+</span> <span class="n">v_shift</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">IVCurveSolar</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">ierr</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">v_oc</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">i_sc</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p_th</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">v_mp</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">i_mp</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p_mp</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">j_sc</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r_th</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">j_mp</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r_mp</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fill</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ifit</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pfit</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jfit</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rfit</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">calculate</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="IVCurveSolar.summary"><a class="viewcode-back" href="../modules/ivcurve.html#ivcurve.IVCurveSolar.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get summary of all calculated results as a dictionary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">IVCurve</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">v_oc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">v_oc</span><span class="p">)</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">i_sc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">i_sc</span><span class="p">)</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">p_th</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p_th</span><span class="p">)</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">v_mp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">v_mp</span><span class="p">)</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">i_mp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">i_mp</span><span class="p">)</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">p_mp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">p_mp</span><span class="p">)</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">j_sc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">j_sc</span><span class="p">)</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">r_th</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">r_th</span><span class="p">)</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">j_mp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">j_mp</span><span class="p">)</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">r_mp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">r_mp</span><span class="p">)</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fill</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">results</span>
+</div>
+<div class="viewcode-block" id="IVCurveSolar.calculate"><a class="viewcode-back" href="../modules/ivcurve.html#ivcurve.IVCurveSolar.calculate">[docs]</a>    <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;interp1d&#39;</span><span class="p">,</span> <span class="n">recycle</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate fill factor.  kwargs are passed to fitting functions.</span>
+
+<span class="sd">        :param mode: fitting mode (tanh, power, interp1d, spline, erf)</span>
+<span class="sd">        :param recycle: recycle fit parameters when guessing</span>
+<span class="sd">        :param guess: guess for v_oc (default=shift)</span>
+
+<span class="sd">        :type mode: str</span>
+<span class="sd">        :type recycle: bool</span>
+<span class="sd">        :type guess: float</span>
+
+<span class="sd">        ============ ============</span>
+<span class="sd">        Mode         Option</span>
+<span class="sd">        ============ ============</span>
+<span class="sd">        **power**    order=8</span>
+<span class="sd">        **tanh**</span>
+<span class="sd">        **erf**</span>
+<span class="sd">        **interp1d** kind=&#39;cubic&#39;</span>
+<span class="sd">        **spline**   k=5</span>
+<span class="sd">        ============ ============</span>
+
+<span class="sd">        &gt;&gt;&gt; ivcurve = lm.ivcurve.IVCurve.load_pkl(&#39;gathered.pkl.gz&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; ivcurve.calculate(mode=&#39;interp1d&#39;, kind=&#39;linear&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; print ivcurve.fill</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s">&#39;power&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fit_power</span><span class="p">(</span><span class="n">recycle</span><span class="o">=</span><span class="n">recycle</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s">&#39;tanh&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fit_tanh</span><span class="p">(</span><span class="n">recycle</span><span class="o">=</span><span class="n">recycle</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s">&#39;erf&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fit_erf</span><span class="p">(</span><span class="n">recycle</span><span class="o">=</span><span class="n">recycle</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s">&#39;interp1d&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fit_interp1d</span><span class="p">(</span><span class="n">recycle</span><span class="o">=</span><span class="n">recycle</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s">&#39;spline&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fit_spline</span><span class="p">(</span><span class="n">recycle</span><span class="o">=</span><span class="n">recycle</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&#39;unknown fit mode: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">mode</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">guess</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">guess</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">v_shift</span>
+
+        <span class="c">### &gt;&gt;&gt; units on</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">v_oc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ifit</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">x0</span><span class="o">=</span><span class="n">guess</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">v</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">i_sc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ifit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">i</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p_th</span> <span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_oc</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">i_sc</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">p</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">v_mp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pfit</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="mf">0.66</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">v_oc</span><span class="o">.</span><span class="n">magnitude</span><span class="p">,</span>
+            <span class="n">return_y</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">v</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">i_mp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ifit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_mp</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">i</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p_mp</span> <span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">i_mp</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">v_mp</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">p</span><span class="p">)</span>
+
+        <span class="n">area</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">a</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">j_sc</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">i_sc</span> <span class="o">/</span> <span class="n">area</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">j</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">j_mp</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">i_mp</span> <span class="o">/</span> <span class="n">area</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">j</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">r_th</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p_th</span> <span class="o">/</span> <span class="n">area</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">r</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r_mp</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p_mp</span> <span class="o">/</span> <span class="n">area</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">r</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fill</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p_mp</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_th</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fill</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fill</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">v_oc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_oc</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">i_sc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">i_sc</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p_th</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p_th</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">v_mp</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_mp</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">i_mp</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">i_mp</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p_mp</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p_mp</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">j_sc</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">j_sc</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r_th</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r_th</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">j_mp</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">j_mp</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r_mp</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r_mp</span><span class="o">.</span><span class="n">magnitude</span><span class="p">)</span>
+        <span class="c">### &lt;&lt;&lt; units off</span>
+</div>
+    <span class="k">def</span> <span class="nf">_fit_power</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recycle</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fit using power series.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ifit</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">FitPower</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="p">,</span>
+            <span class="n">popt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ierr</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">jfit</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">FitPower</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">j</span><span class="p">,</span>
+            <span class="n">popt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">jerr</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">recycle</span><span class="p">:</span>
+            <span class="n">p_popt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ifit</span><span class="o">.</span><span class="n">popt</span>
+            <span class="n">r_popt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jfit</span><span class="o">.</span><span class="n">popt</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">p_popt</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">r_popt</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="n">order</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pfit</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">FitPower</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">,</span>
+            <span class="n">popt</span><span class="o">=</span><span class="n">p_popt</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">perr</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rfit</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">FitPower</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">,</span>
+            <span class="n">popt</span><span class="o">=</span><span class="n">r_popt</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rerr</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_fit_tanh</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recycle</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fit using hyperbolic tangent.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">i_popt</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">i</span><span class="o">.</span><span class="n">min</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">v_shift</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">j_popt</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">j</span><span class="o">.</span><span class="n">min</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">v_shift</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ifit</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">FitTanh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="n">i_popt</span><span class="p">,</span>
+            <span class="n">yerr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ierr</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">jfit</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">FitTanh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="n">j_popt</span><span class="p">,</span>
+            <span class="n">yerr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">jerr</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">recycle</span><span class="p">:</span>
+            <span class="n">p_popt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ifit</span><span class="o">.</span><span class="n">popt</span>
+            <span class="n">r_popt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jfit</span><span class="o">.</span><span class="n">popt</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">p_popt</span> <span class="o">=</span> <span class="n">i_popt</span>
+            <span class="n">r_popt</span> <span class="o">=</span> <span class="n">j_popt</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pfit</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">FitXTanh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="n">p_popt</span><span class="p">,</span>
+            <span class="n">yerr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">perr</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rfit</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">FitXTanh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="n">r_popt</span><span class="p">,</span>
+            <span class="n">yerr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rerr</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_fit_erf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recycle</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fit using error function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">i_popt</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">i</span><span class="o">.</span><span class="n">min</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">v_shift</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">j_popt</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">j</span><span class="o">.</span><span class="n">min</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">v_shift</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ifit</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">FitErf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="n">i_popt</span><span class="p">,</span>
+            <span class="n">yerr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ierr</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">jfit</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">FitErf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="n">j_popt</span><span class="p">,</span>
+            <span class="n">yerr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">jerr</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">recycle</span><span class="p">:</span>
+            <span class="n">p_popt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ifit</span><span class="o">.</span><span class="n">popt</span>
+            <span class="n">r_popt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jfit</span><span class="o">.</span><span class="n">popt</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">p_popt</span> <span class="o">=</span> <span class="n">i_popt</span>
+            <span class="n">r_popt</span> <span class="o">=</span> <span class="n">j_popt</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pfit</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">FitXErf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="n">p_popt</span><span class="p">,</span>
+            <span class="n">yerr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">perr</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rfit</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">FitXErf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="n">r_popt</span><span class="p">,</span>
+            <span class="n">yerr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rerr</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_fit_interp1d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recycle</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s">&#39;cubic&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fit using an interpolating polynomial.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ifit</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">FitInterp1D</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+            <span class="n">yerr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ierr</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">jfit</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">FitInterp1D</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">j</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+            <span class="n">yerr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">jerr</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pfit</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">FitInterp1D</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+            <span class="n">yerr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">perr</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rfit</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">FitInterp1D</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+            <span class="n">yerr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rerr</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="n">kind</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_fit_spline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recycle</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fit using spline.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ifit</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">FitUnivariateSpline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">i</span><span class="p">,</span>
+            <span class="n">popt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ierr</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">jfit</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">FitUnivariateSpline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">j</span><span class="p">,</span>
+            <span class="n">popt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">jerr</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pfit</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">FitUnivariateSpline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">,</span>
+            <span class="n">popt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">perr</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rfit</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">FitUnivariateSpline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">,</span>
+            <span class="n">popt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rerr</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">StringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">s</span><span class="p">,</span> <span class="s">&#39;[IVCurveSolar]&#39;</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">s</span><span class="p">,</span> <span class="s">&#39;  {self.string.v_oc} = {self.v_oc:{fmt}} {self.string.v}&#39;</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">s</span><span class="p">,</span> <span class="s">&#39;  {self.string.v_mp} = {self.v_mp:{fmt}} {self.string.v}&#39;</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">s</span><span class="p">,</span> <span class="s">&#39;  {self.string.i_sc} = {self.i_sc:{fmt}} {self.string.i} {self.j_sc:{fmt}} {self.string.j}&#39;</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">s</span><span class="p">,</span> <span class="s">&#39;  {self.string.i_mp} = {self.i_mp:{fmt}} {self.string.i} {self.j_mp:{fmt}} {self.string.j}&#39;</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">s</span><span class="p">,</span> <span class="s">&#39;  {self.string.p_th} = {self.p_th:{fmt}} {self.string.p} {self.r_th:{fmt}} {self.string.r}&#39;</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">s</span><span class="p">,</span> <span class="s">&#39;  {self.string.p_mp} = {self.p_mp:{fmt}} {self.string.p} {self.r_mp:{fmt}} {self.string.r}&#39;</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">s</span><span class="p">,</span> <span class="s">&#39;  {self.string.fill} = {self.fill:{fmt}} {self.string.f}&#39;</span>
+        <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s">&#39;12.8f&#39;</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Adam Gagorik.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

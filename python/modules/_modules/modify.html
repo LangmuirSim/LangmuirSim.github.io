@@ -1,0 +1,899 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>modify &mdash; Langmuir Python 2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <link rel="top" title="Langmuir Python 2.0 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for modify</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">modify.py</span>
+<span class="sd">=========</span>
+
+<span class="sd">.. argparse::</span>
+<span class="sd">    :module: modify</span>
+<span class="sd">    :func: create_parser</span>
+<span class="sd">    :prog: modify.py</span>
+
+<span class="sd">.. moduleauthor:: Geoff Hutchison &lt;geoffh@pitt.edu&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">math</span>
+
+<span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">morphology</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">misc</span><span class="p">,</span> <span class="n">ndimage</span><span class="p">,</span> <span class="n">fftpack</span><span class="p">,</span> <span class="n">signal</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+
+<span class="n">desc</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">Modify one or two images with various &quot;mutation&quot; options.</span>
+<span class="s">- Blend and re-threshold two images</span>
+<span class="s">- Gaussian Blur</span>
+<span class="s">- Uniform Blur (preserves edges)</span>
+<span class="s">- Shrink and tile</span>
+<span class="s">- Enlarge and tile</span>
+<span class="s">- Add pepper to a particular phase</span>
+<span class="s">- Roughen edges</span>
+<span class="s">- Grow one phase using diffusion-limited growth (fractal noise)</span>
+<span class="s">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="threshold"><a class="viewcode-back" href="../scripts/ga2d.html#modify.threshold">[docs]</a><span class="k">def</span> <span class="nf">threshold</span><span class="p">(</span><span class="n">image</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Threshold an image to return a binary :py:class:`numpy.ndarray`</span>
+<span class="sd">    with a 50:50 mix of two phases.</span>
+
+<span class="sd">    :param image: data</span>
+<span class="sd">    :type image: :py:class:`numpy.ndarray`</span>
+
+<span class="sd">    :return: modified image data</span>
+<span class="sd">    :rtype: :py:class:`numpy.ndarray`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">image</span> <span class="o">&gt;</span> <span class="n">image</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="blend_and_threshold"><a class="viewcode-back" href="../scripts/ga2d.html#modify.blend_and_threshold">[docs]</a><span class="k">def</span> <span class="nf">blend_and_threshold</span><span class="p">(</span><span class="n">image1</span><span class="p">,</span> <span class="n">image2</span><span class="p">,</span> <span class="n">ratio</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Mix two images, blur and threshold</span>
+
+<span class="sd">    :param image1: data1</span>
+<span class="sd">    :param image2: data2</span>
+<span class="sd">    :param ratio: mixing ratio (default is 50:50 mixture)</span>
+<span class="sd">    :param radius: size of uniform blur kernel to use after mixing (default is no blurring)</span>
+
+<span class="sd">    :type image1: :py:class:`numpy.ndarray`</span>
+<span class="sd">    :type image2: :py:class:`numpy.ndarray`</span>
+<span class="sd">    :type ratio: float</span>
+<span class="sd">    :type radius: float</span>
+
+<span class="sd">    :return: modified image data</span>
+<span class="sd">    :rtype: :py:class:`numpy.ndarray`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mixed</span> <span class="o">=</span> <span class="p">(</span><span class="n">ratio</span> <span class="o">*</span> <span class="n">image1</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">ratio</span><span class="p">)</span><span class="o">*</span><span class="n">image2</span><span class="p">)</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">uniform_filter</span><span class="p">(</span><span class="n">mixed</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">radius</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">image</span> <span class="o">&gt;</span> <span class="n">image</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="gblur_and_threshold"><a class="viewcode-back" href="../scripts/ga2d.html#modify.gblur_and_threshold">[docs]</a><span class="k">def</span> <span class="nf">gblur_and_threshold</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Blur an image with a Gaussian kernel of supplied radius</span>
+
+<span class="sd">    :param image: data</span>
+<span class="sd">    :param radius: kernel radius (default = no blurring)</span>
+
+<span class="sd">    :type image: :py:class:`numpy.ndarray`</span>
+<span class="sd">    :type radius: float</span>
+
+<span class="sd">    :return: modified image data</span>
+<span class="sd">    :rtype: :py:class:`numpy.ndarray`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">gaussian_filter</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">radius</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output</span> <span class="o">&gt;</span> <span class="n">output</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="ublur_and_threshold"><a class="viewcode-back" href="../scripts/ga2d.html#modify.ublur_and_threshold">[docs]</a><span class="k">def</span> <span class="nf">ublur_and_threshold</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Blur an image with a Uniform blur kernel of supplied radius</span>
+<span class="sd">    (the uniform filter better preserves edges/boundaries</span>
+
+<span class="sd">    :param image: data</span>
+<span class="sd">    :param radius: kernel radius</span>
+
+<span class="sd">    :type image: :py:class:`numpy.ndarray`</span>
+<span class="sd">    :type radius: float</span>
+
+<span class="sd">    :return: modified image data</span>
+<span class="sd">    :rtype: :py:class:`numpy.ndarray`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">uniform_filter</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">radius</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">threshold</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="shrink"><a class="viewcode-back" href="../scripts/ga2d.html#modify.shrink">[docs]</a><span class="k">def</span> <span class="nf">shrink</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">scale_x</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">scale_y</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Randomly shrink an image using different x and y scales. Re-tile and slice</span>
+<span class="sd">    the image to ensure the dimensions remain the same.</span>
+
+<span class="sd">    :param image: data</span>
+<span class="sd">    :param scale_x: x-dimension scale factor (or 0.0 for random choice)</span>
+<span class="sd">    :param scale_y: y-dimension scale factor (or 0.0 for random choice)</span>
+
+<span class="sd">    :type image: :py:class:`numpy.ndarray`</span>
+<span class="sd">    :type scale_x: float</span>
+<span class="sd">    :type scale_y: float</span>
+
+<span class="sd">    :return: modified image data</span>
+<span class="sd">    :rtype: :py:class:`numpy.ndarray`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span>
+    <span class="k">if</span> <span class="n">scale_x</span> <span class="o">&lt;=</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="n">scale_x</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="n">scale_x</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">scale_y</span> <span class="o">&lt;=</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="n">scale_y</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="n">scale_y</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">resized</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">imresize</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">scale_x</span> <span class="o">*</span> <span class="n">width</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">scale_y</span> <span class="o">*</span> <span class="n">height</span><span class="p">))</span> <span class="p">)</span>
+    <span class="c"># now we need to tile this thing, so work out how many repeats are needed</span>
+    <span class="n">mult_x</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">scale_x</span><span class="p">)</span>
+    <span class="n">mult_y</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">scale_y</span><span class="p">)</span>
+    <span class="n">tiled</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">resized</span><span class="p">,</span> <span class="p">(</span><span class="n">mult_x</span><span class="p">,</span> <span class="n">mult_y</span><span class="p">))</span>
+
+    <span class="c"># now take a slice of width and height out of the re-tiled version</span>
+    <span class="n">tiled_width</span><span class="p">,</span> <span class="n">tiled_height</span> <span class="o">=</span> <span class="n">tiled</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">start_x</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">tiled_width</span> <span class="o">&gt;</span> <span class="n">width</span><span class="p">:</span>
+        <span class="n">start_x</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="n">tiled_width</span> <span class="o">-</span> <span class="n">width</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">start_x</span> <span class="o">+</span> <span class="mi">256</span> <span class="o">&gt;</span> <span class="n">tiled_width</span><span class="p">:</span>
+            <span class="n">start_x</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">start_x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">start_x</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">start_y</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">tiled_height</span> <span class="o">&gt;</span> <span class="n">height</span><span class="p">:</span>
+        <span class="n">start_y</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="n">tiled_height</span> <span class="o">-</span> <span class="n">height</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">start_y</span> <span class="o">+</span> <span class="mi">256</span> <span class="o">&gt;</span> <span class="n">tiled_height</span><span class="p">:</span>
+            <span class="n">start_y</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">start_y</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">start_y</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">tiled</span><span class="p">[</span> <span class="n">start_x</span><span class="p">:</span><span class="n">start_x</span><span class="o">+</span><span class="mi">256</span><span class="p">,</span> <span class="n">start_y</span><span class="p">:</span><span class="n">start_y</span><span class="o">+</span><span class="mi">256</span> <span class="p">]</span>
+</div>
+<div class="viewcode-block" id="enlarge"><a class="viewcode-back" href="../scripts/ga2d.html#modify.enlarge">[docs]</a><span class="k">def</span> <span class="nf">enlarge</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">zoom_x</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">zoom_y</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Randomly enlarge an image using different x and y scales. Slice the image to</span>
+<span class="sd">    ensure the dimensions remain the same.</span>
+
+<span class="sd">    :param image: data</span>
+<span class="sd">    :param zoom_x: x-dimension scale factor (or 0.0 for random choice)</span>
+<span class="sd">    :param zoom_y: y-dimension scale factor (or 0.0 for random choice)</span>
+
+<span class="sd">    :type image: :py:class:`numpy.ndarray`</span>
+<span class="sd">    :type zoom_x: float</span>
+<span class="sd">    :type zoom_y: float</span>
+
+<span class="sd">    :return: modified image data</span>
+<span class="sd">    :rtype: :py:class:`numpy.ndarray`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span>
+    <span class="k">if</span> <span class="n">zoom_x</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="n">zoom_x</span> <span class="o">=</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">+</span> <span class="mf">1.0</span>
+    <span class="k">if</span> <span class="n">zoom_y</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
+        <span class="n">zoom_y</span> <span class="o">=</span> <span class="mf">2.0</span><span class="o">*</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">+</span> <span class="mf">1.0</span>
+    <span class="n">child</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">interpolation</span><span class="o">.</span><span class="n">zoom</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="p">(</span><span class="n">zoom_x</span><span class="p">,</span> <span class="n">zoom_y</span><span class="p">)</span> <span class="p">)</span>
+
+    <span class="c"># now take a slice of width and height out of this thing</span>
+    <span class="n">child_width</span><span class="p">,</span> <span class="n">child_height</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">start_x</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">child_width</span> <span class="o">&gt;</span> <span class="n">width</span><span class="p">:</span>
+        <span class="n">start_x</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="n">child_width</span> <span class="o">-</span> <span class="n">width</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">start_x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">start_x</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">start_y</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">child_height</span> <span class="o">&gt;</span> <span class="n">height</span><span class="p">:</span>
+        <span class="n">start_y</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="n">child_height</span> <span class="o">-</span> <span class="n">height</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">start_y</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">start_y</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">child</span><span class="p">[</span> <span class="n">start_x</span><span class="p">:</span><span class="n">start_x</span><span class="o">+</span><span class="mi">256</span><span class="p">,</span> <span class="n">start_y</span><span class="p">:</span><span class="n">start_y</span><span class="o">+</span><span class="mi">256</span> <span class="p">]</span>
+</div>
+<div class="viewcode-block" id="pepper"><a class="viewcode-back" href="../scripts/ga2d.html#modify.pepper">[docs]</a><span class="k">def</span> <span class="nf">pepper</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">percent</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">brush</span><span class="o">=</span><span class="s">&#39;point&#39;</span><span class="p">,</span> <span class="n">overlap</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">maxTries</span><span class="o">=</span><span class="mf">1e9</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add pepper to image.</span>
+
+<span class="sd">    :param image: data</span>
+<span class="sd">    :param phase: phase ID (0, 1)</span>
+<span class="sd">    :param count: number of pixels to change</span>
+<span class="sd">    :param percent: percent of phase to change (overrides count!)</span>
+<span class="sd">    :param brush: which brush to use (point, square, square3, cross)</span>
+<span class="sd">    :param overlap: allow the brush to paint over existing pixels</span>
+
+<span class="sd">    :return: modified image data</span>
+<span class="sd">    :rtype: :py:class:`numpy.ndarray`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># choose brush</span>
+    <span class="n">brushes</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&#39;point&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="p">]),</span>
+
+        <span class="s">&#39;square&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="p">]),</span>
+
+        <span class="s">&#39;square3&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+            <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="p">]),</span>
+
+        <span class="s">&#39;cross&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+                     <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+            <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                     <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="p">]),</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">brush</span> <span class="ow">in</span> <span class="n">brushes</span><span class="p">:</span>
+        <span class="n">brush</span> <span class="o">=</span> <span class="n">brushes</span><span class="p">[</span><span class="n">brush</span><span class="p">]</span>
+
+    <span class="c"># list of unique phases</span>
+    <span class="n">phases</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">phases</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">phases</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="s">&#39;invalid number of phases in image: </span><span class="si">%d</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">image</span><span class="o">.</span><span class="n">size</span>
+
+    <span class="c"># list of possible sites ids that can be modified</span>
+    <span class="n">x_i</span><span class="p">,</span> <span class="n">y_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">image</span><span class="o">==</span><span class="n">phases</span><span class="p">[</span><span class="n">phase</span><span class="p">])</span>
+    <span class="n">phase_size</span> <span class="o">=</span> <span class="n">x_i</span><span class="o">.</span><span class="n">size</span>
+
+    <span class="c"># determine the number of pixels to change</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">percent</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">percent</span> <span class="o">&lt;</span> <span class="mi">1</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">phase_size</span> <span class="o">*</span> <span class="n">percent</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="n">phase_size</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="s">&#39;invalid count: </span><span class="si">%d</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">count</span>
+
+    <span class="c"># add the pepper</span>
+    <span class="n">pixels_changed</span><span class="p">,</span> <span class="n">tries</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">pixels_changed</span> <span class="o">&lt;</span> <span class="n">count</span><span class="p">:</span>
+        <span class="c"># choose a random site</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">x_i</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c"># apply brush to site</span>
+        <span class="n">to_paint</span> <span class="o">=</span> <span class="n">brush</span> <span class="o">+</span> <span class="p">(</span><span class="n">x_i</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">y_i</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">x_j</span><span class="p">,</span> <span class="n">y_j</span> <span class="o">=</span> <span class="n">to_paint</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">to_paint</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c"># restrict sites to be in bounds of image</span>
+        <span class="n">valid</span> <span class="o">=</span> <span class="p">((</span><span class="n">x_j</span> <span class="o">&lt;</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">x_j</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span>
+                 <span class="p">(</span><span class="n">y_j</span> <span class="o">&lt;</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">y_j</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">x_j</span> <span class="o">=</span> <span class="n">x_j</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span>
+        <span class="n">y_j</span> <span class="o">=</span> <span class="n">y_j</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span>
+
+        <span class="c"># restrict sites to lie within the paiting phase</span>
+        <span class="n">valid</span> <span class="o">=</span> <span class="p">(</span><span class="n">image</span><span class="p">[</span><span class="n">x_j</span><span class="p">,</span> <span class="n">y_j</span><span class="p">]</span> <span class="o">==</span> <span class="n">phases</span><span class="p">[</span><span class="n">phase</span><span class="p">])</span>
+        <span class="n">x_j</span> <span class="o">=</span> <span class="n">x_j</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span>
+        <span class="n">y_j</span> <span class="o">=</span> <span class="n">y_j</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span>
+
+        <span class="c"># allow the brush to paint over</span>
+        <span class="k">if</span> <span class="n">overlap</span><span class="p">:</span>
+            <span class="n">image</span><span class="p">[</span><span class="n">x_j</span><span class="p">,</span> <span class="n">y_j</span><span class="p">]</span> <span class="o">=</span> <span class="n">phases</span><span class="p">[</span><span class="n">phase</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">pixels_changed</span> <span class="o">+=</span> <span class="n">x_j</span><span class="o">.</span><span class="n">size</span>
+
+        <span class="c"># or restrict brush to only paint where it &#39;fits&#39;</span>
+        <span class="k">elif</span> <span class="n">x_j</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="n">brush</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">image</span><span class="p">[</span><span class="n">x_j</span><span class="p">,</span> <span class="n">y_j</span><span class="p">]</span> <span class="o">=</span> <span class="n">phases</span><span class="p">[</span><span class="n">phase</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">pixels_changed</span> <span class="o">+=</span> <span class="n">x_j</span><span class="o">.</span><span class="n">size</span>
+
+        <span class="c"># recalcualte which sites can be painted</span>
+        <span class="n">x_i</span><span class="p">,</span> <span class="n">y_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">image</span><span class="o">==</span><span class="n">phases</span><span class="p">[</span><span class="n">phase</span><span class="p">])</span>
+        <span class="n">tries</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c"># only allow a certain number of tries</span>
+        <span class="k">if</span> <span class="n">tries</span> <span class="o">&gt;=</span> <span class="n">maxTries</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">,</span> <span class="s">&#39;reached max tries in pepper: </span><span class="si">%d</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">tries</span>
+
+    <span class="k">return</span> <span class="n">image</span>
+</div>
+<div class="viewcode-block" id="roughen"><a class="viewcode-back" href="../scripts/ga2d.html#modify.roughen">[docs]</a><span class="k">def</span> <span class="nf">roughen</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">fraction</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">dilation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">struct</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Roughen the edges of the two phases. Use a binary-closing and dilation</span>
+<span class="sd">    to find the edge between phases (ignoring pepper defects) and then flip</span>
+<span class="sd">    the phase of a fraction of the resulting edge sites.</span>
+
+<span class="sd">    :param image: data</span>
+<span class="sd">    :param fraction: percent of sites to flip</span>
+<span class="sd">    :param dilation: number of times to dilate (expand) the border</span>
+<span class="sd">    :param struct: structure used for the mathematical morphology operations</span>
+
+<span class="sd">    :type image: :py:class:`numpy.ndarray`</span>
+<span class="sd">    :type fraction: float</span>
+<span class="sd">    :type dilation: int</span>
+<span class="sd">    :type struct: :py:class:`numpy.ndarray`</span>
+
+<span class="sd">    :return: modified image data</span>
+<span class="sd">    :rtype: :py:class:`numpy.ndarray`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">struct</span><span class="o">==</span><span class="bp">None</span><span class="p">:</span>
+        <span class="n">struct</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">morphology</span><span class="o">.</span><span class="n">generate_binary_structure</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c"># remove small noise with a binary closing</span>
+    <span class="n">cleaned</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">binary_closing</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">structure</span><span class="o">=</span><span class="n">struct</span><span class="p">)</span>
+    <span class="c"># find the edge with a dilation</span>
+    <span class="n">edge</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_xor</span><span class="p">(</span> <span class="n">cleaned</span><span class="p">,</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">binary_dilation</span><span class="p">(</span><span class="n">cleaned</span><span class="p">,</span> <span class="n">structure</span><span class="o">=</span><span class="n">struct</span><span class="p">)</span> <span class="p">)</span>
+    <span class="c"># optionally dilate the edge (extending into both phases)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dilation</span><span class="p">):</span>
+        <span class="n">edge</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">binary_dilation</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">structure</span><span class="o">=</span><span class="n">struct</span><span class="p">)</span>
+    <span class="c"># add noise to the edge sites</span>
+    <span class="c"># this is probably inefficient, but it works</span>
+    <span class="n">sites</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span> <span class="o">*</span> <span class="n">fraction</span><span class="p">)</span>
+    <span class="n">x_nz</span><span class="p">,</span> <span class="n">y_nz</span> <span class="o">=</span> <span class="n">edge</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()</span> <span class="c"># get all the nonzero indices</span>
+    <span class="n">count</span>  <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="n">sites</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">x_nz</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">y_nz</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">edge</span><span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="n">edge</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span> <span class="c"># invert one of these edge sites</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_xor</span><span class="p">(</span> <span class="n">image</span><span class="p">,</span> <span class="n">edge</span> <span class="p">)</span>
+</div>
+<div class="viewcode-block" id="grow_ndimage"><a class="viewcode-back" href="../scripts/ga2d.html#modify.grow_ndimage">[docs]</a><span class="k">def</span> <span class="nf">grow_ndimage</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">phase</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">pixToAdd</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Grow points into a minority phase using diffusion-limited fractal growth.</span>
+<span class="sd">    The result will ensure 50:50 mixtures and by default will determine the</span>
+<span class="sd">    minority phase automatically, but both could be specified.</span>
+
+<span class="sd">    :param image: data</span>
+<span class="sd">    :param phase: grey level to grow into (i.e., default 0 = add white into black regions)</span>
+<span class="sd">    :param pixToAdd: number of points to grow, -1 for automatic detection of 50:50 mix</span>
+
+<span class="sd">    :type image: :py:class:`numpy.ndarray`</span>
+<span class="sd">    :type phase: int</span>
+<span class="sd">    :type pixToAdd: int</span>
+
+<span class="sd">    :return: modified image data</span>
+<span class="sd">    :rtype: :py:class:`numpy.ndarray`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">phase</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">nonzero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+        <span class="n">phase</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">nonzero</span> <span class="o">&gt;</span> <span class="n">image</span><span class="o">.</span><span class="n">size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">phase</span> <span class="o">=</span> <span class="mi">255</span>
+
+    <span class="c"># switch the phases for now, we&#39;ll switch them back later</span>
+    <span class="k">if</span> <span class="n">phase</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">inverted</span> <span class="o">=</span> <span class="p">(</span><span class="n">image</span> <span class="o">&lt;</span> <span class="n">image</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">inverted</span>
+
+    <span class="c"># neighbor pixel directions</span>
+    <span class="n">nx</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">ny</span> <span class="o">=</span> <span class="p">[</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">nbrs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">nx</span><span class="p">)</span>
+
+    <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span>
+    <span class="k">if</span> <span class="n">pixToAdd</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="n">pixToAdd</span> <span class="o">=</span> <span class="n">width</span> <span class="o">*</span> <span class="n">height</span> <span class="o">/</span> <span class="mi">2</span>
+
+    <span class="c"># how many are currently set</span>
+    <span class="n">pix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="n">pix</span> <span class="o">&lt;</span> <span class="n">pixToAdd</span><span class="p">:</span>
+        <span class="c"># pick a spot and see if it can be added</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="n">height</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">image</span><span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">]</span> <span class="o">!=</span> <span class="n">phase</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nbrs</span><span class="p">):</span>
+                <span class="c"># x, y is set, so try to find an empty neighbor</span>
+                <span class="n">k</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="n">nbrs</span><span class="p">)</span>
+                <span class="n">xn</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">nx</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                <span class="n">yn</span> <span class="o">=</span> <span class="n">y</span> <span class="o">+</span> <span class="n">ny</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">xn</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">xn</span> <span class="o">&gt;</span> <span class="n">width</span> <span class="o">-</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">yn</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">yn</span> <span class="o">&gt;</span> <span class="n">height</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">image</span><span class="p">[</span><span class="n">xn</span><span class="p">,</span><span class="n">yn</span><span class="p">]</span> <span class="o">==</span> <span class="n">phase</span><span class="p">:</span>
+                    <span class="n">image</span><span class="p">[</span><span class="n">xn</span><span class="p">,</span><span class="n">yn</span><span class="p">]</span> <span class="o">=</span> <span class="mi">255</span>
+                    <span class="n">pix</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">break</span>
+
+    <span class="k">if</span> <span class="n">phase</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c"># re-invert to get the original phases</span>
+        <span class="n">inverted</span> <span class="o">=</span> <span class="p">(</span><span class="n">image</span> <span class="o">&lt;</span> <span class="n">image</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">inverted</span>
+
+    <span class="k">return</span> <span class="n">image</span>
+</div>
+<div class="viewcode-block" id="invert"><a class="viewcode-back" href="../scripts/ga2d.html#modify.invert">[docs]</a><span class="k">def</span> <span class="nf">invert</span><span class="p">(</span><span class="n">image</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Invert the phases (i.e., black -&gt; white, white-&gt;black)</span>
+
+<span class="sd">    :param image: data</span>
+
+<span class="sd">    :type image: :py:class:`numpy.ndarray`</span>
+
+<span class="sd">    :return: modified image data</span>
+<span class="sd">    :rtype: :py:class:`numpy.ndarray`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">image</span> <span class="o">&lt;</span> <span class="n">image</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+</div>
+<div class="viewcode-block" id="add_noise"><a class="viewcode-back" href="../scripts/ga2d.html#modify.add_noise">[docs]</a><span class="k">def</span> <span class="nf">add_noise</span><span class="p">(</span><span class="n">image</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :param image: data</span>
+<span class="sd">    :type image: :py:class:`numpy.ndarray`</span>
+
+<span class="sd">    :return: modified image data</span>
+<span class="sd">    :rtype: :py:class:`numpy.ndarray`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="mi">255</span>
+    <span class="k">return</span> <span class="n">blend_and_threshold</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">noise</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="flip_random_sites"><a class="viewcode-back" href="../scripts/ga2d.html#modify.flip_random_sites">[docs]</a><span class="k">def</span> <span class="nf">flip_random_sites</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">64</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    What random noise should be doing?</span>
+
+<span class="sd">    :param image: data</span>
+<span class="sd">    :type image: :py:class:`numpy.ndarray`</span>
+
+<span class="sd">    :param n: number of sites to flip</span>
+<span class="sd">    :type n: int</span>
+
+<span class="sd">    :return: modified image data</span>
+<span class="sd">    :rtype: :py:class:`numpy.ndarray`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="p">(</span><span class="n">image</span> <span class="o">&gt;</span> <span class="n">image</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+    <span class="n">x_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">y_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">iflip</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+    <span class="n">iflip</span><span class="p">[</span><span class="n">x_ids</span><span class="p">,</span> <span class="n">y_ids</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">image</span><span class="p">[</span><span class="n">x_ids</span><span class="p">,</span> <span class="n">y_ids</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">iflip</span> <span class="o">&gt;</span> <span class="n">iflip</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="dialate"><a class="viewcode-back" href="../scripts/ga2d.html#modify.dialate">[docs]</a><span class="k">def</span> <span class="nf">dialate</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">struct</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Grow edges of white phase.</span>
+
+<span class="sd">    :param image: data</span>
+<span class="sd">    :type image: :py:class:`numpy.ndarray`</span>
+
+<span class="sd">    :type struct: :py:class:`numpy.ndarray`</span>
+<span class="sd">    :type struct: :py:class:`numpy.ndarray`</span>
+
+<span class="sd">    :return: modified image data</span>
+<span class="sd">    :rtype: :py:class:`numpy.ndarray`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">struct</span><span class="p">:</span>
+        <span class="n">struct</span> <span class="o">=</span> <span class="n">morphology</span><span class="o">.</span><span class="n">disk</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">i</span> <span class="o">=</span> <span class="n">morphology</span><span class="o">.</span><span class="n">binary_dilation</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">struct</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="n">i</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="erode"><a class="viewcode-back" href="../scripts/ga2d.html#modify.erode">[docs]</a><span class="k">def</span> <span class="nf">erode</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">struct</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Erode edges of white phase.</span>
+
+<span class="sd">    :param image: data</span>
+<span class="sd">    :type image: :py:class:`numpy.ndarray`</span>
+
+<span class="sd">    :type struct: :py:class:`numpy.ndarray`</span>
+<span class="sd">    :type struct: :py:class:`numpy.ndarray`</span>
+
+<span class="sd">    :return: modified image data</span>
+<span class="sd">    :rtype: :py:class:`numpy.ndarray`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">struct</span><span class="p">:</span>
+        <span class="n">struct</span> <span class="o">=</span> <span class="n">morphology</span><span class="o">.</span><span class="n">disk</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">i</span> <span class="o">=</span> <span class="n">morphology</span><span class="o">.</span><span class="n">binary_erosion</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">struct</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="n">i</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="opening"><a class="viewcode-back" href="../scripts/ga2d.html#modify.opening">[docs]</a><span class="k">def</span> <span class="nf">opening</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">struct</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Open up white phase so that struct fits without overlapping black phase.</span>
+
+<span class="sd">    :param image: data</span>
+<span class="sd">    :type image: :py:class:`numpy.ndarray`</span>
+
+<span class="sd">    :type struct: :py:class:`numpy.ndarray`</span>
+<span class="sd">    :type struct: :py:class:`numpy.ndarray`</span>
+
+<span class="sd">    :return: modified image data</span>
+<span class="sd">    :rtype: :py:class:`numpy.ndarray`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">struct</span><span class="p">:</span>
+        <span class="n">struct</span> <span class="o">=</span> <span class="n">morphology</span><span class="o">.</span><span class="n">disk</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">i</span> <span class="o">=</span> <span class="n">morphology</span><span class="o">.</span><span class="n">binary_opening</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">struct</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="n">i</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="closing"><a class="viewcode-back" href="../scripts/ga2d.html#modify.closing">[docs]</a><span class="k">def</span> <span class="nf">closing</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">struct</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Open up black phase so that struct fits without overlapping white phase.</span>
+
+<span class="sd">    :param image: data</span>
+<span class="sd">    :type image: :py:class:`numpy.ndarray`</span>
+
+<span class="sd">    :type struct: :py:class:`numpy.ndarray`</span>
+<span class="sd">    :type struct: :py:class:`numpy.ndarray`</span>
+
+<span class="sd">    :return: modified image data</span>
+<span class="sd">    :rtype: :py:class:`numpy.ndarray`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">struct</span><span class="p">:</span>
+        <span class="n">struct</span> <span class="o">=</span> <span class="n">morphology</span><span class="o">.</span><span class="n">disk</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">i</span> <span class="o">=</span> <span class="n">morphology</span><span class="o">.</span><span class="n">binary_opening</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">struct</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="n">i</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="skeletonize_and_reconstruct"><a class="viewcode-back" href="../scripts/ga2d.html#modify.skeletonize_and_reconstruct">[docs]</a><span class="k">def</span> <span class="nf">skeletonize_and_reconstruct</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">dfunc</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">sfunc</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Deconstruct image into skeleton and distance mask.  Alter the skeleton</span>
+<span class="sd">    and/or distance mask and then reconstruct a new morphology.  With no</span>
+<span class="sd">    altering functions passed, this function will not modify the image.</span>
+
+<span class="sd">    :param image: data</span>
+<span class="sd">    :type image: :py:class:`numpy.ndarray`</span>
+
+<span class="sd">    :param dfunc: function that alters distance mask</span>
+<span class="sd">    :type dfunc: func</span>
+
+<span class="sd">    :param sfunc: function that alters skeleton</span>
+<span class="sd">    :type sfunc: func</span>
+
+<span class="sd">    :return: modified image data</span>
+<span class="sd">    :rtype: :py:class:`numpy.ndarray`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="p">(</span><span class="n">image</span> <span class="o">&gt;</span> <span class="n">image</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+    <span class="c"># compute skeleton</span>
+    <span class="n">s0</span> <span class="o">=</span> <span class="n">morphology</span><span class="o">.</span><span class="n">skeletonize</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+
+    <span class="c"># compute mask</span>
+    <span class="n">d0</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">distance_transform_edt</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+
+    <span class="c"># alter the mask</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dfunc</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">d0</span> <span class="o">=</span> <span class="n">dfunc</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">s0</span><span class="p">,</span> <span class="n">d0</span><span class="p">)</span>
+
+    <span class="c"># alter the skeleton</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">sfunc</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">s0</span> <span class="o">=</span> <span class="n">dfunc</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">s0</span><span class="p">,</span> <span class="n">d0</span><span class="p">)</span>
+
+    <span class="c"># fix d-matrix</span>
+    <span class="n">d0</span><span class="p">[</span><span class="n">d0</span> <span class="o">&lt;=</span> <span class="n">s0</span><span class="p">]</span> <span class="o">=</span> <span class="n">s0</span><span class="p">[</span><span class="n">d0</span> <span class="o">&lt;=</span> <span class="n">s0</span><span class="p">]</span>
+
+    <span class="c"># recomute morphology</span>
+    <span class="n">r0</span> <span class="o">=</span> <span class="n">morphology</span><span class="o">.</span><span class="n">reconstruction</span><span class="p">(</span><span class="n">s0</span><span class="p">,</span> <span class="n">d0</span><span class="p">)</span>
+
+    <span class="c"># threshold</span>
+    <span class="k">return</span> <span class="n">r0</span> <span class="o">&gt;</span> <span class="n">r0</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="fourier_transform_and_reconstruct"><a class="viewcode-back" href="../scripts/ga2d.html#modify.fourier_transform_and_reconstruct">[docs]</a><span class="k">def</span> <span class="nf">fourier_transform_and_reconstruct</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">detrend</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                                      <span class="n">ffunc</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Take fourier transform, alter it, and reconstruct image.  For some</span>
+<span class="sd">    reason this is shifting the origin by 1 pixel after reconstruction, which</span>
+<span class="sd">    should not happen.</span>
+
+<span class="sd">    :param image: data</span>
+<span class="sd">    :type image: :py:class:`numpy.ndarray`</span>
+
+<span class="sd">    :param ffunc: function that alters FFT matrix</span>
+<span class="sd">    :type ffunc: func</span>
+
+<span class="sd">    :return: modified image data</span>
+<span class="sd">    :rtype: :py:class:`numpy.ndarray`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">window</span><span class="p">:</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">hamming</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">detrend</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">fftpack</span><span class="o">.</span><span class="n">fft</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">signal</span><span class="o">.</span><span class="n">detrend</span><span class="p">(</span><span class="n">image</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">fftpack</span><span class="o">.</span><span class="n">fft</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">image</span><span class="p">)</span>
+
+    <span class="c"># alter the fft</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ffunc</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">ffunc</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fliplr</span><span class="p">(</span><span class="n">fftpack</span><span class="o">.</span><span class="n">fft</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">result</span> <span class="o">&gt;</span> <span class="n">result</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="randf"><a class="viewcode-back" href="../scripts/ga2d.html#modify.randf">[docs]</a><span class="k">def</span> <span class="nf">randf</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Random float in range.</span>
+
+<span class="sd">    :param a: lower bound</span>
+<span class="sd">    :param b: upper bound</span>
+<span class="sd">    :type size: number of samples to generate</span>
+
+<span class="sd">    :type a: float</span>
+<span class="sd">    :type b: float</span>
+<span class="sd">    :type size: int</span>
+
+<span class="sd">    :return: values</span>
+<span class="sd">    :rtype: float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="n">a</span><span class="p">)</span> <span class="o">+</span> <span class="n">a</span>
+</div>
+<div class="viewcode-block" id="gauss1D"><a class="viewcode-back" href="../scripts/ga2d.html#modify.gauss1D">[docs]</a><span class="k">def</span> <span class="nf">gauss1D</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    1D Gaussian.</span>
+
+<span class="sd">    :param x: x-value</span>
+<span class="sd">    :param s: sigma</span>
+<span class="sd">    :param m: mean</span>
+
+<span class="sd">    :return: values</span>
+<span class="sd">    :rtype: float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">m</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">s</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">g</span>
+</div>
+<div class="viewcode-block" id="gauss2D"><a class="viewcode-back" href="../scripts/ga2d.html#modify.gauss2D">[docs]</a><span class="k">def</span> <span class="nf">gauss2D</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sx</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">sy</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">mx</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">my</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    2D Gaussian.</span>
+
+<span class="sd">    :param x: x-value</span>
+<span class="sd">    :param y: y-value</span>
+<span class="sd">    :param sx: x-sigma</span>
+<span class="sd">    :param mx: x-mean</span>
+<span class="sd">    :param sy: y-sigma</span>
+<span class="sd">    :param my: y-mean</span>
+
+<span class="sd">    :return: values</span>
+<span class="sd">    :rtype: float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">gauss1D</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sx</span><span class="p">,</span> <span class="n">mx</span><span class="p">)</span> <span class="o">*</span> <span class="n">gauss1D</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">sy</span><span class="p">,</span> <span class="n">my</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="create_random_distance_transform_on_skeleton"><a class="viewcode-back" href="../scripts/ga2d.html#modify.create_random_distance_transform_on_skeleton">[docs]</a><span class="k">def</span> <span class="nf">create_random_distance_transform_on_skeleton</span><span class="p">(</span><span class="n">i0</span><span class="p">,</span> <span class="n">s0</span><span class="p">,</span> <span class="n">d0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Draw a bunch of Gaussians of random sigma along skeleton of image.</span>
+
+<span class="sd">    :param i0: data</span>
+<span class="sd">    :type i0: :py:class:`numpy.ndarray`</span>
+
+<span class="sd">    :param s0: data</span>
+<span class="sd">    :type s0: :py:class:`numpy.ndarray`</span>
+
+<span class="sd">    :param d0: data</span>
+<span class="sd">    :type d0: :py:class:`numpy.ndarray`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># create kernel matrix</span>
+    <span class="n">kx_size</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="n">ky_size</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="n">kx</span><span class="p">,</span> <span class="n">ky</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="o">-</span><span class="n">kx_size</span><span class="p">:</span><span class="mf">1.01</span><span class="o">*</span><span class="n">kx_size</span><span class="p">:</span><span class="mf">1.0</span><span class="p">,</span>
+                      <span class="o">-</span><span class="n">ky_size</span><span class="p">:</span><span class="mf">1.01</span><span class="o">*</span><span class="n">ky_size</span><span class="p">:</span><span class="mf">1.0</span><span class="p">]</span>
+
+    <span class="c"># image size</span>
+    <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span> <span class="o">=</span> <span class="n">i0</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="c"># skeleton x,y values</span>
+    <span class="n">sx</span><span class="p">,</span> <span class="n">sy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">s0</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="c"># create padded distance array</span>
+    <span class="n">d1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">d0</span><span class="p">)</span>
+    <span class="n">dp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="p">(</span><span class="n">kx_size</span><span class="p">,</span> <span class="n">ky_size</span><span class="p">),</span> <span class="s">&#39;constant&#39;</span><span class="p">,</span> <span class="n">constant_values</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="c"># run along skeleton</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">x_id</span><span class="p">,</span> <span class="n">y_id</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">sx</span><span class="p">,</span> <span class="n">sy</span><span class="p">)):</span>
+
+        <span class="c"># jitter the skeleton</span>
+        <span class="n">x_id</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_id</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span> <span class="o">%</span> <span class="n">nx</span>
+        <span class="n">y_id</span> <span class="o">=</span> <span class="p">(</span><span class="n">y_id</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span> <span class="o">%</span> <span class="n">ny</span>
+
+        <span class="c"># random sigma</span>
+        <span class="n">sigma_x</span> <span class="o">=</span> <span class="n">randf</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
+        <span class="n">sigma_y</span> <span class="o">=</span> <span class="n">randf</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
+
+        <span class="n">x_id_pad</span> <span class="o">=</span> <span class="n">x_id</span> <span class="o">+</span> <span class="n">kx_size</span>
+        <span class="n">y_id_pad</span> <span class="o">=</span> <span class="n">y_id</span> <span class="o">+</span> <span class="n">ky_size</span>
+
+        <span class="n">x0</span> <span class="o">=</span> <span class="n">x_id_pad</span> <span class="o">-</span> <span class="n">kx_size</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="n">x_id_pad</span> <span class="o">+</span> <span class="n">ky_size</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="n">y0</span> <span class="o">=</span> <span class="n">y_id_pad</span> <span class="o">-</span> <span class="n">ky_size</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="n">y_id_pad</span> <span class="o">+</span> <span class="n">ky_size</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="n">dp</span><span class="p">[</span><span class="n">x0</span><span class="p">:</span><span class="n">x1</span><span class="p">,</span><span class="n">y0</span><span class="p">:</span><span class="n">y1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">gauss2D</span><span class="p">(</span><span class="n">kx</span><span class="p">,</span> <span class="n">ky</span><span class="p">,</span> <span class="n">sigma_x</span><span class="p">,</span> <span class="n">sigma_y</span><span class="p">)</span>
+
+    <span class="c"># remove padding</span>
+    <span class="n">d1</span> <span class="o">=</span> <span class="n">dp</span><span class="p">[</span><span class="n">kx_size</span><span class="p">:</span><span class="o">-</span><span class="n">kx_size</span><span class="p">,</span> <span class="n">ky_size</span><span class="p">:</span><span class="o">-</span><span class="n">ky_size</span><span class="p">]</span>
+
+    <span class="c"># blur edges</span>
+    <span class="n">d1</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">gaussian_filter</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c"># fix for reconstruction</span>
+    <span class="n">d1</span><span class="p">[</span><span class="n">d1</span> <span class="o">&lt;=</span> <span class="n">s0</span><span class="p">]</span> <span class="o">=</span> <span class="n">s0</span><span class="p">[</span><span class="n">d1</span> <span class="o">&lt;=</span> <span class="n">s0</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">d1</span>
+</div>
+<span class="k">def</span> <span class="nf">create_parser</span><span class="p">():</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">desc</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="n">dest</span><span class="o">=</span><span class="s">&#39;ifile1&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&#39;input1&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s">&#39;input file #1&#39;</span><span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="n">dest</span><span class="o">=</span><span class="s">&#39;ifile2&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+                        <span class="n">metavar</span><span class="o">=</span><span class="s">&#39;input2&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s">&#39;?&#39;</span><span class="p">,</span>
+                        <span class="n">help</span><span class="o">=</span><span class="s">&#39;input file #2&#39;</span><span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--type&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&#39;type&#39;</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;blend&#39;</span><span class="p">,</span> <span class="s">&#39;gblur&#39;</span><span class="p">,</span> <span class="s">&#39;ublur&#39;</span><span class="p">,</span> <span class="s">&#39;shrink&#39;</span><span class="p">,</span> <span class="s">&#39;enlarge&#39;</span><span class="p">,</span> <span class="s">&#39;invert&#39;</span><span class="p">,</span>
+                 <span class="s">&#39;pepper&#39;</span><span class="p">,</span> <span class="s">&#39;roughen&#39;</span><span class="p">,</span> <span class="s">&#39;fracgrow&#39;</span><span class="p">,</span> <span class="s">&#39;noise&#39;</span><span class="p">,</span> <span class="s">&#39;flip&#39;</span><span class="p">,</span> <span class="s">&#39;erode&#39;</span><span class="p">,</span>
+                 <span class="s">&#39;dialate&#39;</span><span class="p">,</span> <span class="s">&#39;opening&#39;</span><span class="p">,</span> <span class="s">&#39;closing&#39;</span><span class="p">,</span> <span class="s">&#39;random_dist&#39;</span><span class="p">],</span>
+        <span class="n">help</span><span class="o">=</span><span class="s">&#39;mutation type&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">parser</span>
+
+<span class="k">def</span> <span class="nf">get_arguments</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">create_parser</span><span class="p">()</span>
+    <span class="n">opts</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">ifile1</span><span class="p">):</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">print_help</span><span class="p">()</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">file does not exist: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">opts</span><span class="o">.</span><span class="n">ifile1</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">opts</span><span class="o">.</span><span class="n">ifile2</span> <span class="o">!=</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">ifile2</span><span class="p">):</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">print_help</span><span class="p">()</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">file does not exist: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">opts</span><span class="o">.</span><span class="n">ifile2</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">opts</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">opts</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&quot;blend&quot;</span> <span class="ow">and</span> <span class="n">opts</span><span class="o">.</span><span class="n">ifile2</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">print_help</span><span class="p">()</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">You must supply two valid filenames to blend&quot;</span>
+
+    <span class="k">return</span> <span class="n">opts</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">work</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+    <span class="n">opts</span> <span class="o">=</span> <span class="n">get_arguments</span><span class="p">()</span>
+
+    <span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">ifile1</span><span class="p">)</span>
+    <span class="n">image1</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">fromimage</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s">&quot;L&quot;</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">opts</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&#39;blend&#39;</span><span class="p">:</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">ifile2</span><span class="p">)</span>
+        <span class="n">image2</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">fromimage</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s">&quot;L&quot;</span><span class="p">))</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">blend_and_threshold</span><span class="p">(</span><span class="n">image1</span><span class="p">,</span> <span class="n">image2</span><span class="p">)</span>
+        <span class="n">misc</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span><span class="s">&quot;Blend.png&quot;</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">opts</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&#39;gblur&#39;</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">gblur_and_threshold</span><span class="p">(</span><span class="n">image1</span><span class="p">)</span>
+        <span class="n">misc</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">ifile1</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">opts</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&#39;ublur&#39;</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">ublur_and_threshold</span><span class="p">(</span><span class="n">image1</span><span class="p">)</span>
+        <span class="n">misc</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">ifile1</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">opts</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&#39;shrink&#39;</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">shrink</span><span class="p">(</span><span class="n">image1</span><span class="p">)</span>
+        <span class="n">misc</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">ifile1</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">opts</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&#39;enlarge&#39;</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">enlarge</span><span class="p">(</span><span class="n">image1</span><span class="p">)</span>
+        <span class="n">misc</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">ifile1</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">opts</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&#39;invert&#39;</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">invert</span><span class="p">(</span><span class="n">image1</span><span class="p">)</span>
+        <span class="n">misc</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">ifile1</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">opts</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&#39;pepper&#39;</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">pepper</span><span class="p">(</span><span class="n">image1</span><span class="p">)</span>
+        <span class="n">misc</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">ifile1</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">opts</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&#39;roughen&#39;</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">roughen</span><span class="p">(</span><span class="n">image1</span><span class="p">)</span>
+        <span class="n">misc</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">ifile1</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">opts</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&#39;noise&#39;</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">add_noise</span><span class="p">(</span><span class="n">image1</span><span class="p">)</span>
+        <span class="n">misc</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">ifile1</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">opts</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&#39;flip&#39;</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">flip_random_sites</span><span class="p">(</span><span class="n">image1</span><span class="p">)</span>
+        <span class="n">misc</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">ifile1</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">opts</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&#39;fracgrow&#39;</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">grow_ndimage</span><span class="p">(</span><span class="n">image1</span><span class="p">)</span>
+        <span class="n">misc</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">ifile1</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">opts</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&#39;erode&#39;</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">erode</span><span class="p">(</span><span class="n">image1</span><span class="p">)</span>
+        <span class="n">misc</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">ifile1</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">opts</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&#39;dialate&#39;</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">dialate</span><span class="p">(</span><span class="n">image1</span><span class="p">)</span>
+        <span class="n">misc</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">ifile1</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">opts</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&#39;opening&#39;</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">opening</span><span class="p">(</span><span class="n">image1</span><span class="p">)</span>
+        <span class="n">misc</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">ifile1</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">opts</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&#39;closing&#39;</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">closing</span><span class="p">(</span><span class="n">image1</span><span class="p">)</span>
+        <span class="n">misc</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">ifile1</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">opts</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&#39;random_dist&#39;</span><span class="p">:</span>
+        <span class="n">dfunc</span> <span class="o">=</span> <span class="n">create_random_distance_transform_on_skeleton</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">skeletonize_and_reconstruct</span><span class="p">(</span><span class="n">image1</span><span class="p">,</span> <span class="n">dfunc</span><span class="o">=</span><span class="n">dfunc</span><span class="p">)</span>
+        <span class="n">misc</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">ifile1</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Adam Gagorik.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

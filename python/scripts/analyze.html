@@ -1,0 +1,381 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>calculate.py &mdash; Langmuir Python 2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <link rel="top" title="Langmuir Python 2.0 documentation" href="../index.html" />
+    <link rel="next" title="isotropic.py" href="surface.html" />
+    <link rel="prev" title="fit" href="../modules/fit.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="surface.html" title="isotropic.py"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../modules/fit.html" title="fit"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">calculate.py</a></li>
+<li><a class="reference internal" href="#combine-py">combine.py</a></li>
+<li><a class="reference internal" href="#gather-py">gather.py</a></li>
+<li><a class="reference internal" href="#equil-py">equil.py</a></li>
+<li><a class="reference internal" href="#solar-py">solar.py</a></li>
+<li><a class="reference internal" href="#table-py">table.py</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../modules/fit.html"
+                        title="previous chapter">fit</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="surface.html"
+                        title="next chapter">isotropic.py</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../sources/scripts/analyze.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <span class="target" id="module-calculate"></span><div class="section" id="calculate-py">
+<h1>calculate.py<a class="headerlink" href="#calculate-py" title="Permalink to this headline">¶</a></h1>
+<p>
+Calculate the current in a dat (or pkl) file.
+</p>
+<pre class="literal-block">
+usage: calculate.py [-h] [--stub stub] [--csv] [--pkl] [--excel] [input]
+
+</pre>
+<dl class="docutils">
+<dt>Positional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd>ifile</kbd></td>
+<td>input file</td></tr>
+</tbody>
+</table>
+</dd>
+<dt>Options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--stub=calculated</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>output file stub</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--csv=False</span></kbd></td>
+<td>save csv file</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--pkl=False</span></kbd></td>
+<td>save pkl file</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--excel=False</span></kbd></td>
+<td>save excel file (slow)</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</div>
+<span class="target" id="module-combine"></span><div class="section" id="combine-py">
+<h1>combine.py<a class="headerlink" href="#combine-py" title="Permalink to this headline">¶</a></h1>
+<p>
+Combine the output of a series of dat files.  The dat files should be in a
+series of directories labeled part.0, part.1, part.2, etc.
+</p>
+<pre class="literal-block">
+usage: combine.py [-h] [-r]
+
+</pre>
+<dl class="docutils">
+<dt>Options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-r=False</span></kbd></td>
+<td>search recursivly for parts</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<div class="highlight-bash"><div class="highlight"><pre>adam@work:~<span class="nv">$ </span>ls
+part.0 part.1
+adam@work:~<span class="nv">$ </span>python combine -r
+<span class="o">(</span>  1/  1<span class="o">)</span> : .
+adam@work:~<span class="nv">$ </span>ls
+combined.pkl.gz part.0 part.1
+</pre></div>
+</div>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</div>
+<span class="target" id="module-gather"></span><div class="section" id="gather-py">
+<h1>gather.py<a class="headerlink" href="#gather-py" title="Permalink to this headline">¶</a></h1>
+<p>Gather the output of a series of pickles.  The pickes should have been made
+using &#8216;combine.py&#8217;.
+</p>
+<pre class="literal-block">
+usage: gather.py [-h] [--stub stub] [--last #] [--equil #] [-g]
+
+</pre>
+<dl class="docutils">
+<dt>Options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--stub=gathered</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>output file stub</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--last=-1</span></kbd></td>
+<td>last step</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--equil</span></kbd></td>
+<td>equil step</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-g=False</span></kbd></td>
+<td>gathered output is grouped by os.dirname</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</div>
+<span class="target" id="module-equil"></span><div class="section" id="equil-py">
+<h1>equil.py<a class="headerlink" href="#equil-py" title="Permalink to this headline">¶</a></h1>
+<p>
+Check simulation(s) for equilibration.
+</p>
+<pre class="literal-block">
+usage: equil [-h] [-r] [--ycol YCOL] [--legend] [--zoom ZOOM] [--show]
+             [--save]
+             [pkl [pkl ...]]
+
+</pre>
+<dl class="docutils">
+<dt>Positional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd>pkls</kbd></td>
+<td>input files</td></tr>
+</tbody>
+</table>
+</dd>
+<dt>Options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-r=False</span></kbd></td>
+<td>search for files recursivly</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--ycol=drain:current</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>ycolumn to plot</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--legend=False</span></kbd></td>
+<td>show legend</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--zoom=0.05</span></kbd></td>
+<td>zoom factor</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--show=False</span></kbd></td>
+<td>show plot</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--save=False</span></kbd></td>
+<td>save plot</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</div>
+<span class="target" id="module-solar"></span><div class="section" id="solar-py">
+<h1>solar.py<a class="headerlink" href="#solar-py" title="Permalink to this headline">¶</a></h1>
+<p>
+Script to analyze solar cell IV curve.
+</p>
+<pre class="literal-block">
+usage: solar.py [-h] [-r] [--stub stub] [--csv] [--mode str] [--shift float]
+                [--guess float] [--recycle] [--order int] [--kind str]
+                [--show] [--plot]
+                [pkls [pkls ...]]
+
+</pre>
+<dl class="docutils">
+<dt>Positional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd>pkls</kbd></td>
+<td>input files</td></tr>
+</tbody>
+</table>
+</dd>
+<dt>Options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-r=False</span></kbd></td>
+<td>search recursivly for files</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--stub=</span></kbd></td>
+<td>output file stub</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--csv=False</span></kbd></td>
+<td>save CSV file</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--mode=interp1d</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>fit method</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--shift=1.5</span></kbd></td>
+<td>voltage shift</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--guess</span></kbd></td>
+<td>v_oc guess</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--recycle=False</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>recycle current-opt paramters as initial guess for power fit</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--order=8</span></kbd></td>
+<td>order of power series fit</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--kind=cubic</span></kbd></td>
+<td>interpolation type for interp1d</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--show=False</span></kbd></td>
+<td>open matplotlib window</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--plot=False</span></kbd></td>
+<td>plot iv curves</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</div>
+<span class="target" id="module-table"></span><div class="section" id="table-py">
+<h1>table.py<a class="headerlink" href="#table-py" title="Permalink to this headline">¶</a></h1>
+<p>
+Gather output from pkl files into table.
+</p>
+<pre class="literal-block">
+usage: table.py [-h]
+
+</pre>
+<dl class="docutils">
+</dl>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="surface.html" title="isotropic.py"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../modules/fit.html" title="fit"
+             >previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Adam Gagorik.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>analyze &mdash; Langmuir Python 2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <link rel="top" title="Langmuir Python 2.0 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for analyze</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. note::</span>
+<span class="sd">    Functions for analyzing Langmuir output.</span>
+
+<span class="sd">    1.  Combine each part of a simulation with :py:func:`combine`</span>
+<span class="sd">    2.  Calculate the current with :py:func:`calculate`</span>
+<span class="sd">    3.  Extract the result with :py:func:`equilibrate`</span>
+<span class="sd">    4.  Average over runs with :py:func:`create_panel`</span>
+
+<span class="sd">.. seealso::</span>
+
+<span class="sd">    1.  :download:`combine.py &lt;../../../analyze/combine.py&gt;`</span>
+<span class="sd">    2.  :download:`gather.py &lt;../../../analyze/gather.py&gt;`</span>
+
+<span class="sd">.. moduleauthor:: Adam Gagorik &lt;adam.gagorik@gmail.com&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">langmuir</span> <span class="kn">as</span> <span class="nn">lm</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">StringIO</span>
+
+<span class="n">fluxes</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;eSourceL&#39;</span><span class="p">,</span> <span class="s">&#39;eSourceR&#39;</span><span class="p">,</span> <span class="s">&#39;hSourceL&#39;</span><span class="p">,</span> <span class="s">&#39;hSourceR&#39;</span><span class="p">,</span> <span class="s">&#39;eDrainL&#39;</span><span class="p">,</span> <span class="s">&#39;eDrainR&#39;</span><span class="p">,</span>
+          <span class="s">&#39;hDrainL&#39;</span><span class="p">,</span> <span class="s">&#39;hDrainR&#39;</span><span class="p">,</span> <span class="s">&#39;xSource&#39;</span><span class="p">,</span> <span class="s">&#39;xDrain&#39;</span><span class="p">]</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">scipy.constants</span> <span class="kn">import</span> <span class="n">e</span> <span class="k">as</span> <span class="n">_e</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">_e</span> <span class="o">=</span> <span class="mf">1.6021765650e-19</span>
+
+<span class="n">ifactor</span> <span class="o">=</span> <span class="n">_e</span> <span class="o">*</span> <span class="mf">1e21</span>
+
+
+<div class="viewcode-block" id="create_panel"><a class="viewcode-back" href="../modules/analyze.html#analyze.create_panel">[docs]</a><span class="k">def</span> <span class="nf">create_panel</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Turn a list of :py:class:`pandas.DataFrame` into a</span>
+<span class="sd">    :py:class:`pandas.Panel`.</span>
+
+<span class="sd">    :param frames: list of :py:class:`pandas.DataFrame`</span>
+<span class="sd">    :param index: major axis labels</span>
+
+<span class="sd">    :type frames: list</span>
+<span class="sd">    :type index: list</span>
+
+<span class="sd">    &gt;&gt;&gt; data1 = lm.common.load_pkl(&#39;run.0/calculated.pkl.gz&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; data2 = lm.common.load_pkl(&#39;run.1/calculated.pkl.gz&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; panel = create_panel([data1, data2], index=[0, 1])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Panel</span><span class="p">({</span><span class="n">i</span><span class="p">:</span> <span class="n">frame</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">frames</span><span class="p">)})</span>
+
+</div>
+<div class="viewcode-block" id="combine"><a class="viewcode-back" href="../modules/analyze.html#analyze.combine">[docs]</a><span class="k">def</span> <span class="nf">combine</span><span class="p">(</span><span class="n">objs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Combine a set of panda&#39;s DataFrames into a single DataFrame.  The idea</span>
+<span class="sd">    is that each DataFrame holds data from a part of some series of data.</span>
+<span class="sd">    The index of each part should be the *simulation:time*.</span>
+
+<span class="sd">    :param objs: list of :py:class:`pandas.DataFrame`</span>
+<span class="sd">    :type objs: list</span>
+
+<span class="sd">    &gt;&gt;&gt; data1 = lm.datfile.load(&#39;part.0/out.dat.gz&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; data2 = lm.datfile.load(&#39;part.1/out.dat.gz&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; combined = lm.analyze.combine([data1, data2])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">objs</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">objs</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
+            <span class="n">objs</span> <span class="o">=</span> <span class="p">[</span><span class="n">objs</span><span class="p">]</span>
+
+    <span class="n">frame</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">obj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">objs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">datfile</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s">&#39;simulation:time&#39;</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="n">obj</span><span class="p">[</span><span class="s">&#39;part&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+
+        <span class="k">if</span> <span class="n">frame</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">frame</span> <span class="o">=</span> <span class="n">obj</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">real</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s">&#39;real:time&#39;</span><span class="p">][</span><span class="n">frame</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+            <span class="n">obj</span><span class="p">[</span><span class="s">&#39;real:time&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">real</span>
+            <span class="n">frame</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">combine_first</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+
+    <span class="n">frame</span><span class="p">[</span><span class="s">&#39;new_index&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">frame</span><span class="p">))</span>
+    <span class="n">frame</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s">&#39;new_index&#39;</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">frame</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">return</span> <span class="n">lm</span><span class="o">.</span><span class="n">datfile</span><span class="o">.</span><span class="n">fix</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="calculate"><a class="viewcode-back" href="../modules/analyze.html#analyze.calculate">[docs]</a><span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute all flux statistics.  Calculates current using, for example,</span>
+<span class="sd">    the number of carriers exiting a drain.</span>
+
+<span class="sd">    :param obj: data</span>
+<span class="sd">    :type obj: :py:class:`pandas.DataFrame`</span>
+
+<span class="sd">    &gt;&gt;&gt; data = lm.common.load_pkl(&#39;combined.pkl.gz&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; data = lm.analyze.calculate(data)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">flux</span> <span class="ow">in</span> <span class="n">fluxes</span><span class="p">:</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">flux</span> <span class="o">+</span> <span class="s">&#39;:attempt&#39;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">flux</span> <span class="o">+</span> <span class="s">&#39;:success&#39;</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">flux</span> <span class="o">+</span> <span class="s">&#39;:prob&#39;</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">flux</span> <span class="o">+</span> <span class="s">&#39;:rate&#39;</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">flux</span> <span class="o">+</span> <span class="s">&#39;:current&#39;</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="s">&#39;simulation:time&#39;</span>
+        <span class="n">obj</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">/</span> <span class="n">obj</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span> <span class="o">*</span> <span class="mf">100.0</span>
+        <span class="n">obj</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">/</span> <span class="n">obj</span><span class="p">[</span><span class="n">t</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">obj</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">*</span> <span class="n">ifactor</span>
+
+    <span class="n">obj</span><span class="p">[</span><span class="s">&#39;eDrain:rate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s">&#39;eDrainR:rate&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">obj</span><span class="p">[</span><span class="s">&#39;eDrainL:rate&#39;</span><span class="p">]</span>
+    <span class="n">obj</span><span class="p">[</span><span class="s">&#39;eDrain:current&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s">&#39;eDrain:rate&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">ifactor</span>
+
+    <span class="n">obj</span><span class="p">[</span><span class="s">&#39;hDrain:rate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s">&#39;hDrainL:rate&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">obj</span><span class="p">[</span><span class="s">&#39;hDrainR:rate&#39;</span><span class="p">]</span>
+    <span class="n">obj</span><span class="p">[</span><span class="s">&#39;hDrain:current&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s">&#39;hDrain:rate&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">ifactor</span>
+
+    <span class="n">obj</span><span class="p">[</span><span class="s">&#39;drain:rate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s">&#39;eDrain:rate&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">obj</span><span class="p">[</span><span class="s">&#39;hDrain:rate&#39;</span><span class="p">]</span>
+    <span class="n">obj</span><span class="p">[</span><span class="s">&#39;drain:current&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s">&#39;drain:rate&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">ifactor</span>
+
+    <span class="n">obj</span><span class="p">[</span><span class="s">&#39;eSource:rate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s">&#39;eSourceR:rate&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">obj</span><span class="p">[</span><span class="s">&#39;eSourceL:rate&#39;</span><span class="p">]</span>
+    <span class="n">obj</span><span class="p">[</span><span class="s">&#39;eSource:current&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s">&#39;eSource:rate&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">ifactor</span>
+
+    <span class="n">obj</span><span class="p">[</span><span class="s">&#39;hSource:rate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s">&#39;hSourceL:rate&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">obj</span><span class="p">[</span><span class="s">&#39;hSourceR:rate&#39;</span><span class="p">]</span>
+    <span class="n">obj</span><span class="p">[</span><span class="s">&#39;hSource:current&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s">&#39;hSource:rate&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">ifactor</span>
+
+    <span class="n">obj</span><span class="p">[</span><span class="s">&#39;source:rate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s">&#39;eSource:rate&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">obj</span><span class="p">[</span><span class="s">&#39;hSource:rate&#39;</span><span class="p">]</span>
+    <span class="n">obj</span><span class="p">[</span><span class="s">&#39;source:current&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s">&#39;source:rate&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">ifactor</span>
+
+    <span class="n">obj</span><span class="p">[</span><span class="s">&#39;carrier:count&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s">&#39;electron:count&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">obj</span><span class="p">[</span><span class="s">&#39;hole:count&#39;</span><span class="p">]</span>
+    <span class="n">obj</span><span class="p">[</span><span class="s">&#39;carrier:difference&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s">&#39;electron:count&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">obj</span><span class="p">[</span><span class="s">&#39;hole:count&#39;</span><span class="p">]</span>
+
+    <span class="n">obj</span><span class="p">[</span><span class="s">&#39;speed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="p">[</span><span class="s">&#39;real:time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">/</span> <span class="n">obj</span><span class="p">[</span><span class="s">&#39;simulation:time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">obj</span>
+
+</div>
+<div class="viewcode-block" id="equilibrate"><a class="viewcode-back" href="../modules/analyze.html#analyze.equilibrate">[docs]</a><span class="k">def</span> <span class="nf">equilibrate</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">last</span><span class="p">,</span> <span class="n">equil</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the difference between two steps.</span>
+
+<span class="sd">    :param obj: data</span>
+<span class="sd">    :param last: index of last step</span>
+<span class="sd">    :param equil: index of first step</span>
+
+<span class="sd">    :type obj: :py:class:`pandas.DataFrame`</span>
+<span class="sd">    :type last: int</span>
+<span class="sd">    :type equil: int</span>
+
+<span class="sd">    &gt;&gt;&gt; data = lm.common.load_pkl(&#39;combined.pkl.gz&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; data = lm.analyze.equilibrate(data, last=-1, equil=-1000)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="c">#    sub = obj.iloc[equil:last]</span>
+<span class="c">#    return sub.iloc[-1] - sub.iloc[0]</span>
+    <span class="n">last</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">last</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">equil</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">last</span>
+    <span class="n">equil</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">equil</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">last</span> <span class="o">-</span> <span class="n">equil</span>
+</div>
+<div class="viewcode-block" id="Stats"><a class="viewcode-back" href="../modules/analyze.html#analyze.Stats">[docs]</a><span class="k">class</span> <span class="nc">Stats</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute various statistics of an array like object.</span>
+
+<span class="sd">    ======== ==================</span>
+<span class="sd">    Attr     Description</span>
+<span class="sd">    ======== ==================</span>
+<span class="sd">    **max**  max</span>
+<span class="sd">    **min**  min</span>
+<span class="sd">    **rng**  range</span>
+<span class="sd">    **avg**  average</span>
+<span class="sd">    **std**  standard deviation</span>
+<span class="sd">    ======== ==================</span>
+
+<span class="sd">    &gt;&gt;&gt; s = Stats([1, 2, 3, 4, 5])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param array: array like object</span>
+<span class="sd">        :type array: list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">amin</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rng</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">min</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Stats.to_dict"><a class="viewcode-back" href="../modules/analyze.html#analyze.Stats.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get summary of stats.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="n">d</span><span class="p">[</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">max&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">)</span>
+        <span class="n">d</span><span class="p">[</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">min&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min</span><span class="p">)</span>
+        <span class="n">d</span><span class="p">[</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">rng&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rng</span><span class="p">)</span>
+        <span class="n">d</span><span class="p">[</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">avg&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">)</span>
+        <span class="n">d</span><span class="p">[</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">std&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">d</span>
+</div>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">StringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">s</span><span class="p">,</span> <span class="s">r&#39;{self.prefix}max  = {self.max:{fmt}}&#39;</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">s</span><span class="p">,</span> <span class="s">r&#39;{self.prefix}min  = {self.min:{fmt}}&#39;</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">s</span><span class="p">,</span> <span class="s">r&#39;{self.prefix}rng  = {self.rng:{fmt}}&#39;</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">s</span><span class="p">,</span> <span class="s">r&#39;{self.prefix}avg  = {self.avg:{fmt}}&#39;</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">s</span><span class="p">,</span> <span class="s">r&#39;{self.prefix}std  = {self.std:{fmt}}&#39;</span>
+        <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="s">&#39;+.5f&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Adam Gagorik.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

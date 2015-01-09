@@ -1,0 +1,647 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>fit &mdash; Langmuir Python 2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <link rel="top" title="Langmuir Python 2.0 documentation" href="../index.html" />
+    <link rel="next" title="calculate.py" href="../scripts/analyze.html" />
+    <link rel="prev" title="plot" href="plot.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../scripts/analyze.html" title="calculate.py"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="plot.html" title="plot"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="plot.html"
+                        title="previous chapter">plot</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../scripts/analyze.html"
+                        title="next chapter">calculate.py</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../sources/modules/fit.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-fit">
+<span id="fit"></span><h1>fit<a class="headerlink" href="#module-fit" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Functions for fitting 2D data.</p>
+</div>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+<dl class="class">
+<dt id="fit.Fit">
+<em class="property">class </em><tt class="descclassname">fit.</tt><tt class="descname">Fit</tt><big>(</big><em>x</em>, <em>y</em>, <em>func</em>, <em>popt=None</em>, <em>yerr=None</em><big>)</big><a class="reference internal" href="../modules/fit.html#Fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.Fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for fitting.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; array of x-values</li>
+<li><strong>y</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; array of y-values</li>
+<li><strong>func</strong> (<em>function</em>) &#8211; function object</li>
+<li><strong>popt</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; initial guess for parameters</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Do not explicitly create Fit instance, its a base class.</p>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fit</span> <span class="o">=</span> <span class="n">FitLinear</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="fit.Fit.plot">
+<tt class="descname">plot</tt><big>(</big><em>xmin=None</em>, <em>xmax=None</em>, <em>xpoints=100</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/fit.html#Fit.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.Fit.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around <a class="reference external" href="http://matplotlib.sourceforge.net/api/pyplot_api.html#matplotlib.pyplot.plot" title="(in Matplotlib v1.4.2)"><tt class="xref py py-func docutils literal"><span class="pre">matplotlib.pyplot.plot()</span></tt></a>.  Plots the fit line.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>xmin</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; min x-value</li>
+<li><strong>xmax</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; max x-value</li>
+<li><strong>xpoints</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; number of xpoints</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fit</span> <span class="o">=</span> <span class="n">FitLinear</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fit</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xmin</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">xpoints</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">&#39;blue&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fit.Fit.text">
+<tt class="descname">text</tt><big>(</big><em>s</em>, <em>x</em>, <em>y=None</em>, <em>transform=None</em>, <em>rotate=False</em>, <em>draw_behind=True</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/fit.html#Fit.text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.Fit.text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around <a class="reference external" href="http://matplotlib.sourceforge.net/api/pyplot_api.html#matplotlib.pyplot.text" title="(in Matplotlib v1.4.2)"><tt class="xref py py-func docutils literal"><span class="pre">matplotlib.pyplot.text()</span></tt></a>.  Useful for putting
+text along the fit line drawn by <a class="reference internal" href="#fit.Fit.plot" title="fit.Fit.plot"><tt class="xref py py-func docutils literal"><span class="pre">Fit.plot()</span></tt></a>, and rotating the
+text using the derivative.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>s</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; text</li>
+<li><strong>x</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; x-value of text</li>
+<li><strong>y</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; y-value of text; if None, use the fit line</li>
+<li><strong>transform</strong> (<a class="reference external" href="http://matplotlib.sourceforge.net/devel/transformations.html#matplotlib.transforms.Transform" title="(in Matplotlib v1.4.2)"><tt class="xref py py-class docutils literal"><span class="pre">matplotlib.transforms.Transform</span></tt></a>) &#8211; matplotlib transform; if None, plt.gca().transAxes</li>
+<li><strong>rotate</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; rotate text using angle computed from derivative</li>
+<li><strong>draw_behind</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; hide the plot objects behind the text</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fit</span> <span class="o">=</span> <span class="n">FitLinear</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fit</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="s">&#39;Hello!&#39;</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">rotate</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s">&#39;large&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fit.Fit.solve">
+<tt class="descname">solve</tt><big>(</big><em>y=0</em>, <em>x0=0</em>, <em>return_y=False</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/fit.html#Fit.solve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.Fit.solve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around <tt class="xref py py-func docutils literal"><span class="pre">scipy.optimize.fsolve()</span></tt>.  Solves y=fit(x) for x.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>y</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; y-value</li>
+<li><strong>x0</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; initial guess</li>
+<li><strong>return_y</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; return x and fit(x)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">xval, yval</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fit</span> <span class="o">=</span> <span class="n">FitLinear</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">xval</span><span class="p">,</span> <span class="n">yval</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fit.Fit.brute">
+<tt class="descname">brute</tt><big>(</big><em>a=0</em>, <em>b=1</em>, <em>find_max=False</em>, <em>return_y=False</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/fit.html#Fit.brute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.Fit.brute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around <tt class="xref py py-func docutils literal"><span class="pre">scipy.optimize.brute()</span></tt>.  Finds minimum in range.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; lower x-bound</li>
+<li><strong>b</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; upper x-bound</li>
+<li><strong>find_max</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; find max instead of min</li>
+<li><strong>return_y</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; return x and fit(x)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">xval, yval</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fit</span> <span class="o">=</span> <span class="n">FitLinear</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">xval</span><span class="p">,</span> <span class="n">yval</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">brute</span><span class="p">(</span><span class="n">a</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fit.Fit.maxbrute">
+<tt class="descname">maxbrute</tt><big>(</big><em>a=0</em>, <em>b=1</em>, <em>return_y=False</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/fit.html#Fit.maxbrute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.Fit.maxbrute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls <a class="reference internal" href="#fit.Fit.brute" title="fit.Fit.brute"><tt class="xref py py-func docutils literal"><span class="pre">Fit.brute()</span></tt></a> with find_max=True</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fit.Fit.minimize">
+<tt class="descname">minimize</tt><big>(</big><em>x0=0</em>, <em>find_max=False</em>, <em>return_y=True</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/fit.html#Fit.minimize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.Fit.minimize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around <tt class="xref py py-func docutils literal"><span class="pre">scipy.optimize.minimize()</span></tt>.  Finds minimum using
+a initial guess.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x0</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; initial guess for x</li>
+<li><strong>find_max</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; find max instead of min</li>
+<li><strong>return_y</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; return x and fit(x)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">xval, yval</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fit</span> <span class="o">=</span> <span class="n">FitLinear</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">xval</span><span class="p">,</span> <span class="n">yval</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">x0</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fit.Fit.maximize">
+<tt class="descname">maximize</tt><big>(</big><em>x0</em>, <em>return_y=True</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/fit.html#Fit.maximize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.Fit.maximize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls <a class="reference internal" href="#fit.Fit.minimize" title="fit.Fit.minimize"><tt class="xref py py-func docutils literal"><span class="pre">Fit.minimize()</span></tt></a> with find_max=True</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fit.Fit.derivative">
+<tt class="descname">derivative</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/fit.html#Fit.derivative"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.Fit.derivative" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around <tt class="xref py py-func docutils literal"><span class="pre">scipy.misc.derivative()</span></tt>, unless an inheriting
+class implements the derivative analytically.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>x</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; x-value to evaluate derivative at</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fit.Fit.tangent">
+<tt class="descname">tangent</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/fit.html#Fit.tangent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.Fit.tangent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute a tangent line at x.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; x-value to evaluate derivative at</li>
+<li><strong>xmin</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; min x-value</li>
+<li><strong>xmax</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; max x-value</li>
+<li><strong>xpoints</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; number of xpoints</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fit</span> <span class="o">=</span> <span class="n">FitLinear</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">func</span> <span class="o">=</span> <span class="n">fit</span><span class="o">.</span><span class="n">tangent</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">func</span><span class="p">(</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="gp">... </span><span class="mf">0.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fit.Fit.plot_tangent">
+<tt class="descname">plot_tangent</tt><big>(</big><em>x</em>, <em>xmin=None</em>, <em>xmax=None</em>, <em>xpoints=100</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/fit.html#Fit.plot_tangent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.Fit.plot_tangent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot a tangent line at x.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; x-value to evaluate derivative at</li>
+<li><strong>xmin</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; min x-value</li>
+<li><strong>xmax</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; max x-value</li>
+<li><strong>xpoints</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; number of xpoints</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fit</span> <span class="o">=</span> <span class="n">FitLinear</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fit</span><span class="o">.</span><span class="n">plot_tangent</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">&#39;blue&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="fit.Fit.summary">
+<tt class="descname">summary</tt><big>(</big><big>)</big><a class="reference internal" href="../modules/fit.html#Fit.summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.Fit.summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a summary <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">dict</span></tt></a> of fit results.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">dict</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="fit.Fit.sort">
+<tt class="descname">sort</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/fit.html#Fit.sort"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.Fit.sort" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sort x and y values.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="fit.FitPower">
+<em class="property">class </em><tt class="descclassname">fit.</tt><tt class="descname">FitPower</tt><big>(</big><em>x</em>, <em>y</em>, <em>order=1</em>, <em>popt=None</em>, <em>yerr=None</em><big>)</big><a class="reference internal" href="../modules/fit.html#FitPower"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitPower" title="Permalink to this definition">¶</a></dt>
+<dd><p><img class="math" src="../images/math/e17c126dfa6f0167873d7e8cbb65d3222a90ef0c.png" alt="\sum_{i=0}^{N} c_i x^i"/></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>order</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; order of polynomial</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="fit.FitPower.summary">
+<tt class="descname">summary</tt><big>(</big><big>)</big><a class="reference internal" href="../modules/fit.html#FitPower.summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitPower.summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>create a summary <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">dict</span></tt></a></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="fit.FitLinear">
+<em class="property">class </em><tt class="descclassname">fit.</tt><tt class="descname">FitLinear</tt><big>(</big><em>x</em>, <em>y</em>, <em>popt=None</em>, <em>yerr=None</em><big>)</big><a class="reference internal" href="../modules/fit.html#FitLinear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitLinear" title="Permalink to this definition">¶</a></dt>
+<dd><p><img class="math" src="../images/math/0ccb122c2ed2ff95654a105f71958d07a06b7c5d.png" alt="m x + b"/></p>
+<dl class="method">
+<dt id="fit.FitLinear.derivative">
+<tt class="descname">derivative</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/fit.html#FitLinear.derivative"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitLinear.derivative" title="Permalink to this definition">¶</a></dt>
+<dd><p>analytic derivative of function</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fit.FitLinear.summary">
+<tt class="descname">summary</tt><big>(</big><big>)</big><a class="reference internal" href="../modules/fit.html#FitLinear.summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitLinear.summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>create a summary <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">dict</span></tt></a></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="fit.FitQuadratic">
+<em class="property">class </em><tt class="descclassname">fit.</tt><tt class="descname">FitQuadratic</tt><big>(</big><em>x</em>, <em>y</em>, <em>popt=None</em>, <em>yerr=None</em><big>)</big><a class="reference internal" href="../modules/fit.html#FitQuadratic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitQuadratic" title="Permalink to this definition">¶</a></dt>
+<dd><p><img class="math" src="../images/math/1df3a8571138086e093389aa67e25032141b23e1.png" alt="a x^{2} + b x + c"/></p>
+<dl class="method">
+<dt id="fit.FitQuadratic.derivative">
+<tt class="descname">derivative</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/fit.html#FitQuadratic.derivative"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitQuadratic.derivative" title="Permalink to this definition">¶</a></dt>
+<dd><p>analytic derivative of function</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fit.FitQuadratic.summary">
+<tt class="descname">summary</tt><big>(</big><big>)</big><a class="reference internal" href="../modules/fit.html#FitQuadratic.summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitQuadratic.summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>create a summary <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">dict</span></tt></a></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="fit.FitInterp1D">
+<em class="property">class </em><tt class="descclassname">fit.</tt><tt class="descname">FitInterp1D</tt><big>(</big><em>x</em>, <em>y</em>, <em>popt=None</em>, <em>yerr=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/fit.html#FitInterp1D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitInterp1D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit to interpolating function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>kind</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; linear, nearest, zero, slinear, quadratic, cubic.</td>
+</tr>
+</tbody>
+</table>
+<p>kind : linear, nearest, zero, slinear, quadratic, cubic</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="fit.FitUnivariateSpline">
+<em class="property">class </em><tt class="descclassname">fit.</tt><tt class="descname">FitUnivariateSpline</tt><big>(</big><em>x</em>, <em>y</em>, <em>popt=None</em>, <em>yerr=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/fit.html#FitUnivariateSpline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitUnivariateSpline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit to spline.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>k</strong> &#8211; degree of spline (&lt;=5)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="fit.FitLagrange">
+<em class="property">class </em><tt class="descclassname">fit.</tt><tt class="descname">FitLagrange</tt><big>(</big><em>x</em>, <em>y</em>, <em>popt=None</em>, <em>yerr=None</em><big>)</big><a class="reference internal" href="../modules/fit.html#FitLagrange"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitLagrange" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit to lagrange interpolating spline.  It sucks.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="fit.FitBarycentric">
+<em class="property">class </em><tt class="descclassname">fit.</tt><tt class="descname">FitBarycentric</tt><big>(</big><em>x</em>, <em>y</em>, <em>popt=None</em>, <em>yerr=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/fit.html#FitBarycentric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitBarycentric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit to lagrange interpolating spline.  It sucks.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="fit.FitTanh">
+<em class="property">class </em><tt class="descclassname">fit.</tt><tt class="descname">FitTanh</tt><big>(</big><em>x</em>, <em>y</em>, <em>popt=None</em>, <em>yerr=None</em><big>)</big><a class="reference internal" href="../modules/fit.html#FitTanh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitTanh" title="Permalink to this definition">¶</a></dt>
+<dd><p><img class="math" src="../images/math/db6bfbd94bff6ddc0f557aeaf3a69cb0ada30aef.png" alt="a \tanh(b x + c) + d"/></p>
+<dl class="method">
+<dt id="fit.FitTanh.derivative">
+<tt class="descname">derivative</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/fit.html#FitTanh.derivative"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitTanh.derivative" title="Permalink to this definition">¶</a></dt>
+<dd><p>analytic derivative of function</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fit.FitTanh.summary">
+<tt class="descname">summary</tt><big>(</big><big>)</big><a class="reference internal" href="../modules/fit.html#FitTanh.summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitTanh.summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>create a summary <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">dict</span></tt></a></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="fit.FitLog">
+<em class="property">class </em><tt class="descclassname">fit.</tt><tt class="descname">FitLog</tt><big>(</big><em>x</em>, <em>y</em>, <em>popt=None</em>, <em>yerr=None</em><big>)</big><a class="reference internal" href="../modules/fit.html#FitLog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitLog" title="Permalink to this definition">¶</a></dt>
+<dd><p><img class="math" src="../images/math/db6bfbd94bff6ddc0f557aeaf3a69cb0ada30aef.png" alt="a \tanh(b x + c) + d"/></p>
+<dl class="method">
+<dt id="fit.FitLog.derivative">
+<tt class="descname">derivative</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/fit.html#FitLog.derivative"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitLog.derivative" title="Permalink to this definition">¶</a></dt>
+<dd><p>analytic derivative of function</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fit.FitLog.summary">
+<tt class="descname">summary</tt><big>(</big><big>)</big><a class="reference internal" href="../modules/fit.html#FitLog.summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitLog.summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>create a summary <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">dict</span></tt></a></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="fit.FitXTanh">
+<em class="property">class </em><tt class="descclassname">fit.</tt><tt class="descname">FitXTanh</tt><big>(</big><em>x</em>, <em>y</em>, <em>popt=None</em>, <em>yerr=None</em><big>)</big><a class="reference internal" href="../modules/fit.html#FitXTanh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitXTanh" title="Permalink to this definition">¶</a></dt>
+<dd><p><img class="math" src="../images/math/4d2805c9694362619257a1d3d73439834fc2a0a6.png" alt="a x \tanh(b x + c) + d"/></p>
+<dl class="method">
+<dt id="fit.FitXTanh.derivative">
+<tt class="descname">derivative</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/fit.html#FitXTanh.derivative"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitXTanh.derivative" title="Permalink to this definition">¶</a></dt>
+<dd><p>analytic derivative of function</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fit.FitXTanh.summary">
+<tt class="descname">summary</tt><big>(</big><big>)</big><a class="reference internal" href="../modules/fit.html#FitXTanh.summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitXTanh.summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>create a summary <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">dict</span></tt></a></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="fit.FitErf">
+<em class="property">class </em><tt class="descclassname">fit.</tt><tt class="descname">FitErf</tt><big>(</big><em>x</em>, <em>y</em>, <em>popt=None</em>, <em>yerr=None</em><big>)</big><a class="reference internal" href="../modules/fit.html#FitErf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitErf" title="Permalink to this definition">¶</a></dt>
+<dd><p><img class="math" src="../images/math/e3c8c044e83ea7605a51f769b5d8c164ef0f814c.png" alt="a\,\mathrm{erf}(b x + c) + d"/></p>
+<dl class="method">
+<dt id="fit.FitErf.summary">
+<tt class="descname">summary</tt><big>(</big><big>)</big><a class="reference internal" href="../modules/fit.html#FitErf.summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitErf.summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>create a summary <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">dict</span></tt></a></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="fit.FitXErf">
+<em class="property">class </em><tt class="descclassname">fit.</tt><tt class="descname">FitXErf</tt><big>(</big><em>x</em>, <em>y</em>, <em>popt=None</em>, <em>yerr=None</em><big>)</big><a class="reference internal" href="../modules/fit.html#FitXErf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitXErf" title="Permalink to this definition">¶</a></dt>
+<dd><p><img class="math" src="../images/math/83adccf691ad775edb40dd7ac0395a4fd6d986a6.png" alt="a x\,\mathrm{erf}(b x + c) + d"/></p>
+<dl class="method">
+<dt id="fit.FitXErf.summary">
+<tt class="descname">summary</tt><big>(</big><big>)</big><a class="reference internal" href="../modules/fit.html#FitXErf.summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitXErf.summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>create a summary <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">dict</span></tt></a></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="fit.FitGaussian">
+<em class="property">class </em><tt class="descclassname">fit.</tt><tt class="descname">FitGaussian</tt><big>(</big><em>x</em>, <em>y</em>, <em>popt=None</em>, <em>yerr=None</em><big>)</big><a class="reference internal" href="../modules/fit.html#FitGaussian"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitGaussian" title="Permalink to this definition">¶</a></dt>
+<dd><p><img class="math" src="../images/math/f3599a12aaa3deacec8ccd094dad5d881e53af7a.png" alt="a e^{\frac{-(x - m)^{2}}{2 \sigma^{2}}}"/></p>
+<dl class="method">
+<dt id="fit.FitGaussian.summary">
+<tt class="descname">summary</tt><big>(</big><big>)</big><a class="reference internal" href="../modules/fit.html#FitGaussian.summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitGaussian.summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>create a summary <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">dict</span></tt></a></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="fit.FitSin">
+<em class="property">class </em><tt class="descclassname">fit.</tt><tt class="descname">FitSin</tt><big>(</big><em>x</em>, <em>y</em>, <em>popt=None</em>, <em>yerr=None</em><big>)</big><a class="reference internal" href="../modules/fit.html#FitSin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitSin" title="Permalink to this definition">¶</a></dt>
+<dd><p><img class="math" src="../images/math/f63c31c9e03a003eec44893ce89a96265c9109d5.png" alt="a \sin(b x + c) + d"/></p>
+<dl class="method">
+<dt id="fit.FitSin.derivative">
+<tt class="descname">derivative</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/fit.html#FitSin.derivative"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitSin.derivative" title="Permalink to this definition">¶</a></dt>
+<dd><p>analytic derivative of function</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fit.FitSin.summary">
+<tt class="descname">summary</tt><big>(</big><big>)</big><a class="reference internal" href="../modules/fit.html#FitSin.summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitSin.summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>create a summary <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">dict</span></tt></a></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="fit.FitCos">
+<em class="property">class </em><tt class="descclassname">fit.</tt><tt class="descname">FitCos</tt><big>(</big><em>x</em>, <em>y</em>, <em>popt=None</em>, <em>yerr=None</em><big>)</big><a class="reference internal" href="../modules/fit.html#FitCos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitCos" title="Permalink to this definition">¶</a></dt>
+<dd><p><img class="math" src="../images/math/40010e3e81f3a8995e7945323fc9fad20ae3468e.png" alt="a \cos(b x + c) + d"/></p>
+<dl class="method">
+<dt id="fit.FitCos.derivative">
+<tt class="descname">derivative</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/fit.html#FitCos.derivative"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitCos.derivative" title="Permalink to this definition">¶</a></dt>
+<dd><p>analytic derivative of function</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fit.FitCos.summary">
+<tt class="descname">summary</tt><big>(</big><big>)</big><a class="reference internal" href="../modules/fit.html#FitCos.summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitCos.summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>create a summary <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">dict</span></tt></a></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="fit.FitLinearZero">
+<em class="property">class </em><tt class="descclassname">fit.</tt><tt class="descname">FitLinearZero</tt><big>(</big><em>x</em>, <em>y</em>, <em>popt=None</em>, <em>yerr=None</em><big>)</big><a class="reference internal" href="../modules/fit.html#FitLinearZero"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitLinearZero" title="Permalink to this definition">¶</a></dt>
+<dd><p><img class="math" src="../images/math/f452dfd99d1c8279b6586221256edc7e99a6b971.png" alt="mx"/></p>
+<dl class="method">
+<dt id="fit.FitLinearZero.derivative">
+<tt class="descname">derivative</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/fit.html#FitLinearZero.derivative"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitLinearZero.derivative" title="Permalink to this definition">¶</a></dt>
+<dd><p>analytic derivative of function</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fit.FitLinearZero.summary">
+<tt class="descname">summary</tt><big>(</big><big>)</big><a class="reference internal" href="../modules/fit.html#FitLinearZero.summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitLinearZero.summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>create a summary <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">dict</span></tt></a></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="fit.FitQuadraticZero">
+<em class="property">class </em><tt class="descclassname">fit.</tt><tt class="descname">FitQuadraticZero</tt><big>(</big><em>x</em>, <em>y</em>, <em>popt=None</em>, <em>yerr=None</em><big>)</big><a class="reference internal" href="../modules/fit.html#FitQuadraticZero"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitQuadraticZero" title="Permalink to this definition">¶</a></dt>
+<dd><p><img class="math" src="../images/math/f452dfd99d1c8279b6586221256edc7e99a6b971.png" alt="mx"/></p>
+<dl class="method">
+<dt id="fit.FitQuadraticZero.derivative">
+<tt class="descname">derivative</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/fit.html#FitQuadraticZero.derivative"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitQuadraticZero.derivative" title="Permalink to this definition">¶</a></dt>
+<dd><p>analytic derivative of function</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="fit.FitQuadraticZero.summary">
+<tt class="descname">summary</tt><big>(</big><big>)</big><a class="reference internal" href="../modules/fit.html#FitQuadraticZero.summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#fit.FitQuadraticZero.summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>create a summary <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">dict</span></tt></a></p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../scripts/analyze.html" title="calculate.py"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="plot.html" title="plot"
+             >previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Adam Gagorik.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

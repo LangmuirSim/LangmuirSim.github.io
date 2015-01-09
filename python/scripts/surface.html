@@ -1,0 +1,579 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>isotropic.py &mdash; Langmuir Python 2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <link rel="top" title="Langmuir Python 2.0 documentation" href="../index.html" />
+    <link rel="next" title="image2chk.py" href="convert.html" />
+    <link rel="prev" title="calculate.py" href="analyze.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="convert.html" title="image2chk.py"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="analyze.html" title="calculate.py"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">isotropic.py</a></li>
+<li><a class="reference internal" href="#ideal-py">ideal.py</a></li>
+<li><a class="reference internal" href="#pepper-py">pepper.py</a></li>
+<li><a class="reference internal" href="#morph-py">morph.py</a></li>
+<li><a class="reference internal" href="#convolution-py">convolution.py</a></li>
+<li><a class="reference internal" href="#stats-py">stats.py</a></li>
+<li><a class="reference internal" href="#rdf-py">rdf.py</a></li>
+<li><a class="reference internal" href="#fft-py">fft.py</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="analyze.html"
+                        title="previous chapter">calculate.py</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="convert.html"
+                        title="next chapter">image2chk.py</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../sources/scripts/surface.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <span class="target" id="module-isotropic"></span><div class="section" id="isotropic-py">
+<h1>isotropic.py<a class="headerlink" href="#isotropic-py" title="Permalink to this headline">¶</a></h1>
+<p>
+Create surface using convolution.
+</p>
+<pre class="literal-block">
+usage: isotropic.py [-h] [--stub stub] [--noise str] [--kernel str]
+                    [--spacing float] [--sigma float] [--sx float]
+                    [--sy float] [--sz float] [--seed int] [--lmap]
+                    [--threshold] [--tvalue TVALUE] [--saven] [--savek]
+                    [--ext str]
+                    grid.x grid.y grid.z
+
+</pre>
+<dl class="docutils">
+<dt>Positional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd>xsize</kbd></td>
+<td>grid.x</td></tr>
+<tr><td class="option-group">
+<kbd>ysize</kbd></td>
+<td>grid.y</td></tr>
+<tr><td class="option-group">
+<kbd>zsize</kbd></td>
+<td>grid.z</td></tr>
+</tbody>
+</table>
+</dd>
+<dt>Options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--stub=</span></kbd></td>
+<td>output file stub</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--noise=uniform</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>noise function</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--kernel=gaussian</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>kernel function</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--spacing=1.0</span></kbd></td>
+<td>kernel spacing</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--sigma</span></kbd></td>
+<td>same as &#8211;sx # &#8211;sy # &#8211;sz #</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--sx</span></kbd></td>
+<td>sigma.x for gaussian kernel</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--sy</span></kbd></td>
+<td>sigma.y for gaussian kernel</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--sz</span></kbd></td>
+<td>sigma.z for gaussian kernel</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--seed</span></kbd></td>
+<td>random number seed</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--lmap=False</span></kbd></td>
+<td>apply linear map</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--threshold=False</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>apply threshold</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--tvalue=0.0</span></kbd></td>
+<td>threshold value</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--saven=False</span></kbd></td>
+<td>save noise data</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--savek=False</span></kbd></td>
+<td>save kernel data</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--ext=pkl</span></kbd></td>
+<td>output file type</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</div>
+<span class="target" id="module-ideal"></span><div class="section" id="ideal-py">
+<h1>ideal.py<a class="headerlink" href="#ideal-py" title="Permalink to this headline">¶</a></h1>
+<p>
+Create surface using ideal function.
+</p>
+<pre class="literal-block">
+usage: ideal [-h] [--stub stub] [--spacing float] [--lmap] [--threshold]
+             [--tvalue TVALUE] [--ext str]
+             grid.x grid.y grid.z int int int str
+
+</pre>
+<dl class="docutils">
+<dt>Positional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd>xsize</kbd></td>
+<td>grid.x</td></tr>
+<tr><td class="option-group">
+<kbd>ysize</kbd></td>
+<td>grid.y</td></tr>
+<tr><td class="option-group">
+<kbd>zsize</kbd></td>
+<td>grid.z</td></tr>
+<tr><td class="option-group">
+<kbd>xwidth</kbd></td>
+<td>size of bands, x-direction: lambda.x</td></tr>
+<tr><td class="option-group">
+<kbd>ywidth</kbd></td>
+<td>size of bands, y-direction: lambda.y</td></tr>
+<tr><td class="option-group">
+<kbd>zwidth</kbd></td>
+<td>size of bands, z-direction: lambda.z</td></tr>
+<tr><td class="option-group">
+<kbd>surface</kbd></td>
+<td>surface type</td></tr>
+</tbody>
+</table>
+</dd>
+<dt>Options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--stub=</span></kbd></td>
+<td>output file stub</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--spacing=1.0</span></kbd></td>
+<td>grid spacing</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--lmap=False</span></kbd></td>
+<td>apply linear map</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--threshold=False</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>apply threshold</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--tvalue=0.0</span></kbd></td>
+<td>threshold value</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--ext=pkl</span></kbd></td>
+<td>output file type</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</div>
+<span class="target" id="module-pepper"></span><div class="section" id="pepper-py">
+<h1>pepper.py<a class="headerlink" href="#pepper-py" title="Permalink to this headline">¶</a></h1>
+<p>
+Add pepper to phase(s).
+</p>
+<pre class="literal-block">
+usage: pepper [-h] (--count int | --percent float) [--brush str] [--phase int]
+              [--overlap] [--total] [--show]
+              input output
+
+</pre>
+<dl class="docutils">
+<dt>Positional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd>ifile</kbd></td>
+<td>input file</td></tr>
+<tr><td class="option-group">
+<kbd>ofile</kbd></td>
+<td>output file</td></tr>
+</tbody>
+</table>
+</dd>
+<dt>Options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--count</span></kbd></td>
+<td>number of strokes</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--percent</span></kbd></td>
+<td>calculate number of strokes based on percent of phase volume</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--brush=point</span></kbd></td>
+<td>pepper brush type</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--phase=0</span></kbd></td>
+<td>phase ID</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--overlap=False</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>allow overlap</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--total=False</span></kbd></td>
+<td>compute count based on total system</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--show=False</span></kbd></td>
+<td>show plot</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</div>
+<span class="target" id="module-morph"></span><div class="section" id="morph-py">
+<h1>morph.py<a class="headerlink" href="#morph-py" title="Permalink to this headline">¶</a></h1>
+<p>
+Morph between two surfaces.
+</p>
+<pre class="literal-block">
+usage: morph.py [-h] [--stub stub] [--format FORMAT] [--func str]
+                [--xvalues [str [str ...]]] [--nolmap] [--vtk] [--show]
+                [--save]
+                input input
+
+</pre>
+<dl class="docutils">
+<dt>Positional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd>ifile1</kbd></td>
+<td>input file 1</td></tr>
+<tr><td class="option-group">
+<kbd>ifile2</kbd></td>
+<td>input file 2</td></tr>
+</tbody>
+</table>
+</dd>
+<dt>Options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--stub=</span></kbd></td>
+<td>output file stub</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--format={stub}_{name}_{i}.{ext}</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>format of file names: use {stub},{i},{x},{y},{ext}</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--func=x</span></kbd></td>
+<td>interpolating polynomial as a string, for example: np.sin(x)</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--xvalues=np.linspace(0, 1, 10)</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>x-values as a string, for example: np.linspace(0, 1, 10)</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--nolmap=True</span></kbd></td>
+<td>do not map yvalues to [0,1]</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--vtk=False</span></kbd></td>
+<td>save vtk files for paraview animation</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--show=False</span></kbd></td>
+<td>show mpl plot</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--save=False</span></kbd></td>
+<td>save mpl plot</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</div>
+<span class="target" id="module-convolution"></span><div class="section" id="convolution-py">
+<h1>convolution.py<a class="headerlink" href="#convolution-py" title="Permalink to this headline">¶</a></h1>
+<p>
+Convolute two data sets.
+</p>
+<pre class="literal-block">
+usage: convolution.py [-h] [--stub stub] [--mode str] input [input]
+
+</pre>
+<dl class="docutils">
+<dt>Positional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd>inputA</kbd></td>
+<td>input file 1</td></tr>
+<tr><td class="option-group">
+<kbd>inputB</kbd></td>
+<td>input file 2</td></tr>
+</tbody>
+</table>
+</dd>
+<dt>Options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--stub=</span></kbd></td>
+<td>output file stub</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--mode=same</span></kbd></td>
+<td>see scipy.signal.convolve</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</div>
+<span class="target" id="module-stats"></span><div class="section" id="stats-py">
+<h1>stats.py<a class="headerlink" href="#stats-py" title="Permalink to this headline">¶</a></h1>
+<p>
+Compute avg, std, min, max, rng, corrcoeffs, skew, kurtosis for data sets.
+</p>
+<pre class="literal-block">
+usage: stats.py [-h] [--stub stub] input [input]
+
+</pre>
+<dl class="docutils">
+<dt>Positional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd>inputA</kbd></td>
+<td>input file 1</td></tr>
+<tr><td class="option-group">
+<kbd>inputB</kbd></td>
+<td>input file 2</td></tr>
+</tbody>
+</table>
+</dd>
+<dt>Options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--stub=</span></kbd></td>
+<td>output file stub</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</div>
+<span class="target" id="module-rdf"></span><div class="section" id="rdf-py">
+<h1>rdf.py<a class="headerlink" href="#rdf-py" title="Permalink to this headline">¶</a></h1>
+<p>
+Perform RDF on surface or KPFM image.  This script takes some time.
+</p>
+<pre class="literal-block">
+usage: rdf.py [-h] [--stub stub] input
+
+</pre>
+<dl class="docutils">
+<dt>Positional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd>ifile</kbd></td>
+<td>input file</td></tr>
+</tbody>
+</table>
+</dd>
+<dt>Options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--stub=</span></kbd></td>
+<td>output file stub</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</div>
+<span class="target" id="module-fft"></span><div class="section" id="fft-py">
+<h1>fft.py<a class="headerlink" href="#fft-py" title="Permalink to this headline">¶</a></h1>
+<p>
+Perform FFT on surface or KPFM image.
+</p>
+<pre class="literal-block">
+usage: fft.py [-h] [--stub stub] [--nodetrend] [--window] [--lmap] input
+
+</pre>
+<dl class="docutils">
+<dt>Positional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd>ifile</kbd></td>
+<td>input file</td></tr>
+</tbody>
+</table>
+</dd>
+<dt>Options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--stub=</span></kbd></td>
+<td>output file stub</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--nodetrend=False</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>do not subtract average from signal</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--window=False</span></kbd></td>
+<td>multiply signal by hamming window</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--lmap=False</span></kbd></td>
+<td>map values to 0,1</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="convert.html" title="image2chk.py"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="analyze.html" title="calculate.py"
+             >previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Adam Gagorik.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

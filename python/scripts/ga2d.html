@@ -1,0 +1,1085 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ga_analyze.py &mdash; Langmuir Python 2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <link rel="top" title="Langmuir Python 2.0 documentation" href="../index.html" />
+    <link rel="next" title="block.py" href="generators.html" />
+    <link rel="prev" title="compare.py" href="utils.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="generators.html" title="block.py"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="utils.html" title="compare.py"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">ga_analyze.py</a></li>
+<li><a class="reference internal" href="#modify-py">modify.py</a></li>
+<li><a class="reference internal" href="#ga-py">ga.py</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="utils.html"
+                        title="previous chapter">compare.py</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="generators.html"
+                        title="next chapter">block.py</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../sources/scripts/ga2d.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <span class="target" id="module-ga_analyze"></span><div class="section" id="ga-analyze-py">
+<h1>ga_analyze.py<a class="headerlink" href="#ga-analyze-py" title="Permalink to this headline">¶</a></h1>
+<p><em>Module author: Geoff Hutchison &lt;<a class="reference external" href="mailto:geoffh&#37;&#52;&#48;pitt&#46;edu">geoffh<span>&#64;</span>pitt<span>&#46;</span>edu</a>&gt;</em></p>
+<dl class="function">
+<dt id="ga_analyze.as_ndarray_3D">
+<tt class="descclassname">ga_analyze.</tt><tt class="descname">as_ndarray_3D</tt><big>(</big><em>obj</em><big>)</big><a class="reference internal" href="../modules/ga_analyze.html#as_ndarray_3D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ga_analyze.as_ndarray_3D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes sure object is an ndarray with len(shape) = 3</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>obj</strong> &#8211; arbitrary python object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ga_analyze.as_ndarray_2D">
+<tt class="descclassname">ga_analyze.</tt><tt class="descname">as_ndarray_2D</tt><big>(</big><em>obj</em><big>)</big><a class="reference internal" href="../modules/ga_analyze.html#as_ndarray_2D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ga_analyze.as_ndarray_2D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes sure object is an ndarray with len(shape) = 2</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>obj</strong> &#8211; arbitrary python object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ga_analyze.load_image">
+<tt class="descclassname">ga_analyze.</tt><tt class="descname">load_image</tt><big>(</big><em>filename</em>, <em>make3D=False</em><big>)</big><a class="reference internal" href="../modules/ga_analyze.html#load_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ga_analyze.load_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads data from image file (png, jpg, etc).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; name of file</li>
+<li><strong>make3D</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; forces object to be ndarray with len(shape)=3</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ga_analyze.load_npy">
+<tt class="descclassname">ga_analyze.</tt><tt class="descname">load_npy</tt><big>(</big><em>filename</em>, <em>make3D=False</em><big>)</big><a class="reference internal" href="../modules/ga_analyze.html#load_npy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ga_analyze.load_npy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads data from numpy file (npy).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filename</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; name of file</li>
+<li><strong>make3D</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; forces object to be ndarray with len(shape)=3</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ga_analyze.disk_structure">
+<tt class="descclassname">ga_analyze.</tt><tt class="descname">disk_structure</tt><big>(</big><em>n</em><big>)</big><a class="reference internal" href="../modules/ga_analyze.html#disk_structure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ga_analyze.disk_structure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a mathematical morphology structure kernel (i.e., a circle/disk)
+of radius n</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>n</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; radius of disk</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">structuring kernel</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#ga_analyze.square_structure" title="ga_analyze.square_structure"><tt class="xref py py-func docutils literal"><span class="pre">square_structure()</span></tt></a></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="ga_analyze.square_structure">
+<tt class="descclassname">ga_analyze.</tt><tt class="descname">square_structure</tt><big>(</big><em>n</em><big>)</big><a class="reference internal" href="../modules/ga_analyze.html#square_structure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ga_analyze.square_structure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a mathematical morphology structure kernel (i.e., a square)
+of size n</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>n</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; radius of disk</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">structuring kernel</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#ga_analyze.disk_structure" title="ga_analyze.disk_structure"><tt class="xref py py-func docutils literal"><span class="pre">disk_structure()</span></tt></a></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="ga_analyze.granulometry">
+<tt class="descclassname">ga_analyze.</tt><tt class="descname">granulometry</tt><big>(</big><em>image</em>, <em>sizes=None</em>, <em>structure=&lt;function disk_structure at 0x7fef975b3ed8&gt;</em><big>)</big><a class="reference internal" href="../modules/ga_analyze.html#granulometry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ga_analyze.granulometry" title="Permalink to this definition">¶</a></dt>
+<dd><div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">comment function</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>image</strong> &#8211; data</li>
+<li><strong>sizes</strong> (<em>list[int]</em>) &#8211; list of particle sizes to test</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of particle counts at each size</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list[int]</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ga_analyze.average_domain_size">
+<tt class="descclassname">ga_analyze.</tt><tt class="descname">average_domain_size</tt><big>(</big><em>image</em>, <em>full=False</em><big>)</big><a class="reference internal" href="../modules/ga_analyze.html#average_domain_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ga_analyze.average_domain_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the average domain size for the image (for the &#8220;true&#8221; phase).
+Really, it returns the avg/std (over labeled regions) of the distance
+to a boundary.  The distance average is over the &#8220;max of mins&#8221;.  This
+means, first a minimum distance is calculated to the boundary for each
+region.  Then the max of <em>those</em> distances is found for each region.
+Finally, the average of those max&#8217;s is taken.  Full output returns
+the avg, the std, a labeled version of the image, the number of unique
+regions, the min-distance matrix, and the max-distance list.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>image</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data</li>
+<li><strong>full</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; returns more output</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">mean and standard deviation of domain sizes</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple(int)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ga_analyze.box_counting_dimension">
+<tt class="descclassname">ga_analyze.</tt><tt class="descname">box_counting_dimension</tt><big>(</big><em>image</em><big>)</big><a class="reference internal" href="../modules/ga_analyze.html#box_counting_dimension"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ga_analyze.box_counting_dimension" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the fractal dimension of the edges of the supplied image.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>image</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">slope of best-fit line of the log-log plot</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference external" href="http://en.wikipedia.org/wiki/Minkowski–Bouligand_dimension">Wikipedia</a></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="ga_analyze.interface_size">
+<tt class="descclassname">ga_analyze.</tt><tt class="descname">interface_size</tt><big>(</big><em>image</em>, <em>periodic=False</em><big>)</big><a class="reference internal" href="../modules/ga_analyze.html#interface_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ga_analyze.interface_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the interfacial area (length for 2D images) between the phases.
+Faster version of <tt class="xref py py-func docutils literal"><span class="pre">interface_size_old()</span></tt> that works on any dimension.  Tested for 1D, 2D, and 3D.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>image</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data</li>
+<li><strong>periodic</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; use periodic boundary conditions</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">total length of interface (in pixels)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>..seealso: <tt class="xref py py-func docutils literal"><span class="pre">test_interface_size()</span></tt>, <tt class="xref py py-func docutils literal"><span class="pre">interface_size_old()</span></tt></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ga_analyze.transfer_distance">
+<tt class="descclassname">ga_analyze.</tt><tt class="descname">transfer_distance</tt><big>(</big><em>original</em>, <em>axis=0</em>, <em>rot90=1</em>, <em>full=False</em><big>)</big><a class="reference internal" href="../modules/ga_analyze.html#transfer_distance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ga_analyze.transfer_distance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the connectivity of the two phases to the side electrodes and
+the average &#8220;transfer distance&#8221; (i.e., the shortest distance a charge carrier
+must travel to be collected at an electrode).</p>
+<p>The transfer distances and connectivity fractions are calculated using a breadth-first
+search from the electrodes left = white phase, right = black phase.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>original</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data</li>
+<li><strong>axis</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; transfer axis (x=0, y=1, z=2)</li>
+<li><strong>rot90</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; rotate image</li>
+<li><strong>full</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; return more output</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">average transfer distance and connectivity fraction (phase 1 and then phase 2)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">tuple(float)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ga_analyze.bottleneck_distribution">
+<tt class="descclassname">ga_analyze.</tt><tt class="descname">bottleneck_distribution</tt><big>(</big><em>image</em><big>)</big><a class="reference internal" href="../modules/ga_analyze.html#bottleneck_distribution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ga_analyze.bottleneck_distribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Count the distribution of bottlenecks</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>image</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data (binary)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">count of bottlenecks of size 4 and size 2</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">tuple(int)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<span class="target" id="module-modify"></span><div class="section" id="modify-py">
+<h1>modify.py<a class="headerlink" href="#modify-py" title="Permalink to this headline">¶</a></h1>
+<p>
+Modify one or two images with various &#8220;mutation&#8221; options.
+- Blend and re-threshold two images
+- Gaussian Blur
+- Uniform Blur (preserves edges)
+- Shrink and tile
+- Enlarge and tile
+- Add pepper to a particular phase
+- Roughen edges
+- Grow one phase using diffusion-limited growth (fractal noise)
+</p>
+<pre class="literal-block">
+usage: modify.py [-h] [--type type] input1 [input2]
+
+</pre>
+<dl class="docutils">
+<dt>Positional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd>ifile1</kbd></td>
+<td>input file #1</td></tr>
+<tr><td class="option-group">
+<kbd>ifile2</kbd></td>
+<td>input file #2</td></tr>
+</tbody>
+</table>
+</dd>
+<dt>Options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--type</span></kbd></td>
+<td>mutation type</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p><em>Module author: Geoff Hutchison &lt;<a class="reference external" href="mailto:geoffh&#37;&#52;&#48;pitt&#46;edu">geoffh<span>&#64;</span>pitt<span>&#46;</span>edu</a>&gt;</em></p>
+<dl class="function">
+<dt id="modify.threshold">
+<tt class="descclassname">modify.</tt><tt class="descname">threshold</tt><big>(</big><em>image</em><big>)</big><a class="reference internal" href="../modules/modify.html#threshold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modify.threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Threshold an image to return a binary <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>
+with a 50:50 mix of two phases.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>image</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">modified image data</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modify.blend_and_threshold">
+<tt class="descclassname">modify.</tt><tt class="descname">blend_and_threshold</tt><big>(</big><em>image1</em>, <em>image2</em>, <em>ratio=0.5</em>, <em>radius=2</em><big>)</big><a class="reference internal" href="../modules/modify.html#blend_and_threshold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modify.blend_and_threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mix two images, blur and threshold</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>image1</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data1</li>
+<li><strong>image2</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data2</li>
+<li><strong>ratio</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; mixing ratio (default is 50:50 mixture)</li>
+<li><strong>radius</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; size of uniform blur kernel to use after mixing (default is no blurring)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">modified image data</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modify.gblur_and_threshold">
+<tt class="descclassname">modify.</tt><tt class="descname">gblur_and_threshold</tt><big>(</big><em>image</em>, <em>radius=2</em><big>)</big><a class="reference internal" href="../modules/modify.html#gblur_and_threshold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modify.gblur_and_threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Blur an image with a Gaussian kernel of supplied radius</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>image</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data</li>
+<li><strong>radius</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; kernel radius (default = no blurring)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">modified image data</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modify.ublur_and_threshold">
+<tt class="descclassname">modify.</tt><tt class="descname">ublur_and_threshold</tt><big>(</big><em>image</em>, <em>radius=2</em><big>)</big><a class="reference internal" href="../modules/modify.html#ublur_and_threshold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modify.ublur_and_threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Blur an image with a Uniform blur kernel of supplied radius
+(the uniform filter better preserves edges/boundaries</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>image</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data</li>
+<li><strong>radius</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; kernel radius</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">modified image data</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modify.shrink">
+<tt class="descclassname">modify.</tt><tt class="descname">shrink</tt><big>(</big><em>image</em>, <em>scale_x=0.0</em>, <em>scale_y=0.0</em><big>)</big><a class="reference internal" href="../modules/modify.html#shrink"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modify.shrink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Randomly shrink an image using different x and y scales. Re-tile and slice
+the image to ensure the dimensions remain the same.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>image</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data</li>
+<li><strong>scale_x</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; x-dimension scale factor (or 0.0 for random choice)</li>
+<li><strong>scale_y</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; y-dimension scale factor (or 0.0 for random choice)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">modified image data</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modify.enlarge">
+<tt class="descclassname">modify.</tt><tt class="descname">enlarge</tt><big>(</big><em>image</em>, <em>zoom_x=0.0</em>, <em>zoom_y=0.0</em><big>)</big><a class="reference internal" href="../modules/modify.html#enlarge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modify.enlarge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Randomly enlarge an image using different x and y scales. Slice the image to
+ensure the dimensions remain the same.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>image</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data</li>
+<li><strong>zoom_x</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; x-dimension scale factor (or 0.0 for random choice)</li>
+<li><strong>zoom_y</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; y-dimension scale factor (or 0.0 for random choice)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">modified image data</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modify.pepper">
+<tt class="descclassname">modify.</tt><tt class="descname">pepper</tt><big>(</big><em>image</em>, <em>phase=0</em>, <em>count=0</em>, <em>percent=None</em>, <em>brush='point'</em>, <em>overlap=False</em>, <em>maxTries=1000000000.0</em><big>)</big><a class="reference internal" href="../modules/modify.html#pepper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modify.pepper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add pepper to image.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>image</strong> &#8211; data</li>
+<li><strong>phase</strong> &#8211; phase ID (0, 1)</li>
+<li><strong>count</strong> &#8211; number of pixels to change</li>
+<li><strong>percent</strong> &#8211; percent of phase to change (overrides count!)</li>
+<li><strong>brush</strong> &#8211; which brush to use (point, square, square3, cross)</li>
+<li><strong>overlap</strong> &#8211; allow the brush to paint over existing pixels</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">modified image data</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modify.roughen">
+<tt class="descclassname">modify.</tt><tt class="descname">roughen</tt><big>(</big><em>image</em>, <em>fraction=0.5</em>, <em>dilation=0</em>, <em>struct=None</em><big>)</big><a class="reference internal" href="../modules/modify.html#roughen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modify.roughen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Roughen the edges of the two phases. Use a binary-closing and dilation
+to find the edge between phases (ignoring pepper defects) and then flip
+the phase of a fraction of the resulting edge sites.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>image</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data</li>
+<li><strong>fraction</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; percent of sites to flip</li>
+<li><strong>dilation</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; number of times to dilate (expand) the border</li>
+<li><strong>struct</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; structure used for the mathematical morphology operations</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">modified image data</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modify.grow_ndimage">
+<tt class="descclassname">modify.</tt><tt class="descname">grow_ndimage</tt><big>(</big><em>image</em>, <em>phase=-1</em>, <em>pixToAdd=-1</em><big>)</big><a class="reference internal" href="../modules/modify.html#grow_ndimage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modify.grow_ndimage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Grow points into a minority phase using diffusion-limited fractal growth.
+The result will ensure 50:50 mixtures and by default will determine the
+minority phase automatically, but both could be specified.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>image</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data</li>
+<li><strong>phase</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; grey level to grow into (i.e., default 0 = add white into black regions)</li>
+<li><strong>pixToAdd</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; number of points to grow, -1 for automatic detection of 50:50 mix</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">modified image data</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modify.invert">
+<tt class="descclassname">modify.</tt><tt class="descname">invert</tt><big>(</big><em>image</em><big>)</big><a class="reference internal" href="../modules/modify.html#invert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modify.invert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invert the phases (i.e., black -&gt; white, white-&gt;black)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>image</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">modified image data</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modify.add_noise">
+<tt class="descclassname">modify.</tt><tt class="descname">add_noise</tt><big>(</big><em>image</em><big>)</big><a class="reference internal" href="../modules/modify.html#add_noise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modify.add_noise" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>image</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">modified image data</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modify.flip_random_sites">
+<tt class="descclassname">modify.</tt><tt class="descname">flip_random_sites</tt><big>(</big><em>image</em>, <em>n=64</em><big>)</big><a class="reference internal" href="../modules/modify.html#flip_random_sites"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modify.flip_random_sites" title="Permalink to this definition">¶</a></dt>
+<dd><p>What random noise should be doing?</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>image</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data</li>
+<li><strong>n</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; number of sites to flip</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">modified image data</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modify.dialate">
+<tt class="descclassname">modify.</tt><tt class="descname">dialate</tt><big>(</big><em>image</em>, <em>struct=None</em><big>)</big><a class="reference internal" href="../modules/modify.html#dialate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modify.dialate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Grow edges of white phase.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>image</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">modified image data</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modify.erode">
+<tt class="descclassname">modify.</tt><tt class="descname">erode</tt><big>(</big><em>image</em>, <em>struct=None</em><big>)</big><a class="reference internal" href="../modules/modify.html#erode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modify.erode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Erode edges of white phase.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>image</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">modified image data</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modify.opening">
+<tt class="descclassname">modify.</tt><tt class="descname">opening</tt><big>(</big><em>image</em>, <em>struct=None</em><big>)</big><a class="reference internal" href="../modules/modify.html#opening"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modify.opening" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open up white phase so that struct fits without overlapping black phase.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>image</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">modified image data</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modify.closing">
+<tt class="descclassname">modify.</tt><tt class="descname">closing</tt><big>(</big><em>image</em>, <em>struct=None</em><big>)</big><a class="reference internal" href="../modules/modify.html#closing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modify.closing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open up black phase so that struct fits without overlapping white phase.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>image</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">modified image data</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modify.skeletonize_and_reconstruct">
+<tt class="descclassname">modify.</tt><tt class="descname">skeletonize_and_reconstruct</tt><big>(</big><em>image</em>, <em>dfunc=None</em>, <em>sfunc=None</em><big>)</big><a class="reference internal" href="../modules/modify.html#skeletonize_and_reconstruct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modify.skeletonize_and_reconstruct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deconstruct image into skeleton and distance mask.  Alter the skeleton
+and/or distance mask and then reconstruct a new morphology.  With no
+altering functions passed, this function will not modify the image.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>image</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data</li>
+<li><strong>dfunc</strong> (<em>func</em>) &#8211; function that alters distance mask</li>
+<li><strong>sfunc</strong> (<em>func</em>) &#8211; function that alters skeleton</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">modified image data</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modify.fourier_transform_and_reconstruct">
+<tt class="descclassname">modify.</tt><tt class="descname">fourier_transform_and_reconstruct</tt><big>(</big><em>image</em>, <em>detrend=False</em>, <em>window=False</em>, <em>ffunc=None</em><big>)</big><a class="reference internal" href="../modules/modify.html#fourier_transform_and_reconstruct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modify.fourier_transform_and_reconstruct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take fourier transform, alter it, and reconstruct image.  For some
+reason this is shifting the origin by 1 pixel after reconstruction, which
+should not happen.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>image</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data</li>
+<li><strong>ffunc</strong> (<em>func</em>) &#8211; function that alters FFT matrix</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">modified image data</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modify.randf">
+<tt class="descclassname">modify.</tt><tt class="descname">randf</tt><big>(</big><em>a</em>, <em>b</em>, <em>size=None</em><big>)</big><a class="reference internal" href="../modules/modify.html#randf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modify.randf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Random float in range.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>a</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; lower bound</li>
+<li><strong>b</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; upper bound</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">values</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modify.gauss1D">
+<tt class="descclassname">modify.</tt><tt class="descname">gauss1D</tt><big>(</big><em>x</em>, <em>s=1.0</em>, <em>m=0.0</em><big>)</big><a class="reference internal" href="../modules/modify.html#gauss1D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modify.gauss1D" title="Permalink to this definition">¶</a></dt>
+<dd><p>1D Gaussian.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> &#8211; x-value</li>
+<li><strong>s</strong> &#8211; sigma</li>
+<li><strong>m</strong> &#8211; mean</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">values</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modify.gauss2D">
+<tt class="descclassname">modify.</tt><tt class="descname">gauss2D</tt><big>(</big><em>x</em>, <em>y</em>, <em>sx=1.0</em>, <em>sy=1.0</em>, <em>mx=0.0</em>, <em>my=0.0</em><big>)</big><a class="reference internal" href="../modules/modify.html#gauss2D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modify.gauss2D" title="Permalink to this definition">¶</a></dt>
+<dd><p>2D Gaussian.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> &#8211; x-value</li>
+<li><strong>y</strong> &#8211; y-value</li>
+<li><strong>sx</strong> &#8211; x-sigma</li>
+<li><strong>mx</strong> &#8211; x-mean</li>
+<li><strong>sy</strong> &#8211; y-sigma</li>
+<li><strong>my</strong> &#8211; y-mean</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">values</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="modify.create_random_distance_transform_on_skeleton">
+<tt class="descclassname">modify.</tt><tt class="descname">create_random_distance_transform_on_skeleton</tt><big>(</big><em>i0</em>, <em>s0</em>, <em>d0</em><big>)</big><a class="reference internal" href="../modules/modify.html#create_random_distance_transform_on_skeleton"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#modify.create_random_distance_transform_on_skeleton" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw a bunch of Gaussians of random sigma along skeleton of image.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>i0</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data</li>
+<li><strong>s0</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data</li>
+<li><strong>d0</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<span class="target" id="module-ga"></span><div class="section" id="ga-py">
+<h1>ga.py<a class="headerlink" href="#ga-py" title="Permalink to this headline">¶</a></h1>
+<p>
+Genetic algorithm design of 2D morphologies.
+</p>
+<pre class="literal-block">
+usage: ga.py [-h] [--rescore] [--silent]
+             directory [population] [generations] [children] [mutability]
+             [diversity]
+
+</pre>
+<dl class="docutils">
+<dt>Positional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd>dir</kbd></td>
+<td>initial directory</td></tr>
+<tr><td class="option-group">
+<kbd>population</kbd></td>
+<td>size of population</td></tr>
+<tr><td class="option-group">
+<kbd>generations</kbd></td>
+<td># of generations</td></tr>
+<tr><td class="option-group">
+<kbd>children</kbd></td>
+<td># of children to create each generation</td></tr>
+<tr><td class="option-group">
+<kbd>mutability</kbd></td>
+<td># of items to mutate each generation</td></tr>
+<tr><td class="option-group">
+<kbd>diversity</kbd></td>
+<td>percent of pixels that need to differ</td></tr>
+</tbody>
+</table>
+</dd>
+<dt>Options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--rescore=False</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>rescore initial files</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--silent=False</span></kbd></td>
+<td>set logging level to ERROR only</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p><em>Module author: Geoff Hutchison &lt;<a class="reference external" href="mailto:geoffh&#37;&#52;&#48;pitt&#46;edu">geoffh<span>&#64;</span>pitt<span>&#46;</span>edu</a>&gt;</em></p>
+<dl class="function">
+<dt id="ga.score">
+<tt class="descclassname">ga.</tt><tt class="descname">score</tt><big>(</big><em>filename</em><big>)</big><a class="reference internal" href="../modules/ga.html#score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ga.score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Score individual image files for the genetic algorithm.
+The idea is to derive predictive factors for the langmuir performance
+(i.e., max power) based on the connectivity, phase fractions, domain sizes,
+etc. The scoring function should be based on multivariate fits from a database
+of existing simulations. To ensure good results, use robust regression techniques
+and cross-validate the best-fit.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; image file name</td>
+</tr>
+</tbody>
+</table>
+<p>:return score (ideally as an estimated maximum power in W/(m^2))
+:rtype float</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="ga.score_filenames">
+<tt class="descclassname">ga.</tt><tt class="descname">score_filenames</tt><big>(</big><em>filenames</em>, <em>pool=None</em><big>)</big><a class="reference internal" href="../modules/ga.html#score_filenames"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ga.score_filenames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Score a list of files in parallel using the supplied processing pool</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>filenames</strong> (<em>list of str</em>) &#8211; image file names</li>
+<li><strong>pool</strong> (<em>multiprocessing.pool.Pool</em>) &#8211; multiprocessing thread pool</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of tuples (score, filename)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of tuple</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="ga.diversity_check">
+<tt class="descclassname">ga.</tt><tt class="descname">diversity_check</tt><big>(</big><em>image1</em>, <em>image2</em><big>)</big><a class="reference internal" href="../modules/ga.html#diversity_check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#ga.diversity_check" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compare two</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>file1</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; first filename</li>
+<li><strong>file2</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; second filename</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">fraction of sites that differ</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="generators.html" title="block.py"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="utils.html" title="compare.py"
+             >previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Adam Gagorik.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

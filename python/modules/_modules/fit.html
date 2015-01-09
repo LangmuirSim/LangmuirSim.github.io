@@ -1,0 +1,788 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>fit &mdash; Langmuir Python 2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <link rel="top" title="Langmuir Python 2.0 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for fit</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. note::</span>
+<span class="sd">    Functions for fitting 2D data.</span>
+
+<span class="sd">.. moduleauthor:: Adam Gagorik &lt;adam.gagorik@gmail.com&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">scipy.interpolate</span> <span class="kn">as</span> <span class="nn">_interpolate</span>
+<span class="kn">import</span> <span class="nn">scipy.optimize</span> <span class="kn">as</span> <span class="nn">_optimize</span>
+<span class="kn">import</span> <span class="nn">scipy.special</span> <span class="kn">as</span> <span class="nn">_special</span>
+<span class="kn">import</span> <span class="nn">scipy.misc</span> <span class="kn">as</span> <span class="nn">_misc</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">_plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">_np</span>
+
+<div class="viewcode-block" id="Fit"><a class="viewcode-back" href="../modules/fit.html#fit.Fit">[docs]</a><span class="k">class</span> <span class="nc">Fit</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for fitting.</span>
+
+<span class="sd">    :param x: array of x-values</span>
+<span class="sd">    :param y: array of y-values</span>
+<span class="sd">    :param func: function object</span>
+<span class="sd">    :param popt: initial guess for parameters</span>
+
+<span class="sd">    :type x: list</span>
+<span class="sd">    :type y: list</span>
+<span class="sd">    :type func: function</span>
+<span class="sd">    :type popt: list</span>
+
+<span class="sd">    .. warning:: Do not explicitly create Fit instance, its a base class.</span>
+
+<span class="sd">    &gt;&gt;&gt; fit = FitLinear([1, 2, 3], [4, 5, 6])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r2</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">popt</span> <span class="o">=</span> <span class="n">popt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">yerr</span> <span class="o">=</span> <span class="n">yerr</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">yerr</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">yerr</span> <span class="o">=</span> <span class="bp">None</span>
+
+<div class="viewcode-block" id="Fit.plot"><a class="viewcode-back" href="../modules/fit.html#fit.Fit.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xmin</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">xpoints</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Wrapper around :func:`matplotlib.pyplot.plot`.  Plots the fit line.</span>
+
+<span class="sd">        :param xmin: min x-value</span>
+<span class="sd">        :param xmax: max x-value</span>
+<span class="sd">        :param xpoints: number of xpoints</span>
+
+<span class="sd">        :type xmax: float</span>
+<span class="sd">        :type xmin: float</span>
+<span class="sd">        :type xpoints: int</span>
+
+<span class="sd">        &gt;&gt;&gt; fit = FitLinear([1, 2, 3], [4, 5, 6])</span>
+<span class="sd">        &gt;&gt;&gt; fit.plot(xmin=-1.0, xmax=1.0, xpoints=10, lw=2, color=&#39;blue&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">xmin</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">xmin</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">amin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">xmax</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">xmax</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">xs</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">xpoints</span><span class="p">)</span>
+        <span class="n">ys</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+        <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#39;k&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s">&#39;-&#39;</span><span class="p">)</span>
+        <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">_plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Fit.text"><a class="viewcode-back" href="../modules/fit.html#fit.Fit.text">[docs]</a>    <span class="k">def</span> <span class="nf">text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">rotate</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+             <span class="n">draw_behind</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Wrapper around :func:`matplotlib.pyplot.text`.  Useful for putting</span>
+<span class="sd">        text along the fit line drawn by :func:`Fit.plot`, and rotating the</span>
+<span class="sd">        text using the derivative.</span>
+
+<span class="sd">        :param s: text</span>
+<span class="sd">        :param x: x-value of text</span>
+<span class="sd">        :param y: y-value of text; if None, use the fit line</span>
+<span class="sd">        :param transform: matplotlib transform; if None, plt.gca().transAxes</span>
+<span class="sd">        :param rotate: rotate text using angle computed from derivative</span>
+<span class="sd">        :param draw_behind: hide the plot objects behind the text</span>
+
+<span class="sd">        :type s: str</span>
+<span class="sd">        :type x: float</span>
+<span class="sd">        :type y: float</span>
+<span class="sd">        :type transform: :class:`matplotlib.transforms.Transform`</span>
+<span class="sd">        :type rotate: bool</span>
+<span class="sd">        :type draw_behind: bool</span>
+
+<span class="sd">        &gt;&gt;&gt; fit = FitLinear([1, 2, 3], [4, 5, 6])</span>
+<span class="sd">        &gt;&gt;&gt; fit.text(&#39;Hello!&#39;, 0.1, rotate=True, fontsize=&#39;large&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">transform</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">transform</span> <span class="o">=</span> <span class="n">_plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">transAxes</span>
+        <span class="n">tDI</span> <span class="o">=</span> <span class="n">_plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">transData</span><span class="o">.</span><span class="n">inverted</span><span class="p">()</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">tDI</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">transform</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="mi">1</span><span class="p">)))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">tDI</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">transform</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">y</span><span class="p">)))[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">va</span><span class="o">=</span><span class="s">&#39;center&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s">&#39;center&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="s">&#39;x-small&#39;</span><span class="p">,</span>
+                       <span class="n">bbox</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rotate</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">_kwargs</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s">&#39;rotation&#39;</span><span class="p">):</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">_np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="mf">0.9</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">a</span><span class="p">,))</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)])</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">_plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">transData</span><span class="o">.</span><span class="n">transform_angles</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">p</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">_kwargs</span><span class="p">[</span><span class="s">&#39;rotation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">_plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">draw_behind</span><span class="p">:</span>
+            <span class="n">_plt</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+            <span class="n">extent</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">get_window_extent</span><span class="p">()</span>
+            <span class="n">x0</span> <span class="o">=</span> <span class="n">extent</span><span class="o">.</span><span class="n">x0</span>
+            <span class="n">x1</span> <span class="o">=</span> <span class="n">x0</span> <span class="o">+</span> <span class="n">extent</span><span class="o">.</span><span class="n">width</span>
+            <span class="n">x0</span> <span class="o">=</span> <span class="n">_plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">transData</span><span class="o">.</span><span class="n">inverted</span><span class="p">()</span><span class="o">.</span><span class="n">transform</span><span class="p">((</span><span class="n">x0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">x1</span> <span class="o">=</span> <span class="n">_plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">transData</span><span class="o">.</span><span class="n">inverted</span><span class="p">()</span><span class="o">.</span><span class="n">transform</span><span class="p">((</span><span class="n">x1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">_line_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#39;w&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s">&#39;-&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">draw_behind</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">_line_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">draw_behind</span><span class="p">)</span>
+            <span class="n">xs</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+            <span class="n">_plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="bp">self</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="o">**</span><span class="n">_line_kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Fit.solve"><a class="viewcode-back" href="../modules/fit.html#fit.Fit.solve">[docs]</a>    <span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">return_y</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Wrapper around :func:`scipy.optimize.fsolve`.  Solves y=fit(x) for x.</span>
+
+<span class="sd">        :param y: y-value</span>
+<span class="sd">        :param x0: initial guess</span>
+<span class="sd">        :param return_y: return x and fit(x)</span>
+
+<span class="sd">        :returns: xval, yval</span>
+
+<span class="sd">        :type y: float</span>
+<span class="sd">        :type x0: float</span>
+<span class="sd">        :type return_y: bool</span>
+
+<span class="sd">        &gt;&gt;&gt; fit = FitLinear([1, 2, 3], [4, 5, 6])</span>
+<span class="sd">        &gt;&gt;&gt; xval, yval = fit.solve(y=0, x0=1.0)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">y</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">_optimize</span><span class="o">.</span><span class="n">fsolve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__call__</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__call__</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">y</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">_optimize</span><span class="o">.</span><span class="n">fsolve</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">return_y</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="Fit.brute"><a class="viewcode-back" href="../modules/fit.html#fit.Fit.brute">[docs]</a>    <span class="k">def</span> <span class="nf">brute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">find_max</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">return_y</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Wrapper around :func:`scipy.optimize.brute`.  Finds minimum in range.</span>
+
+<span class="sd">        :param a: lower x-bound</span>
+<span class="sd">        :param b: upper x-bound</span>
+<span class="sd">        :param find_max: find max instead of min</span>
+<span class="sd">        :param return_y: return x and fit(x)</span>
+
+<span class="sd">        :returns: xval, yval</span>
+
+<span class="sd">        :type a: float</span>
+<span class="sd">        :type b: float</span>
+<span class="sd">        :type find_max: bool</span>
+<span class="sd">        :type return_y: bool</span>
+
+<span class="sd">        &gt;&gt;&gt; fit = FitLinear([1, 2, 3], [4, 5, 6])</span>
+<span class="sd">        &gt;&gt;&gt; xval, yval = fit.brute(a=-1, b=1)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">find_max</span><span class="p">:</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">__call__</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__call__</span>
+        <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">func</span><span class="p">,</span> <span class="n">ranges</span><span class="o">=</span><span class="p">[(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)])</span>
+        <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">_optimize</span><span class="o">.</span><span class="n">brute</span><span class="p">(</span><span class="o">**</span><span class="n">_kwargs</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">return_y</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Fit.maxbrute"><a class="viewcode-back" href="../modules/fit.html#fit.Fit.maxbrute">[docs]</a>    <span class="k">def</span> <span class="nf">maxbrute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">return_y</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calls :func:`Fit.brute` with find_max=True&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">brute</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="n">return_y</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Fit.minimize"><a class="viewcode-back" href="../modules/fit.html#fit.Fit.minimize">[docs]</a>    <span class="k">def</span> <span class="nf">minimize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">find_max</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">return_y</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Wrapper around :func:`scipy.optimize.minimize`.  Finds minimum using</span>
+<span class="sd">        a initial guess.</span>
+
+<span class="sd">        :param x0: initial guess for x</span>
+<span class="sd">        :param find_max: find max instead of min</span>
+<span class="sd">        :param return_y: return x and fit(x)</span>
+
+<span class="sd">        :returns: xval, yval</span>
+
+<span class="sd">        :type x0: float</span>
+<span class="sd">        :type find_max: bool</span>
+<span class="sd">        :type return_y: bool</span>
+
+<span class="sd">        &gt;&gt;&gt; fit = FitLinear([1, 2, 3], [4, 5, 6])</span>
+<span class="sd">        &gt;&gt;&gt; xval, yval = fit.minimize(x0=0.1)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">find_max</span><span class="p">:</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">__call__</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__call__</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">_optimize</span><span class="p">,</span> <span class="s">&#39;minimize&#39;</span><span class="p">):</span>
+            <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s">&#39;BFGS&#39;</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">gtol</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="bp">False</span><span class="p">))</span>
+            <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">_optimize</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">gtol</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+            <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">_optimize</span><span class="o">.</span><span class="n">fmin_bfgs</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">return_y</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Fit.maximize"><a class="viewcode-back" href="../modules/fit.html#fit.Fit.maximize">[docs]</a>    <span class="k">def</span> <span class="nf">maximize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">return_y</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calls :func:`Fit.minimize` with find_max=True&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="n">return_y</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Fit.derivative"><a class="viewcode-back" href="../modules/fit.html#fit.Fit.derivative">[docs]</a>    <span class="k">def</span> <span class="nf">derivative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Wrapper around :func:`scipy.misc.derivative`, unless an inheriting</span>
+<span class="sd">        class implements the derivative analytically.</span>
+
+<span class="sd">        :param x: x-value to evaluate derivative at</span>
+<span class="sd">        :type x: float</span>
+
+<span class="sd">        :returns: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+        <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">_misc</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__call__</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">m</span>
+</div>
+<div class="viewcode-block" id="Fit.tangent"><a class="viewcode-back" href="../modules/fit.html#fit.Fit.tangent">[docs]</a>    <span class="k">def</span> <span class="nf">tangent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute a tangent line at x.</span>
+
+<span class="sd">        :param x: x-value to evaluate derivative at</span>
+<span class="sd">        :param xmin: min x-value</span>
+<span class="sd">        :param xmax: max x-value</span>
+<span class="sd">        :param xpoints: number of xpoints</span>
+
+<span class="sd">        :type x: float</span>
+<span class="sd">        :type xmax: float</span>
+<span class="sd">        :type xmin: float</span>
+<span class="sd">        :type xpoints: int</span>
+
+<span class="sd">        &gt;&gt;&gt; fit = FitLinear([1, 2, 3], [4, 5, 6])</span>
+<span class="sd">        &gt;&gt;&gt; func = fit.tangent(x=1.5)</span>
+<span class="sd">        &gt;&gt;&gt; print func(1.5)</span>
+<span class="sd">        ... 0.0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">m</span> <span class="o">*</span> <span class="n">x</span>
+        <span class="k">return</span> <span class="n">_np</span><span class="o">.</span><span class="n">poly1d</span><span class="p">([</span><span class="n">m</span><span class="p">,</span> <span class="n">b</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="Fit.plot_tangent"><a class="viewcode-back" href="../modules/fit.html#fit.Fit.plot_tangent">[docs]</a>    <span class="k">def</span> <span class="nf">plot_tangent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">xmin</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">xmax</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">xpoints</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot a tangent line at x.</span>
+
+<span class="sd">        :param x: x-value to evaluate derivative at</span>
+<span class="sd">        :param xmin: min x-value</span>
+<span class="sd">        :param xmax: max x-value</span>
+<span class="sd">        :param xpoints: number of xpoints</span>
+
+<span class="sd">        :type x: float</span>
+<span class="sd">        :type xmax: float</span>
+<span class="sd">        :type xmin: float</span>
+<span class="sd">        :type xpoints: int</span>
+
+<span class="sd">        &gt;&gt;&gt; fit = FitLinear([1, 2, 3], [4, 5, 6])</span>
+<span class="sd">        &gt;&gt;&gt; fit.plot_tangent(x=1.5, lw=2, color=&#39;blue&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tangent</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s">&#39;k&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s">&#39;-&#39;</span><span class="p">)</span>
+        <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">xmin</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">xmin</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">amin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">xmax</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">xmax</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">xs</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span><span class="p">,</span> <span class="n">xpoints</span><span class="p">)</span>
+        <span class="n">_plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">f</span><span class="p">(</span><span class="n">xs</span><span class="p">),</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Fit.summary"><a class="viewcode-back" href="../modules/fit.html#fit.Fit.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a summary :py:obj:`dict` of fit results.</span>
+
+<span class="sd">        :returns: :py:obj:`dict`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">popt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">,</span> <span class="n">r2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">r2</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Fit.sort"><a class="viewcode-back" href="../modules/fit.html#fit.Fit.sort">[docs]</a>    <span class="k">def</span> <span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sort x and y values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;perform fit&quot;&quot;&quot;</span>
+        <span class="n">popt</span><span class="p">,</span> <span class="n">pcov</span> <span class="o">=</span> <span class="n">_optimize</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">,</span>
+                                         <span class="bp">self</span><span class="o">.</span><span class="n">yerr</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">popt</span> <span class="o">=</span> <span class="n">popt</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;__call__&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_rsquared</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_calculate_rsquared</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;calculate correlation coeff&quot;&quot;&quot;</span>
+        <span class="n">ym</span>  <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">yi</span>  <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">fi</span>  <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">ssr</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">yi</span> <span class="o">-</span> <span class="n">fi</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">sst</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">yi</span> <span class="o">-</span> <span class="n">ym</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r2</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">ssr</span> <span class="o">/</span> <span class="n">sst</span>
+        <span class="c">#A = _np.average(self.y)</span>
+        <span class="c">#N = _np.sum((self(self.x) - A)**2)</span>
+        <span class="c">#D = _np.sum((self.y - A)**2)</span>
+        <span class="c">#print N/D</span>
+        <span class="c">#self.r2 = N/D</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">=</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()])</span>
+        <span class="k">return</span> <span class="s">&#39;Fit(</span><span class="si">%s</span><span class="s">)&#39;</span> <span class="o">%</span> <span class="n">s</span>
+</div>
+<div class="viewcode-block" id="FitPower"><a class="viewcode-back" href="../modules/fit.html#fit.FitPower">[docs]</a><span class="k">class</span> <span class="nc">FitPower</span><span class="p">(</span><span class="n">Fit</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;:math:`\sum_{i=0}^{N} c_i x^i`</span>
+
+<span class="sd">    :param order: order of polynomial</span>
+<span class="sd">    :type order: int</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">Fit</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">popt</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">popt</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">yerr</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">poly1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">)</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;__call__&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">)</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;derivative&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">deriv</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_rsquared</span><span class="p">()</span>
+
+<div class="viewcode-block" id="FitPower.summary"><a class="viewcode-back" href="../modules/fit.html#fit.FitPower.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;create a summary :py:obj:`dict`&quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;c</span><span class="si">%d</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">)}</span>
+        <span class="n">d</span><span class="p">[</span><span class="s">&#39;r2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">r2</span>
+        <span class="k">return</span> <span class="n">d</span>
+</div></div>
+<div class="viewcode-block" id="FitLinear"><a class="viewcode-back" href="../modules/fit.html#fit.FitLinear">[docs]</a><span class="k">class</span> <span class="nc">FitLinear</span><span class="p">(</span><span class="n">FitPower</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;:math:`m x + b`&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">FitPower</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">popt</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">_np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elabel</span> <span class="o">=</span> <span class="s">r&#39;$\mathtt{y=</span><span class="si">%g</span><span class="s"> x </span><span class="si">%+g</span><span class="s">}$&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alabel</span> <span class="o">=</span> <span class="s">r&#39;$\mathtt{</span><span class="si">%.2f</span><span class="s">^{\circ}}$&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mlabel</span> <span class="o">=</span> <span class="s">r&#39;$\mathtt{</span><span class="si">%g</span><span class="s">}$&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span>
+
+<div class="viewcode-block" id="FitLinear.derivative"><a class="viewcode-back" href="../modules/fit.html#fit.FitLinear.derivative">[docs]</a>    <span class="k">def</span> <span class="nf">derivative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;analytic derivative of function&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span>
+</div>
+<div class="viewcode-block" id="FitLinear.summary"><a class="viewcode-back" href="../modules/fit.html#fit.FitLinear.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;create a summary :py:obj:`dict`&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">m</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">r2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">r2</span><span class="p">)</span>
+</div></div>
+<div class="viewcode-block" id="FitQuadratic"><a class="viewcode-back" href="../modules/fit.html#fit.FitQuadratic">[docs]</a><span class="k">class</span> <span class="nc">FitQuadratic</span><span class="p">(</span><span class="n">FitPower</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;:math:`a x^{2} + b x + c`&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">FitPower</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">popt</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+<div class="viewcode-block" id="FitQuadratic.derivative"><a class="viewcode-back" href="../modules/fit.html#fit.FitQuadratic.derivative">[docs]</a>    <span class="k">def</span> <span class="nf">derivative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;analytic derivative of function&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span>
+</div>
+<div class="viewcode-block" id="FitQuadratic.summary"><a class="viewcode-back" href="../modules/fit.html#fit.FitQuadratic.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;create a summary :py:obj:`dict`&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="n">r2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">r2</span><span class="p">)</span>
+</div></div>
+<div class="viewcode-block" id="FitInterp1D"><a class="viewcode-back" href="../modules/fit.html#fit.FitInterp1D">[docs]</a><span class="k">class</span> <span class="nc">FitInterp1D</span><span class="p">(</span><span class="n">Fit</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fit to interpolating function.</span>
+
+<span class="sd">    :param kind: linear, nearest, zero, slinear, quadratic, cubic.</span>
+<span class="sd">    :type kind: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        kind : linear, nearest, zero, slinear, quadratic, cubic</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Fit</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">amin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s">&#39;cubic&#39;</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="n">_np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">bounds_error</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">_interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;__call__&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_rsquared</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="FitUnivariateSpline"><a class="viewcode-back" href="../modules/fit.html#fit.FitUnivariateSpline">[docs]</a><span class="k">class</span> <span class="nc">FitUnivariateSpline</span><span class="p">(</span><span class="n">Fit</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fit to spline.</span>
+
+<span class="sd">    :param k: degree of spline (&lt;=5)</span>
+<span class="sd">    :type kind: int</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">Fit</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">amin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+        <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">_interpolate</span><span class="o">.</span><span class="n">UnivariateSpline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;__call__&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_rsquared</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="FitLagrange"><a class="viewcode-back" href="../modules/fit.html#fit.FitLagrange">[docs]</a><span class="k">class</span> <span class="nc">FitLagrange</span><span class="p">(</span><span class="n">Fit</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fit to lagrange interpolating spline.  It sucks.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">Fit</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">amin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">_interpolate</span><span class="o">.</span><span class="n">lagrange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;__call__&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_rsquared</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="FitBarycentric"><a class="viewcode-back" href="../modules/fit.html#fit.FitBarycentric">[docs]</a><span class="k">class</span> <span class="nc">FitBarycentric</span><span class="p">(</span><span class="n">Fit</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fit to lagrange interpolating spline.  It sucks.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">Fit</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">amin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__call__</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_rsquared</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_interpolate</span><span class="o">.</span><span class="n">barycentric_interpolate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="FitTanh"><a class="viewcode-back" href="../modules/fit.html#fit.FitTanh">[docs]</a><span class="k">class</span> <span class="nc">FitTanh</span><span class="p">(</span><span class="n">Fit</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;:math:`a \tanh(b x + c) + d`&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+        <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">_np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">c</span><span class="p">)</span> <span class="o">+</span> <span class="n">d</span>
+
+        <span class="n">Fit</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">popt</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+<div class="viewcode-block" id="FitTanh.derivative"><a class="viewcode-back" href="../modules/fit.html#fit.FitTanh.derivative">[docs]</a>    <span class="k">def</span> <span class="nf">derivative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;analytic derivative of function&quot;&quot;&quot;</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">v</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="FitTanh.summary"><a class="viewcode-back" href="../modules/fit.html#fit.FitTanh.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;create a summary :py:obj:`dict`&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">,</span> <span class="n">r2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">r2</span><span class="p">)</span>
+</div></div>
+<div class="viewcode-block" id="FitLog"><a class="viewcode-back" href="../modules/fit.html#fit.FitLog">[docs]</a><span class="k">class</span> <span class="nc">FitLog</span><span class="p">(</span><span class="n">Fit</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;:math:`a \tanh(b x + c) + d`&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+        <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">_np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">c</span><span class="p">)</span> <span class="o">+</span> <span class="n">d</span>
+
+        <span class="n">Fit</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">popt</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+<div class="viewcode-block" id="FitLog.derivative"><a class="viewcode-back" href="../modules/fit.html#fit.FitLog.derivative">[docs]</a>    <span class="k">def</span> <span class="nf">derivative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;analytic derivative of function&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="FitLog.summary"><a class="viewcode-back" href="../modules/fit.html#fit.FitLog.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;create a summary :py:obj:`dict`&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">,</span> <span class="n">r2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">r2</span><span class="p">)</span>
+</div></div>
+<div class="viewcode-block" id="FitXTanh"><a class="viewcode-back" href="../modules/fit.html#fit.FitXTanh">[docs]</a><span class="k">class</span> <span class="nc">FitXTanh</span><span class="p">(</span><span class="n">Fit</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;:math:`a x \tanh(b x + c) + d`&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+        <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">_np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">c</span><span class="p">)</span> <span class="o">+</span> <span class="n">d</span>
+
+        <span class="n">Fit</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">popt</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+<div class="viewcode-block" id="FitXTanh.derivative"><a class="viewcode-back" href="../modules/fit.html#fit.FitXTanh.derivative">[docs]</a>    <span class="k">def</span> <span class="nf">derivative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;analytic derivative of function&quot;&quot;&quot;</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">*</span> <span class="n">v</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">v</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="FitXTanh.summary"><a class="viewcode-back" href="../modules/fit.html#fit.FitXTanh.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;create a summary :py:obj:`dict`&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">,</span> <span class="n">r2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">r2</span><span class="p">)</span>
+</div></div>
+<div class="viewcode-block" id="FitErf"><a class="viewcode-back" href="../modules/fit.html#fit.FitErf">[docs]</a><span class="k">class</span> <span class="nc">FitErf</span><span class="p">(</span><span class="n">Fit</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;:math:`a\,\mathrm{erf}(b x + c) + d`&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+        <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">_special</span><span class="o">.</span><span class="n">erf</span><span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">c</span><span class="p">)</span> <span class="o">+</span> <span class="n">d</span>
+
+        <span class="n">Fit</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">popt</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+<div class="viewcode-block" id="FitErf.summary"><a class="viewcode-back" href="../modules/fit.html#fit.FitErf.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;create a summary :py:obj:`dict`&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">,</span> <span class="n">r2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">r2</span><span class="p">)</span>
+</div></div>
+<div class="viewcode-block" id="FitXErf"><a class="viewcode-back" href="../modules/fit.html#fit.FitXErf">[docs]</a><span class="k">class</span> <span class="nc">FitXErf</span><span class="p">(</span><span class="n">Fit</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;:math:`a x\,\mathrm{erf}(b x + c) + d`&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+        <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">_special</span><span class="o">.</span><span class="n">erf</span><span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">c</span><span class="p">)</span> <span class="o">+</span> <span class="n">d</span>
+
+        <span class="n">Fit</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">popt</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+<div class="viewcode-block" id="FitXErf.summary"><a class="viewcode-back" href="../modules/fit.html#fit.FitXErf.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;create a summary :py:obj:`dict`&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">,</span> <span class="n">r2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">r2</span><span class="p">)</span>
+</div></div>
+<div class="viewcode-block" id="FitGaussian"><a class="viewcode-back" href="../modules/fit.html#fit.FitGaussian">[docs]</a><span class="k">class</span> <span class="nc">FitGaussian</span><span class="p">(</span><span class="n">Fit</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;:math:`a e^{\frac{-(x - m)^{2}}{2 \sigma^{2}}}`&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+        <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">_np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">m</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">s</span> <span class="o">*</span> <span class="n">s</span><span class="p">))</span>
+
+        <span class="n">Fit</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">popt</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+<div class="viewcode-block" id="FitGaussian.summary"><a class="viewcode-back" href="../modules/fit.html#fit.FitGaussian.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;create a summary :py:obj:`dict`&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="n">r2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">r2</span><span class="p">)</span>
+</div></div>
+<div class="viewcode-block" id="FitSin"><a class="viewcode-back" href="../modules/fit.html#fit.FitSin">[docs]</a><span class="k">class</span> <span class="nc">FitSin</span><span class="p">(</span><span class="n">Fit</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;:math:`a \sin(b x + c) + d`&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+        <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">_np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">c</span><span class="p">)</span> <span class="o">+</span> <span class="n">d</span>
+
+        <span class="n">Fit</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">popt</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+<div class="viewcode-block" id="FitSin.derivative"><a class="viewcode-back" href="../modules/fit.html#fit.FitSin.derivative">[docs]</a>    <span class="k">def</span> <span class="nf">derivative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;analytic derivative of function&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">*</span> <span class="n">_np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="FitSin.summary"><a class="viewcode-back" href="../modules/fit.html#fit.FitSin.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;create a summary :py:obj:`dict`&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">,</span> <span class="n">r2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">r2</span><span class="p">)</span>
+</div></div>
+<div class="viewcode-block" id="FitCos"><a class="viewcode-back" href="../modules/fit.html#fit.FitCos">[docs]</a><span class="k">class</span> <span class="nc">FitCos</span><span class="p">(</span><span class="n">Fit</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;:math:`a \cos(b x + c) + d`&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+        <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">_np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">c</span><span class="p">)</span> <span class="o">+</span> <span class="n">d</span>
+
+        <span class="n">Fit</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">popt</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+<div class="viewcode-block" id="FitCos.derivative"><a class="viewcode-back" href="../modules/fit.html#fit.FitCos.derivative">[docs]</a>    <span class="k">def</span> <span class="nf">derivative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;analytic derivative of function&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">*</span> <span class="n">_np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="FitCos.summary"><a class="viewcode-back" href="../modules/fit.html#fit.FitCos.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;create a summary :py:obj:`dict`&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">,</span> <span class="n">r2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">r2</span><span class="p">)</span>
+</div></div>
+<div class="viewcode-block" id="FitLinearZero"><a class="viewcode-back" href="../modules/fit.html#fit.FitLinearZero">[docs]</a><span class="k">class</span> <span class="nc">FitLinearZero</span><span class="p">(</span><span class="n">Fit</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;:math:`mx`&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+        <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">m</span> <span class="o">*</span> <span class="n">x</span>
+
+        <span class="n">Fit</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">popt</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<div class="viewcode-block" id="FitLinearZero.derivative"><a class="viewcode-back" href="../modules/fit.html#fit.FitLinearZero.derivative">[docs]</a>    <span class="k">def</span> <span class="nf">derivative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;analytic derivative of function&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span>
+</div>
+<div class="viewcode-block" id="FitLinearZero.summary"><a class="viewcode-back" href="../modules/fit.html#fit.FitLinearZero.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;create a summary :py:obj:`dict`&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">,</span> <span class="n">r2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">r2</span><span class="p">)</span>
+</div></div>
+<div class="viewcode-block" id="FitQuadraticZero"><a class="viewcode-back" href="../modules/fit.html#fit.FitQuadraticZero">[docs]</a><span class="k">class</span> <span class="nc">FitQuadraticZero</span><span class="p">(</span><span class="n">Fit</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;:math:`mx`&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">popt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+        <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">x</span>
+
+        <span class="n">Fit</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">popt</span><span class="p">,</span> <span class="n">yerr</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">popt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+<div class="viewcode-block" id="FitQuadraticZero.derivative"><a class="viewcode-back" href="../modules/fit.html#fit.FitQuadraticZero.derivative">[docs]</a>    <span class="k">def</span> <span class="nf">derivative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;analytic derivative of function&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span>
+</div>
+<div class="viewcode-block" id="FitQuadraticZero.summary"><a class="viewcode-back" href="../modules/fit.html#fit.FitQuadraticZero.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;create a summary :py:obj:`dict`&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">,</span> <span class="n">r2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">r2</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Adam Gagorik.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

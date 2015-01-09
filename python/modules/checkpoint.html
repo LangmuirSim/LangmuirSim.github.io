@@ -1,0 +1,374 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>checkpoint &mdash; Langmuir Python 2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <link rel="top" title="Langmuir Python 2.0 documentation" href="../index.html" />
+    <link rel="next" title="parameters" href="parameters.html" />
+    <link rel="prev" title="find" href="find.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="parameters.html" title="parameters"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="find.html" title="find"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="find.html"
+                        title="previous chapter">find</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="parameters.html"
+                        title="next chapter">parameters</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../sources/modules/checkpoint.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-checkpoint">
+<span id="checkpoint"></span><h1>checkpoint<a class="headerlink" href="#module-checkpoint" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Functions for opening, editing, and saving Langmuir checkpoint files.</p>
+</div>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+<dl class="class">
+<dt id="checkpoint.CheckPoint">
+<em class="property">class </em><tt class="descclassname">checkpoint.</tt><tt class="descname">CheckPoint</tt><big>(</big><em>handle=None</em><big>)</big><a class="reference internal" href="../modules/checkpoint.html#CheckPoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#checkpoint.CheckPoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class to open Langmuir checkpoint files.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="39%" />
+<col width="61%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head"><strong>Attribute</strong></th>
+<th class="head"><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="xref py py-attr docutils literal"><span class="pre">electrons</span></tt></td>
+<td><a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">list</span></tt></a> of <a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">int</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-attr docutils literal"><span class="pre">holes</span></tt></td>
+<td><a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">list</span></tt></a> of <a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">int</span></tt></a></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-attr docutils literal"><span class="pre">traps</span></tt></td>
+<td><a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">list</span></tt></a> of <a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">int</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-attr docutils literal"><span class="pre">defects</span></tt></td>
+<td><a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">list</span></tt></a> of <a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">int</span></tt></a></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-attr docutils literal"><span class="pre">trapPotentials</span></tt></td>
+<td><a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">list</span></tt></a> of <a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">float</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-attr docutils literal"><span class="pre">fluxState</span></tt></td>
+<td><a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">list</span></tt></a> of <a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">int</span></tt></a></td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-attr docutils literal"><span class="pre">randomState</span></tt></td>
+<td><a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">list</span></tt></a> of <a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">int</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="parameters.html#module-parameters" title="parameters"><tt class="xref py py-attr docutils literal"><span class="pre">parameters</span></tt></a></td>
+<td><tt class="xref py py-class docutils literal"><span class="pre">Parameters</span></tt></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>handle</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; filename or file object; Can be <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a>.</td>
+</tr>
+</tbody>
+</table>
+<dl class="classmethod">
+<dt id="checkpoint.CheckPoint.from_grid">
+<em class="property">classmethod </em><tt class="descname">from_grid</tt><big>(</big><em>grid</em><big>)</big><a class="reference internal" href="../modules/checkpoint.html#CheckPoint.from_grid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#checkpoint.CheckPoint.from_grid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create checkpoint file from grid object.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="checkpoint.CheckPoint.from_image">
+<em class="property">classmethod </em><tt class="descname">from_image</tt><big>(</big><em>image</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/checkpoint.html#CheckPoint.from_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#checkpoint.CheckPoint.from_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create checkpoint from image file.  You can also pass another
+checkpoint object, a dictionary, or key=value pairs.  The parameters
+will be updated accordingly.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>image</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; name of image file</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="checkpoint.CheckPoint.load">
+<tt class="descname">load</tt><big>(</big><em>handle</em><big>)</big><a class="reference internal" href="../modules/checkpoint.html#CheckPoint.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#checkpoint.CheckPoint.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load checkpoint from a file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>handle</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; filename or file object</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">chk</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">checkpoint</span><span class="o">.</span><span class="n">CheckPoint</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chk</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">&#39;out.chk&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="checkpoint.CheckPoint.save">
+<tt class="descname">save</tt><big>(</big><em>handle</em><big>)</big><a class="reference internal" href="../modules/checkpoint.html#CheckPoint.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#checkpoint.CheckPoint.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save checkpoint to a file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>handle</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; filename or file object</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">chk</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">checkpoint</span><span class="o">.</span><span class="n">CheckPoint</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chk</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s">&#39;sim.inp&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="checkpoint.CheckPoint.clear">
+<tt class="descname">clear</tt><big>(</big><big>)</big><a class="reference internal" href="../modules/checkpoint.html#CheckPoint.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#checkpoint.CheckPoint.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forget all stored information.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">chk</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">checkpoint</span><span class="o">.</span><span class="n">CheckPoint</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chk</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="checkpoint.CheckPoint.reset">
+<tt class="descname">reset</tt><big>(</big><em>keep_elecs=False</em>, <em>keep_holes=False</em><big>)</big><a class="reference internal" href="../modules/checkpoint.html#CheckPoint.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#checkpoint.CheckPoint.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset a simulation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>keep_elecs</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; do not delete electrons</li>
+<li><strong>keep_holes</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; do not delete holes</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="checkpoint.CheckPoint.update">
+<tt class="descname">update</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/checkpoint.html#CheckPoint.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#checkpoint.CheckPoint.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update parameters.  You can pass other checkpoint objects, python
+dictionaries, or key=value pairs.  Since Langmuir uses dots in
+parameter names, underscores are replaced by dots in they key=value
+pairs.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="checkpoint.CheckPoint.has_key">
+<tt class="descname">has_key</tt><big>(</big><em>key</em><big>)</big><a class="reference internal" href="../modules/checkpoint.html#CheckPoint.has_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#checkpoint.CheckPoint.has_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if key exists in parameters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if key found</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">bool</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="checkpoint.CheckPoint.fix_traps">
+<tt class="descname">fix_traps</tt><big>(</big><big>)</big><a class="reference internal" href="../modules/checkpoint.html#CheckPoint.fix_traps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#checkpoint.CheckPoint.fix_traps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check trap parameter validity.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">chk</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">checkpoint</span><span class="o">.</span><span class="n">CheckPoint</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chk</span><span class="o">.</span><span class="n">fix_traps</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="checkpoint.load">
+<tt class="descclassname">checkpoint.</tt><tt class="descname">load</tt><big>(</big><em>handle</em><big>)</big><a class="reference internal" href="../modules/checkpoint.html#load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#checkpoint.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load checkpoint file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>handle</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; filename or file object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">checkpoint object</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">Checkpoint</span></tt></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">chk</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">checkpoint</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">&#39;out.chk&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="checkpoint.load_last">
+<tt class="descclassname">checkpoint.</tt><tt class="descname">load_last</tt><big>(</big><em>work</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/checkpoint.html#load_last"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#checkpoint.load_last" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the last checkpoint file found in the working directory.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>work</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; directory to look in</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">checkpoint object</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><tt class="xref py py-class docutils literal"><span class="pre">Checkpoint</span></tt></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">chk</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">checkpoint</span><span class="o">.</span><span class="n">load_last</span><span class="p">(</span><span class="s">&#39;/home/adam/simulations&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="checkpoint.compare">
+<tt class="descclassname">checkpoint.</tt><tt class="descname">compare</tt><big>(</big><em>chk1</em>, <em>chk2</em><big>)</big><a class="reference internal" href="../modules/checkpoint.html#compare"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#checkpoint.compare" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rigorously compare to checkpoint files.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>chk1</strong> (<em>lm.checkpoint.CheckPoint</em>) &#8211; checkpoint object 1</li>
+<li><strong>chk2</strong> (<em>lm.checkpoint.CheckPoint</em>) &#8211; checkpoint object 1</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a dictionary of results</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://docs.python.org/library/collections.html#collections.OrderedDict" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">collections.OrderedDict</span></tt></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="common.html#common.compare_dicts" title="common.compare_dicts"><tt class="xref py py-meth docutils literal"><span class="pre">common.compare_dicts()</span></tt></a>
+<a class="reference internal" href="common.html#common.compare_lists" title="common.compare_lists"><tt class="xref py py-meth docutils literal"><span class="pre">common.compare_lists()</span></tt></a></p>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="parameters.html" title="parameters"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="find.html" title="find"
+             >previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Adam Gagorik.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

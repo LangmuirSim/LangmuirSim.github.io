@@ -1,0 +1,591 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>checkpoint &mdash; Langmuir Python 2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <link rel="top" title="Langmuir Python 2.0 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for checkpoint</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. note::</span>
+<span class="sd">    Functions for opening, editing, and saving Langmuir checkpoint files.</span>
+
+<span class="sd">.. moduleauthor:: Adam Gagorik &lt;adam.gagorik@gmail.com&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">langmuir</span> <span class="kn">as</span> <span class="nn">lm</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">scipy.ndimage</span> <span class="kn">as</span> <span class="nn">ndimage</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">ndimage</span> <span class="o">=</span> <span class="bp">None</span>
+
+
+<div class="viewcode-block" id="CheckPoint"><a class="viewcode-back" href="../modules/checkpoint.html#checkpoint.CheckPoint">[docs]</a><span class="k">class</span> <span class="nc">CheckPoint</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to open Langmuir checkpoint files.</span>
+
+<span class="sd">    ========================= =======================================</span>
+<span class="sd">    **Attribute**             **Description**</span>
+<span class="sd">    ========================= =======================================</span>
+<span class="sd">    :py:attr:`electrons`      :py:obj:`list` of :py:obj:`int`</span>
+<span class="sd">    :py:attr:`holes`          :py:obj:`list` of :py:obj:`int`</span>
+<span class="sd">    :py:attr:`traps`          :py:obj:`list` of :py:obj:`int`</span>
+<span class="sd">    :py:attr:`defects`        :py:obj:`list` of :py:obj:`int`</span>
+<span class="sd">    :py:attr:`trapPotentials` :py:obj:`list` of :py:obj:`float`</span>
+<span class="sd">    :py:attr:`fluxState`      :py:obj:`list` of :py:obj:`int`</span>
+<span class="sd">    :py:attr:`randomState`    :py:obj:`list` of :py:obj:`int`</span>
+<span class="sd">    :py:attr:`parameters`     :class:`Parameters`</span>
+<span class="sd">    ========================= =======================================</span>
+
+<span class="sd">    :param handle: filename or file object; Can be :py:obj:`None`.</span>
+<span class="sd">    :type handle: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handle</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_electrons</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_holes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_traps</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_defects</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_potentials</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_flux_state</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_random_state</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">Parameters</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">handle</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="CheckPoint.from_grid"><a class="viewcode-back" href="../modules/checkpoint.html#checkpoint.CheckPoint.from_grid">[docs]</a>    <span class="k">def</span> <span class="nf">from_grid</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">grid</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create checkpoint file from grid object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">chk</span> <span class="o">=</span> <span class="n">cls</span><span class="p">()</span>
+        <span class="n">chk</span><span class="p">[</span><span class="s">&#39;grid.x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">nx</span>
+        <span class="n">chk</span><span class="p">[</span><span class="s">&#39;grid.y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">ny</span>
+        <span class="n">chk</span><span class="p">[</span><span class="s">&#39;grid.z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">nz</span>
+        <span class="k">return</span> <span class="n">chk</span>
+</div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="CheckPoint.from_image"><a class="viewcode-back" href="../modules/checkpoint.html#checkpoint.CheckPoint.from_image">[docs]</a>    <span class="k">def</span> <span class="nf">from_image</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create checkpoint from image file.  You can also pass another</span>
+<span class="sd">        checkpoint object, a dictionary, or key=value pairs.  The parameters</span>
+<span class="sd">        will be updated accordingly.</span>
+
+<span class="sd">        :param image: name of image file</span>
+
+<span class="sd">        :type image: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="n">ndimage</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">flatten</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rot90</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">surface</span><span class="o">.</span><span class="n">linear_mapping</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">surface</span><span class="o">.</span><span class="n">threshold</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+        <span class="n">xsize</span><span class="p">,</span> <span class="n">ysize</span><span class="p">,</span> <span class="n">zsize</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">Grid</span><span class="p">(</span><span class="n">xsize</span><span class="p">,</span> <span class="n">ysize</span><span class="p">,</span> <span class="n">zsize</span><span class="p">)</span>
+
+        <span class="n">chk</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">checkpoint</span><span class="o">.</span><span class="n">CheckPoint</span><span class="o">.</span><span class="n">from_grid</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+
+        <span class="n">chk</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">traps</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">IndexMapper</span><span class="o">.</span><span class="n">map_mesh</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">chk</span><span class="o">.</span><span class="n">traps</span> <span class="o">=</span> <span class="n">traps</span>
+
+        <span class="k">return</span> <span class="n">chk</span>
+</div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">electrons</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_electrons</span>
+
+    <span class="nd">@electrons.setter</span>
+    <span class="k">def</span> <span class="nf">electrons</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_electrons</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">holes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_holes</span>
+
+    <span class="nd">@holes.setter</span>
+    <span class="k">def</span> <span class="nf">holes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_holes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">traps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traps</span>
+
+    <span class="nd">@traps.setter</span>
+    <span class="k">def</span> <span class="nf">traps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_traps</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fix_traps</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">defects</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_defects</span>
+
+    <span class="nd">@defects.setter</span>
+    <span class="k">def</span> <span class="nf">defects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_defects</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">potentials</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_potentials</span>
+
+    <span class="nd">@potentials.setter</span>
+    <span class="k">def</span> <span class="nf">potentials</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_potentials</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">flux_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flux_state</span>
+
+    <span class="nd">@flux_state.setter</span>
+    <span class="k">def</span> <span class="nf">flux_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_flux_state</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">random_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_random_state</span>
+
+    <span class="nd">@random_state.setter</span>
+    <span class="k">def</span> <span class="nf">random_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_random_state</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span>
+
+<div class="viewcode-block" id="CheckPoint.load"><a class="viewcode-back" href="../modules/checkpoint.html#checkpoint.CheckPoint.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handle</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load checkpoint from a file.</span>
+
+<span class="sd">        :param handle: filename or file object</span>
+<span class="sd">        :type handle: str</span>
+
+<span class="sd">        &gt;&gt;&gt; chk = lm.checkpoint.CheckPoint()</span>
+<span class="sd">        &gt;&gt;&gt; chk.load(&#39;out.chk&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">handle</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">zhandle</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">handle</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="k">while</span> <span class="n">line</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="s">&#39;[Electrons]&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_electrons</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_values</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">line</span> <span class="o">==</span> <span class="s">&#39;[Holes]&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_holes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_values</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">line</span> <span class="o">==</span> <span class="s">&#39;[Defects]&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_defects</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_values</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">line</span> <span class="o">==</span> <span class="s">&#39;[Traps]&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_traps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_values</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">line</span> <span class="o">==</span> <span class="s">&#39;[TrapPotentials]&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_potentials</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_values</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">line</span> <span class="o">==</span> <span class="s">&#39;[FluxState]&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_flux_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_values</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">line</span> <span class="o">==</span> <span class="s">&#39;[RandomState]&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_random_state</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span>
+                                      <span class="n">handle</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+            <span class="k">elif</span> <span class="n">line</span> <span class="o">==</span> <span class="s">&#39;[Parameters]&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&#39;invalid section:</span><span class="se">\n\t</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">line</span><span class="p">)</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">handle</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="n">handle</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="CheckPoint.save"><a class="viewcode-back" href="../modules/checkpoint.html#checkpoint.CheckPoint.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handle</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save checkpoint to a file.</span>
+
+<span class="sd">        :param handle: filename or file object</span>
+<span class="sd">        :type handle: str</span>
+
+<span class="sd">        &gt;&gt;&gt; chk = lm.checkpoint.CheckPoint()</span>
+<span class="sd">        &gt;&gt;&gt; chk.save(&#39;sim.inp&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">handle</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">zhandle</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s">&#39;wb&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_electrons</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_save_label</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s">&#39;Electrons&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_save_values</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_electrons</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_holes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_save_label</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s">&#39;Holes&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_save_values</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_holes</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_defects</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_save_label</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s">&#39;Defects&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_save_values</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_defects</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traps</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_save_label</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s">&#39;Traps&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_save_values</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traps</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_potentials</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_save_label</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s">&#39;TrapPotentials&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_save_values</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_potentials</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flux_state</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_save_label</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s">&#39;FluxState&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_save_values</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flux_state</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_random_state</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_save_label</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s">&#39;RandomState&#39;</span><span class="p">)</span>
+            <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">handle</span><span class="p">,</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="s">&#39;</span><span class="si">%d</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_random_state</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+        <span class="n">handle</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="CheckPoint.clear"><a class="viewcode-back" href="../modules/checkpoint.html#checkpoint.CheckPoint.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Forget all stored information.</span>
+
+<span class="sd">        &gt;&gt;&gt; chk = lm.checkpoint.CheckPoint()</span>
+<span class="sd">        &gt;&gt;&gt; chk.clear()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_electrons</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_holes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_traps</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_defects</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_potentials</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_flux_state</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_random_state</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="CheckPoint.reset"><a class="viewcode-back" href="../modules/checkpoint.html#checkpoint.CheckPoint.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keep_elecs</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">keep_holes</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reset a simulation.</span>
+
+<span class="sd">        :param keep_elecs: do not delete electrons</span>
+<span class="sd">        :param keep_holes: do not delete holes</span>
+
+<span class="sd">        :type keep_elecs: bool</span>
+<span class="sd">        :type keep_holes: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">keep_elecs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_electrons</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">keep_holes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_holes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;current.step&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;random.seed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_random_state</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_flux_state</span> <span class="o">=</span> <span class="p">[]</span>
+</div>
+<div class="viewcode-block" id="CheckPoint.update"><a class="viewcode-back" href="../modules/checkpoint.html#checkpoint.CheckPoint.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update parameters.  You can pass other checkpoint objects, python</span>
+<span class="sd">        dictionaries, or key=value pairs.  Since Langmuir uses dots in</span>
+<span class="sd">        parameter names, underscores are replaced by dots in they key=value</span>
+<span class="sd">        pairs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
+</div>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_load_values</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">type_</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read lines from handle and convert them to type_.</span>
+
+<span class="sd">        :param handle: file handle</span>
+<span class="sd">        :param type_: type</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">handle</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">type_</span><span class="p">(</span><span class="n">handle</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">count</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">values</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_save_values</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write values to handle.</span>
+
+<span class="sd">        :param handle: file handle</span>
+<span class="sd">        :param values: list of values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">handle</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+            <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">handle</span><span class="p">,</span> <span class="n">v</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_save_label</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write section header to handle.</span>
+
+<span class="sd">        :param handle: fileane</span>
+<span class="sd">        :param label: section header</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">handle</span><span class="p">,</span> <span class="s">&#39;[</span><span class="si">%s</span><span class="s">]&#39;</span> <span class="o">%</span> <span class="n">label</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s">&#39;[Electrons]     : </span><span class="si">%d</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_electrons</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s">&#39;[Holes]         : </span><span class="si">%d</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_holes</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s">&#39;[Traps]         : </span><span class="si">%d</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_traps</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s">&#39;[Defects]       : </span><span class="si">%d</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_defects</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s">&#39;[TrapPotenials] : </span><span class="si">%d</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_potentials</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s">&#39;[FluxState]     : </span><span class="si">%d</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_flux_state</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s">&#39;[RandomState]   : </span><span class="si">%d</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_random_state</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="s">&#39;[Parameters]    : </span><span class="si">%d</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">s</span>
+
+<div class="viewcode-block" id="CheckPoint.has_key"><a class="viewcode-back" href="../modules/checkpoint.html#checkpoint.CheckPoint.has_key">[docs]</a>    <span class="k">def</span> <span class="nf">has_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if key exists in parameters.</span>
+
+<span class="sd">        :return: True if key found</span>
+<span class="sd">        :rtype: :py:obj:`bool`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span>
+</div>
+<div class="viewcode-block" id="CheckPoint.fix_traps"><a class="viewcode-back" href="../modules/checkpoint.html#checkpoint.CheckPoint.fix_traps">[docs]</a>    <span class="k">def</span> <span class="nf">fix_traps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check trap parameter validity.</span>
+
+<span class="sd">        &gt;&gt;&gt; chk = lm.checkpoint.CheckPoint()</span>
+<span class="sd">        &gt;&gt;&gt; chk.fix_traps()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traps</span><span class="p">:</span>
+
+            <span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_traps</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_potentials</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_potentials</span><span class="p">)</span> <span class="o">==</span> <span class="n">size</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&#39;number of traps and potentials &#39;</span> <span class="o">+</span>
+                                       <span class="s">&#39;do not agree&#39;</span><span class="p">)</span>
+
+                <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_potentials</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+                <span class="n">count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_potentials</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">count</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_potentials</span><span class="p">):</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="s">&#39;trap.potential&#39;</span><span class="p">]</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;grid.x&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">[</span><span class="s">&#39;grid.x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;grid.y&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">[</span><span class="s">&#39;grid.y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;grid.z&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">[</span><span class="s">&#39;grid.z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+            <span class="n">volume</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="s">&#39;grid.x&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="p">[</span><span class="s">&#39;grid.y&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="p">[</span><span class="s">&#39;grid.z&#39;</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">size</span> <span class="o">&lt;=</span> <span class="n">volume</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&#39;number of traps exceeds volume: </span><span class="si">%d</span><span class="s"> &gt; </span><span class="si">%d</span><span class="s">&#39;</span>
+                                   <span class="o">%</span> <span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">volume</span><span class="p">))</span>
+
+            <span class="n">percentage</span> <span class="o">=</span> <span class="p">(</span><span class="n">size</span> <span class="o">+</span> <span class="mf">0.25</span><span class="p">)</span> <span class="o">/</span> <span class="n">volume</span>
+
+            <span class="bp">self</span><span class="p">[</span><span class="s">&#39;trap.percentage&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">percentage</span>
+            <span class="bp">self</span><span class="p">[</span><span class="s">&#39;seed.percentage&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="p">[</span><span class="s">&#39;trap.potential&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_potentials</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="bp">self</span><span class="p">[</span><span class="s">&#39;trap.potential&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+</div>
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Access checkpoint attribute or parameters by key</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Access checkpoint attribute or parameters by key</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+</div>
+<div class="viewcode-block" id="load"><a class="viewcode-back" href="../modules/checkpoint.html#checkpoint.load">[docs]</a><span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">handle</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load checkpoint file.</span>
+
+<span class="sd">    :param handle: filename or file object</span>
+<span class="sd">    :type handle: str</span>
+
+<span class="sd">    :return: checkpoint object</span>
+<span class="sd">    :rtype: :py:class:`Checkpoint`</span>
+
+<span class="sd">    &gt;&gt;&gt; chk = lm.checkpoint.load(&#39;out.chk&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">CheckPoint</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">handle</span>
+    <span class="k">return</span> <span class="n">CheckPoint</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="load_last"><a class="viewcode-back" href="../modules/checkpoint.html#checkpoint.load_last">[docs]</a><span class="k">def</span> <span class="nf">load_last</span><span class="p">(</span><span class="n">work</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load the last checkpoint file found in the working directory.</span>
+
+<span class="sd">    :param work: directory to look in</span>
+<span class="sd">    :type work: str</span>
+
+<span class="sd">    :return: checkpoint object</span>
+<span class="sd">    :rtype: :py:class:`Checkpoint`</span>
+
+<span class="sd">    &gt;&gt;&gt; chk = lm.checkpoint.load_last(&#39;/home/adam/simulations&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">at_least_one</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="n">last</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">find</span><span class="o">.</span><span class="n">chks</span><span class="p">(</span><span class="n">work</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">load</span><span class="p">(</span><span class="n">last</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="compare"><a class="viewcode-back" href="../modules/checkpoint.html#checkpoint.compare">[docs]</a><span class="k">def</span> <span class="nf">compare</span><span class="p">(</span><span class="n">chk1</span><span class="p">,</span> <span class="n">chk2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Rigorously compare to checkpoint files.</span>
+
+<span class="sd">    :param chk1: checkpoint object 1</span>
+<span class="sd">    :param chk2: checkpoint object 1</span>
+
+<span class="sd">    :type chk1: lm.checkpoint.CheckPoint</span>
+<span class="sd">    :type chk2: lm.checkpoint.CheckPoint</span>
+
+<span class="sd">    :returns: a dictionary of results</span>
+<span class="sd">    :rtype: :py:class:`collections.OrderedDict`</span>
+
+<span class="sd">    .. seealso::</span>
+<span class="sd">        :py:meth:`common.compare_dicts`</span>
+<span class="sd">        :py:meth:`common.compare_lists`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+
+    <span class="n">results</span><span class="p">[</span><span class="s">&#39;parameters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">compare_dicts</span><span class="p">(</span>
+        <span class="n">chk1</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span> <span class="n">chk2</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+
+    <span class="n">results</span><span class="p">[</span><span class="s">&#39;elecs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">compare_lists</span><span class="p">(</span>
+        <span class="n">chk1</span><span class="o">.</span><span class="n">electrons</span><span class="p">,</span> <span class="n">chk2</span><span class="o">.</span><span class="n">electrons</span><span class="p">)</span>
+
+    <span class="n">results</span><span class="p">[</span><span class="s">&#39;holes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">compare_lists</span><span class="p">(</span>
+        <span class="n">chk1</span><span class="o">.</span><span class="n">holes</span><span class="p">,</span> <span class="n">chk2</span><span class="o">.</span><span class="n">holes</span><span class="p">)</span>
+
+    <span class="n">results</span><span class="p">[</span><span class="s">&#39;defects&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">compare_lists</span><span class="p">(</span>
+        <span class="n">chk1</span><span class="o">.</span><span class="n">defects</span><span class="p">,</span> <span class="n">chk2</span><span class="o">.</span><span class="n">defects</span><span class="p">)</span>
+
+    <span class="n">results</span><span class="p">[</span><span class="s">&#39;traps&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">compare_lists</span><span class="p">(</span>
+        <span class="n">chk1</span><span class="o">.</span><span class="n">traps</span><span class="p">,</span> <span class="n">chk2</span><span class="o">.</span><span class="n">traps</span><span class="p">)</span>
+
+    <span class="n">results</span><span class="p">[</span><span class="s">&#39;potentials&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">compare_lists</span><span class="p">(</span>
+        <span class="n">chk1</span><span class="o">.</span><span class="n">potentials</span><span class="p">,</span> <span class="n">chk2</span><span class="o">.</span><span class="n">potentials</span><span class="p">)</span>
+
+    <span class="n">results</span><span class="p">[</span><span class="s">&#39;flux&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">compare_lists</span><span class="p">(</span>
+        <span class="n">chk1</span><span class="o">.</span><span class="n">flux_state</span><span class="p">,</span> <span class="n">chk2</span><span class="o">.</span><span class="n">flux_state</span><span class="p">)</span>
+
+    <span class="n">results</span><span class="p">[</span><span class="s">&#39;random&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">compare_lists</span><span class="p">(</span>
+        <span class="n">chk1</span><span class="o">.</span><span class="n">random_state</span><span class="p">,</span> <span class="n">chk2</span><span class="o">.</span><span class="n">random_state</span><span class="p">)</span>
+
+    <span class="n">valid</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">sub_results</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sub_results</span><span class="p">[</span><span class="s">&#39;valid&#39;</span><span class="p">]:</span>
+            <span class="n">valid</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">results</span><span class="p">[</span><span class="s">&#39;valid&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">valid</span>
+    <span class="n">results</span><span class="p">[</span><span class="s">&#39;invalid&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">valid</span>
+
+    <span class="k">return</span> <span class="n">results</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Adam Gagorik.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>parameters &mdash; Langmuir Python 2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <link rel="top" title="Langmuir Python 2.0 documentation" href="../index.html" />
+    <link rel="next" title="datfile" href="datfile.html" />
+    <link rel="prev" title="checkpoint" href="checkpoint.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="datfile.html" title="datfile"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="checkpoint.html" title="checkpoint"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="checkpoint.html"
+                        title="previous chapter">checkpoint</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="datfile.html"
+                        title="next chapter">datfile</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../sources/modules/parameters.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-parameters">
+<span id="parameters"></span><h1>parameters<a class="headerlink" href="#module-parameters" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Functions for opening, editing, and saving Langmuir input files.</p>
+</div>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+<dl class="class">
+<dt id="parameters.Parameter">
+<em class="property">class </em><tt class="descclassname">parameters.</tt><tt class="descname">Parameter</tt><a class="headerlink" href="#parameters.Parameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parameter(key, pytype, default, units, fmt)</p>
+<dl class="attribute">
+<dt id="parameters.Parameter.default">
+<tt class="descname">default</tt><a class="headerlink" href="#parameters.Parameter.default" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="parameters.Parameter.fmt">
+<tt class="descname">fmt</tt><a class="headerlink" href="#parameters.Parameter.fmt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 4</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="parameters.Parameter.key">
+<tt class="descname">key</tt><a class="headerlink" href="#parameters.Parameter.key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="parameters.Parameter.pytype">
+<tt class="descname">pytype</tt><a class="headerlink" href="#parameters.Parameter.pytype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="parameters.Parameter.units">
+<tt class="descname">units</tt><a class="headerlink" href="#parameters.Parameter.units" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="parameters.Parameters">
+<em class="property">class </em><tt class="descclassname">parameters.</tt><tt class="descname">Parameters</tt><big>(</big><em>handle=None</em><big>)</big><a class="reference internal" href="../modules/parameters.html#Parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#parameters.Parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class to store Langmuir simulation parameters.</p>
+<p>Create Parameters instance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>handle</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; filename or file object</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">parm</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">Parameters</span><span class="p">(</span><span class="s">&#39;out.parm&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="parameters.Parameters.set_defaults">
+<tt class="descname">set_defaults</tt><big>(</big><big>)</big><a class="reference internal" href="../modules/parameters.html#Parameters.set_defaults"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#parameters.Parameters.set_defaults" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set parameters to default values.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">parm</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">Parameters</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parm</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="parameters.Parameters.load">
+<tt class="descname">load</tt><big>(</big><em>handle</em><big>)</big><a class="reference internal" href="../modules/parameters.html#Parameters.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#parameters.Parameters.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load parameters from a file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>handle</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; filename or file object</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">parm</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">Parameters</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parm</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">&#39;out.parm&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="parameters.Parameters.save">
+<tt class="descname">save</tt><big>(</big><em>handle</em><big>)</big><a class="reference internal" href="../modules/parameters.html#Parameters.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#parameters.Parameters.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save parameters to a file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>handle</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; filename or file object</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">parm</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">Parameters</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parm</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s">&#39;sim.inp&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="parameters.Parameters.to_ndarray">
+<tt class="descname">to_ndarray</tt><big>(</big><big>)</big><a class="reference internal" href="../modules/parameters.html#Parameters.to_ndarray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#parameters.Parameters.to_ndarray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert parameters to a numpy array.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="parameters.Parameters.to_series">
+<tt class="descname">to_series</tt><big>(</big><big>)</big><a class="reference internal" href="../modules/parameters.html#Parameters.to_series"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#parameters.Parameters.to_series" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert parameters to a pandas series.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="parameters.Parameters.to_dict">
+<tt class="descname">to_dict</tt><big>(</big><big>)</big><a class="reference internal" href="../modules/parameters.html#Parameters.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#parameters.Parameters.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert to simple python dict.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="parameters.load">
+<tt class="descclassname">parameters.</tt><tt class="descname">load</tt><big>(</big><em>handle</em><big>)</big><a class="reference internal" href="../modules/parameters.html#load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#parameters.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create Parameters object from file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>handle</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; filename or file object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="parameters.compare">
+<tt class="descclassname">parameters.</tt><tt class="descname">compare</tt><big>(</big><em>parm1</em>, <em>parm2</em><big>)</big><a class="reference internal" href="../modules/parameters.html#compare"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#parameters.compare" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compare two Parameter objects.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="datfile.html" title="datfile"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="checkpoint.html" title="checkpoint"
+             >previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Adam Gagorik.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

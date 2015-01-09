@@ -1,0 +1,282 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>analyze &mdash; Langmuir Python 2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <link rel="top" title="Langmuir Python 2.0 documentation" href="../index.html" />
+    <link rel="next" title="ivcurve" href="ivcurve.html" />
+    <link rel="prev" title="grid" href="grid.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="ivcurve.html" title="ivcurve"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="grid.html" title="grid"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="grid.html"
+                        title="previous chapter">grid</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="ivcurve.html"
+                        title="next chapter">ivcurve</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../sources/modules/analyze.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-analyze">
+<span id="analyze"></span><h1>analyze<a class="headerlink" href="#module-analyze" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Functions for analyzing Langmuir output.</p>
+<ol class="last arabic simple">
+<li>Combine each part of a simulation with <a class="reference internal" href="../scripts/analyze.html#module-combine" title="combine"><tt class="xref py py-func docutils literal"><span class="pre">combine()</span></tt></a></li>
+<li>Calculate the current with <a class="reference internal" href="../scripts/analyze.html#module-calculate" title="calculate"><tt class="xref py py-func docutils literal"><span class="pre">calculate()</span></tt></a></li>
+<li>Extract the result with <a class="reference internal" href="#analyze.equilibrate" title="analyze.equilibrate"><tt class="xref py py-func docutils literal"><span class="pre">equilibrate()</span></tt></a></li>
+<li>Average over runs with <a class="reference internal" href="#analyze.create_panel" title="analyze.create_panel"><tt class="xref py py-func docutils literal"><span class="pre">create_panel()</span></tt></a></li>
+</ol>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<ol class="last arabic simple">
+<li><a class="reference download internal" href="../downloads/combine.py"><tt class="xref download docutils literal"><span class="pre">combine.py</span></tt></a></li>
+<li><a class="reference download internal" href="../downloads/gather.py"><tt class="xref download docutils literal"><span class="pre">gather.py</span></tt></a></li>
+</ol>
+</div>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+<dl class="function">
+<dt id="analyze.create_panel">
+<tt class="descclassname">analyze.</tt><tt class="descname">create_panel</tt><big>(</big><em>frames</em>, <em>index=None</em><big>)</big><a class="reference internal" href="../modules/analyze.html#create_panel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analyze.create_panel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turn a list of <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v0.15.2)"><tt class="xref py py-class docutils literal"><span class="pre">pandas.DataFrame</span></tt></a> into a
+<a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/generated/pandas.Panel.html#pandas.Panel" title="(in pandas v0.15.2)"><tt class="xref py py-class docutils literal"><span class="pre">pandas.Panel</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>frames</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; list of <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v0.15.2)"><tt class="xref py py-class docutils literal"><span class="pre">pandas.DataFrame</span></tt></a></li>
+<li><strong>index</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; major axis labels</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">data1</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">load_pkl</span><span class="p">(</span><span class="s">&#39;run.0/calculated.pkl.gz&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data2</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">load_pkl</span><span class="p">(</span><span class="s">&#39;run.1/calculated.pkl.gz&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">panel</span> <span class="o">=</span> <span class="n">create_panel</span><span class="p">([</span><span class="n">data1</span><span class="p">,</span> <span class="n">data2</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="analyze.combine">
+<tt class="descclassname">analyze.</tt><tt class="descname">combine</tt><big>(</big><em>objs</em><big>)</big><a class="reference internal" href="../modules/analyze.html#combine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analyze.combine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combine a set of panda&#8217;s DataFrames into a single DataFrame.  The idea
+is that each DataFrame holds data from a part of some series of data.
+The index of each part should be the <em>simulation:time</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>objs</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; list of <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v0.15.2)"><tt class="xref py py-class docutils literal"><span class="pre">pandas.DataFrame</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">data1</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">datfile</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">&#39;part.0/out.dat.gz&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data2</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">datfile</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">&#39;part.1/out.dat.gz&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">combined</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">analyze</span><span class="o">.</span><span class="n">combine</span><span class="p">([</span><span class="n">data1</span><span class="p">,</span> <span class="n">data2</span><span class="p">])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="analyze.calculate">
+<tt class="descclassname">analyze.</tt><tt class="descname">calculate</tt><big>(</big><em>obj</em><big>)</big><a class="reference internal" href="../modules/analyze.html#calculate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analyze.calculate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute all flux statistics.  Calculates current using, for example,
+the number of carriers exiting a drain.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>obj</strong> (<a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v0.15.2)"><tt class="xref py py-class docutils literal"><span class="pre">pandas.DataFrame</span></tt></a>) &#8211; data</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">load_pkl</span><span class="p">(</span><span class="s">&#39;combined.pkl.gz&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">analyze</span><span class="o">.</span><span class="n">calculate</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="analyze.equilibrate">
+<tt class="descclassname">analyze.</tt><tt class="descname">equilibrate</tt><big>(</big><em>obj</em>, <em>last</em>, <em>equil=None</em><big>)</big><a class="reference internal" href="../modules/analyze.html#equilibrate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analyze.equilibrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the difference between two steps.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>obj</strong> (<a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v0.15.2)"><tt class="xref py py-class docutils literal"><span class="pre">pandas.DataFrame</span></tt></a>) &#8211; data</li>
+<li><strong>last</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; index of last step</li>
+<li><strong>equil</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; index of first step</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">load_pkl</span><span class="p">(</span><span class="s">&#39;combined.pkl.gz&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">analyze</span><span class="o">.</span><span class="n">equilibrate</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">last</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">equil</span><span class="o">=-</span><span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="analyze.Stats">
+<em class="property">class </em><tt class="descclassname">analyze.</tt><tt class="descname">Stats</tt><big>(</big><em>array</em>, <em>prefix=''</em><big>)</big><a class="reference internal" href="../modules/analyze.html#Stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analyze.Stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute various statistics of an array like object.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="31%" />
+<col width="69%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Attr</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><strong>max</strong></td>
+<td>max</td>
+</tr>
+<tr class="row-odd"><td><strong>min</strong></td>
+<td>min</td>
+</tr>
+<tr class="row-even"><td><strong>rng</strong></td>
+<td>range</td>
+</tr>
+<tr class="row-odd"><td><strong>avg</strong></td>
+<td>average</td>
+</tr>
+<tr class="row-even"><td><strong>std</strong></td>
+<td>standard deviation</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Stats</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>array</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; array like object</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="analyze.Stats.to_dict">
+<tt class="descname">to_dict</tt><big>(</big><big>)</big><a class="reference internal" href="../modules/analyze.html#Stats.to_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#analyze.Stats.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get summary of stats.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="ivcurve.html" title="ivcurve"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="grid.html" title="grid"
+             >previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Adam Gagorik.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

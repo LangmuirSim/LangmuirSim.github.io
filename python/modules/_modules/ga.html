@@ -1,0 +1,536 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ga &mdash; Langmuir Python 2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <link rel="top" title="Langmuir Python 2.0 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for ga</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">ga.py</span>
+<span class="sd">=====</span>
+
+<span class="sd">.. argparse::</span>
+<span class="sd">    :module: ga</span>
+<span class="sd">    :func: create_parser</span>
+<span class="sd">    :prog: ga.py</span>
+
+<span class="sd">.. moduleauthor:: Geoff Hutchison &lt;geoffh@pitt.edu&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">heapq</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">math</span>
+
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">ndimage</span><span class="p">,</span> <span class="n">misc</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="c"># our code</span>
+<span class="kn">import</span> <span class="nn">ga_analyze</span> <span class="kn">as</span> <span class="nn">analyze</span>
+<span class="kn">import</span> <span class="nn">modify</span>
+
+<span class="c"># logging</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
+    <span class="n">format</span><span class="o">=</span><span class="s">&#39;[</span><span class="si">%(asctime)s</span><span class="s">][proc=</span><span class="si">%(process)5d</span><span class="s">][</span><span class="si">%(levelname)-5s</span><span class="s">]: </span><span class="si">%(message)s</span><span class="s">&#39;</span><span class="p">)</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">captureWarnings</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">debug</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+
+<span class="n">desc</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">Genetic algorithm design of 2D morphologies.</span>
+<span class="s">&quot;&quot;&quot;</span>
+
+<span class="k">def</span> <span class="nf">create_parser</span><span class="p">():</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">desc</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="n">dest</span><span class="o">=</span><span class="s">&#39;dir&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s">&#39;directory&#39;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s">&#39;initial directory&#39;</span><span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="n">dest</span><span class="o">=</span><span class="s">&#39;population&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s">&#39;?&#39;</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s">&#39;population&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;size of population&#39;</span><span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="n">dest</span><span class="o">=</span><span class="s">&#39;generations&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s">&#39;?&#39;</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s">&#39;generations&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;# of generations&#39;</span><span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="n">dest</span><span class="o">=</span><span class="s">&#39;children&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s">&#39;?&#39;</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s">&#39;children&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;# of children to create each generation&#39;</span><span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="n">dest</span><span class="o">=</span><span class="s">&#39;mutability&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s">&#39;?&#39;</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s">&#39;mutability&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;# of items to mutate each generation&#39;</span><span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="n">dest</span><span class="o">=</span><span class="s">&#39;diversity&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s">&#39;?&#39;</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s">&#39;diversity&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;percent of pixels that need to differ&#39;</span><span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--rescore&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s">&#39;rescore initial files&#39;</span><span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--silent&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s">&#39;set logging level to ERROR only&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">parser</span>
+
+<span class="k">def</span> <span class="nf">get_arguments</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">create_parser</span><span class="p">()</span>
+    <span class="n">opts</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">opts</span>
+
+<div class="viewcode-block" id="score"><a class="viewcode-back" href="../scripts/ga2d.html#ga.score">[docs]</a><span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Score individual image files for the genetic algorithm.</span>
+<span class="sd">    The idea is to derive predictive factors for the langmuir performance</span>
+<span class="sd">    (i.e., max power) based on the connectivity, phase fractions, domain sizes,</span>
+<span class="sd">    etc. The scoring function should be based on multivariate fits from a database</span>
+<span class="sd">    of existing simulations. To ensure good results, use robust regression techniques</span>
+<span class="sd">    and cross-validate the best-fit.</span>
+
+<span class="sd">    :param filename: image file name</span>
+<span class="sd">    :type filename: str</span>
+
+<span class="sd">    :return score (ideally as an estimated maximum power in W/(m^2))</span>
+<span class="sd">    :rtype float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># this works around a weird bug in scipy.misc.imread with 1-bit images</span>
+    <span class="c"># open them with PIL as 8-bit greyscale &quot;L&quot; and then convert to ndimage</span>
+    <span class="n">pil_img</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">fromimage</span><span class="p">(</span><span class="n">pil_img</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s">&quot;L&quot;</span><span class="p">))</span>
+
+    <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span>
+    <span class="k">if</span> <span class="n">width</span> <span class="o">!=</span> <span class="mi">256</span> <span class="ow">or</span> <span class="n">height</span> <span class="o">!=</span> <span class="mi">256</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&quot;Size Error: &quot;</span><span class="p">,</span> <span class="n">filename</span>
+
+    <span class="c">#    isize = analyze.interface_size(image)</span>
+    <span class="n">ads1</span><span class="p">,</span> <span class="n">std1</span> <span class="o">=</span> <span class="n">analyze</span><span class="o">.</span><span class="n">average_domain_size</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+
+    <span class="c"># we now need to invert the image to get the second domain size</span>
+    <span class="n">inverted</span> <span class="o">=</span> <span class="p">(</span><span class="n">image</span> <span class="o">&lt;</span> <span class="n">image</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+    <span class="n">ads2</span><span class="p">,</span> <span class="n">std2</span> <span class="o">=</span> <span class="n">analyze</span><span class="o">.</span><span class="n">average_domain_size</span><span class="p">(</span><span class="n">inverted</span><span class="p">)</span>
+
+    <span class="c">#overall average domain size</span>
+    <span class="n">ads</span> <span class="o">=</span> <span class="p">(</span><span class="n">ads1</span> <span class="o">+</span> <span class="n">ads2</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+
+    <span class="c"># transfer distances</span>
+    <span class="c"># connectivity</span>
+    <span class="n">td1</span><span class="p">,</span> <span class="n">connect1</span><span class="p">,</span> <span class="n">td2</span><span class="p">,</span> <span class="n">connect2</span> <span class="o">=</span> <span class="n">analyze</span><span class="o">.</span><span class="n">transfer_distance</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+
+    <span class="n">spots</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_xor</span><span class="p">(</span><span class="n">image</span><span class="p">,</span>
+        <span class="n">ndimage</span><span class="o">.</span><span class="n">binary_erosion</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">structure</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">))))</span>
+    <span class="n">erosion</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">spots</span><span class="p">)</span>
+
+    <span class="n">spots</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_xor</span><span class="p">(</span><span class="n">image</span><span class="p">,</span>
+        <span class="n">ndimage</span><span class="o">.</span><span class="n">binary_dilation</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">structure</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">))))</span>
+    <span class="n">dilation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">spots</span><span class="p">)</span>
+
+    <span class="c"># fraction of phase one</span>
+    <span class="n">nonzero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+    <span class="n">fraction</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">nonzero</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="c"># scores zero at 0, 1 and maximum at 0.5</span>
+    <span class="n">ps</span> <span class="o">=</span> <span class="n">fraction</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">fraction</span><span class="p">)</span>
+
+    <span class="c"># from simulations with multivariate nonlinear regression</span>
+    <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.98566e8</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">1650.14</span><span class="p">)</span><span class="o">/</span><span class="n">ads</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">680.92</span><span class="p">)</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">ads</span><span class="p">,</span><span class="mf">0.25</span><span class="p">)</span> <span class="o">+</span> \
+           <span class="mf">1.56236e7</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="mf">14.5</span><span class="o">*</span><span class="p">(</span><span class="n">connect1</span> <span class="o">+</span> <span class="mf">0.4</span><span class="p">))</span> <span class="o">+</span> <span class="mf">1.82945e8</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="mf">14.5</span><span class="o">*</span><span class="p">(</span><span class="n">connect2</span> <span class="o">+</span> <span class="mf">0.4</span><span class="p">))</span> \
+           <span class="o">+</span> <span class="mf">2231.32</span><span class="o">*</span><span class="n">connect1</span><span class="o">*</span><span class="n">connect2</span> \
+           <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">4.72813</span><span class="p">)</span><span class="o">*</span><span class="n">td1</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mf">4.86025</span><span class="p">)</span><span class="o">*</span><span class="n">td2</span> \
+           <span class="o">+</span> <span class="mf">3.79109e7</span><span class="o">*</span><span class="n">ps</span><span class="o">**</span><span class="mi">8</span> \
+           <span class="o">+</span> <span class="mf">0.0540293</span><span class="o">*</span><span class="n">dilation</span> <span class="o">+</span> <span class="mf">0.0700451</span><span class="o">*</span><span class="n">erosion</span>
+</div>
+<div class="viewcode-block" id="score_filenames"><a class="viewcode-back" href="../scripts/ga2d.html#ga.score_filenames">[docs]</a><span class="k">def</span> <span class="nf">score_filenames</span><span class="p">(</span><span class="n">filenames</span><span class="p">,</span> <span class="n">pool</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Score a list of files in parallel using the supplied processing pool</span>
+
+<span class="sd">    :param filenames: image file names</span>
+<span class="sd">    :param pool: multiprocessing thread pool</span>
+
+<span class="sd">    :type filenames: list of str</span>
+<span class="sd">    :type pool: multiprocessing.pool.Pool</span>
+
+<span class="sd">    :return: list of tuples (score, filename)</span>
+<span class="sd">    :rtype: list of tuple</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># analyze all these files and push into a list of (score, filename) tuples</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">pool</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="n">filenames</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="n">filenames</span><span class="p">)</span>
+
+    <span class="n">debug</span><span class="p">(</span><span class="s">&#39;scoring time required: {:3f}&#39;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">zip</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">filenames</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="diversity_check"><a class="viewcode-back" href="../scripts/ga2d.html#ga.diversity_check">[docs]</a><span class="k">def</span> <span class="nf">diversity_check</span><span class="p">(</span><span class="n">image1</span><span class="p">,</span> <span class="n">image2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compare two</span>
+
+<span class="sd">    :param file1: first filename</span>
+<span class="sd">    :param file2: second filename</span>
+<span class="sd">    :type file1: string</span>
+<span class="sd">    :type file2: string</span>
+
+<span class="sd">    :return: fraction of sites that differ</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># If pixels are the same, XOR will return 0</span>
+    <span class="c"># .. so this counts number of different sites / number of sites</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_xor</span><span class="p">(</span><span class="n">image1</span><span class="p">,</span> <span class="n">image2</span><span class="p">)</span> <span class="p">))</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">image1</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+</div>
+<span class="k">def</span> <span class="nf">summarize_scores</span><span class="p">(</span><span class="n">scores</span><span class="p">):</span>
+    <span class="n">s</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">scores</span><span class="p">)</span>
+    <span class="n">n</span>  <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="n">n2</span> <span class="o">=</span> <span class="n">n</span> <span class="o">/</span> <span class="mi">2</span>
+
+    <span class="n">savg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="n">sstd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="n">smin</span><span class="p">,</span> <span class="n">pmin</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="o">+</span><span class="mi">0</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="o">+</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">smax</span><span class="p">,</span> <span class="n">pmax</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">smed</span><span class="p">,</span> <span class="n">pmed</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">n2</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="n">n2</span><span class="p">]</span>
+    <span class="n">srng</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">smax</span> <span class="o">-</span> <span class="n">smin</span><span class="p">)</span>
+
+    <span class="n">debug</span><span class="p">(</span><span class="s">&#39;score: (avg) {:8.3f}&#39;</span><span class="p">,</span> <span class="n">savg</span><span class="p">)</span>
+    <span class="n">debug</span><span class="p">(</span><span class="s">&#39;score: (std) {:8.3f}&#39;</span><span class="p">,</span> <span class="n">sstd</span><span class="p">)</span>
+    <span class="n">debug</span><span class="p">(</span><span class="s">&#39;score: (rng) {:8.3f}&#39;</span><span class="p">,</span> <span class="n">srng</span><span class="p">)</span>
+    <span class="n">debug</span><span class="p">(</span><span class="s">&#39;score: (max) {:8.3f} path={}&#39;</span><span class="p">,</span> <span class="n">smax</span><span class="p">,</span> <span class="n">pmax</span><span class="p">)</span>
+    <span class="n">debug</span><span class="p">(</span><span class="s">&#39;score: (min) {:8.3f} path={}&#39;</span><span class="p">,</span> <span class="n">smin</span><span class="p">,</span> <span class="n">pmin</span><span class="p">)</span>
+    <span class="n">debug</span><span class="p">(</span><span class="s">&#39;score: (med) {:8.3f} path={}&#39;</span><span class="p">,</span> <span class="n">smed</span><span class="p">,</span> <span class="n">pmed</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">work</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+    <span class="n">opts</span> <span class="o">=</span> <span class="n">get_arguments</span><span class="p">()</span>
+    <span class="n">pool</span> <span class="o">=</span> <span class="n">Pool</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">opts</span><span class="o">.</span><span class="n">silent</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">)</span>
+
+    <span class="c"># glob through the directories for PNG files</span>
+    <span class="n">debug</span><span class="p">(</span><span class="s">&#39;searching for pngs (depth=2)&#39;</span><span class="p">)</span>
+    <span class="n">filenames</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">handle</span> <span class="ow">in</span> <span class="n">glob</span><span class="o">.</span><span class="n">iglob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s">&#39;*.png&#39;</span><span class="p">)):</span>
+        <span class="n">filenames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">handle</span> <span class="ow">in</span> <span class="n">glob</span><span class="o">.</span><span class="n">iglob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s">&#39;*&#39;</span><span class="p">,</span> <span class="s">&#39;*.png&#39;</span><span class="p">)):</span>
+        <span class="n">filenames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+    <span class="n">debug</span><span class="p">(</span><span class="s">&#39;found {} pngs!&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">filenames</span><span class="p">))</span>
+
+    <span class="c"># check for a cache</span>
+    <span class="n">scores</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s">&#39;score.cache&#39;</span><span class="p">):</span>
+        <span class="n">debug</span><span class="p">(</span><span class="s">&#39;found score.cache&#39;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;score.cache&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cache</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">cache</span><span class="p">:</span>
+                <span class="n">fileScore</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="n">scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">fileScore</span><span class="p">),</span> <span class="n">filename</span><span class="p">)</span> <span class="p">)</span>
+        <span class="n">debug</span><span class="p">(</span><span class="s">&#39;loaded {} scores&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">))</span>
+
+    <span class="c"># if needed, score the initial population</span>
+    <span class="k">if</span> <span class="n">opts</span><span class="o">.</span><span class="n">rescore</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">filenames</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">):</span>
+        <span class="n">debug</span><span class="p">(</span><span class="s">&#39;rescoring initial files&#39;</span><span class="p">)</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="n">score_filenames</span><span class="p">(</span><span class="n">filenames</span><span class="p">,</span> <span class="n">pool</span><span class="p">)</span>
+
+        <span class="n">debug</span><span class="p">(</span><span class="s">&#39;caching initial scores&#39;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;score.cache&#39;</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cache</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">fileScore</span><span class="p">,</span> <span class="n">handle</span> <span class="ow">in</span> <span class="n">scores</span><span class="p">:</span>
+                <span class="n">cache</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%8.3f</span><span class="s"> </span><span class="si">%s</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">fileScore</span><span class="p">,</span> <span class="n">handle</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">debug</span><span class="p">(</span><span class="s">&#39;no rescore needed&#39;</span><span class="p">)</span>
+
+    <span class="c"># ok, sort the list</span>
+    <span class="n">scores</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="c"># We need to prune out non-diverse files</span>
+    <span class="n">debug</span><span class="p">(</span><span class="s">&#39;diversity check&#39;</span><span class="p">)</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">):</span>
+        <span class="p">(</span><span class="n">score1</span><span class="p">,</span> <span class="n">name1</span><span class="p">)</span> <span class="o">=</span> <span class="n">scores</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">pil_img</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">name1</span><span class="p">)</span>
+        <span class="n">image1</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">fromimage</span><span class="p">(</span><span class="n">pil_img</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s">&quot;L&quot;</span><span class="p">))</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span>
+        <span class="k">while</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">):</span>
+            <span class="p">(</span><span class="n">score2</span><span class="p">,</span> <span class="n">name2</span><span class="p">)</span> <span class="o">=</span> <span class="n">scores</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">pil_img</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">name2</span><span class="p">)</span>
+            <span class="n">image2</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">fromimage</span><span class="p">(</span><span class="n">pil_img</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s">&quot;L&quot;</span><span class="p">))</span>
+            <span class="n">difference</span> <span class="o">=</span> <span class="n">diversity_check</span><span class="p">(</span><span class="n">image1</span><span class="p">,</span> <span class="n">image2</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">difference</span> <span class="o">&lt;</span> <span class="n">opts</span><span class="o">.</span><span class="n">diversity</span><span class="p">:</span>
+                <span class="n">debug</span><span class="p">(</span><span class="s">&#39;score: (val) {:8.3f} path={} diversity={} (removing)&#39;</span><span class="p">,</span> <span class="n">score2</span><span class="p">,</span> <span class="n">name2</span><span class="p">,</span> <span class="n">difference</span><span class="p">)</span>
+                <span class="n">scores</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="c"># it&#39;s now filtered by diversity and sorted by score, so remove the worst scores</span>
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">opts</span><span class="o">.</span><span class="n">population</span><span class="p">:</span>
+        <span class="n">scores</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+    <span class="n">summarize_scores</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+
+    <span class="c"># Finally, got the initial population and we can get to work</span>
+    <span class="c"># Here&#39;s the real GA code</span>
+    <span class="k">for</span> <span class="n">generation</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">generations</span><span class="p">):</span>
+        <span class="n">debug</span><span class="p">(</span><span class="s">&#39;starting gen={}&#39;</span><span class="p">,</span> <span class="n">generation</span><span class="p">)</span>
+        <span class="c"># create the directory for this new generation</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="s">&quot;gen-</span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">generation</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+            <span class="k">pass</span> <span class="c"># don&#39;t worry if the directories exist</span>
+
+        <span class="c"># remove the worst X performers (i.e., to be replaced by children)</span>
+        <span class="n">heapq</span><span class="o">.</span><span class="n">heapify</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">children</span><span class="p">):</span>
+            <span class="n">heapq</span><span class="o">.</span><span class="n">heappop</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+
+        <span class="c"># first create the children</span>
+        <span class="n">parents</span> <span class="o">=</span> <span class="n">heapq</span><span class="o">.</span><span class="n">nlargest</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">children</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">scores</span><span class="p">)</span>
+        <span class="n">parentFiles</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">fileScore</span><span class="p">,</span> <span class="n">handle</span> <span class="ow">in</span> <span class="n">parents</span><span class="p">:</span>
+            <span class="n">parentFiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+
+        <span class="n">population</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">filenames</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">debug</span><span class="p">(</span><span class="s">&#39;creating children&#39;</span><span class="p">)</span>
+        <span class="n">uniqueParents</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">children</span><span class="p">):</span>
+            <span class="c"># blend and threshold the images</span>
+            <span class="c"># all this code uses PIL not scipy.misc</span>
+
+            <span class="c"># make sure we pick unique parents</span>
+            <span class="c"># .. and that each child has two different parents</span>
+            <span class="c"># We might still create the same child in different generations</span>
+            <span class="c"># but the diversity filter will get that later</span>
+            <span class="n">parent1</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">parentFiles</span><span class="p">)</span>
+            <span class="n">parent2</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">parentFiles</span><span class="p">)</span>
+            <span class="k">while</span> <span class="n">parent2</span> <span class="o">==</span> <span class="n">parent1</span> <span class="ow">or</span> <span class="p">(</span><span class="n">parent1</span><span class="p">,</span> <span class="n">parent2</span><span class="p">)</span> <span class="ow">in</span> <span class="n">uniqueParents</span><span class="p">:</span>
+                <span class="n">parent2</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">parentFiles</span><span class="p">)</span>
+            <span class="n">uniqueParents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="p">(</span><span class="n">parent1</span><span class="p">,</span> <span class="n">parent2</span><span class="p">)</span> <span class="p">)</span>
+
+            <span class="n">image1</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">parent1</span><span class="p">)</span>
+            <span class="n">image2</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">parent2</span><span class="p">)</span>
+
+            <span class="n">child</span> <span class="o">=</span> <span class="n">modify</span><span class="o">.</span><span class="n">blend_and_threshold</span><span class="p">(</span><span class="n">image1</span><span class="p">,</span> <span class="n">image2</span><span class="p">)</span>
+            <span class="c"># save this new child</span>
+            <span class="n">childName</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">/</span><span class="si">%d</span><span class="s">.png&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">population</span><span class="p">)</span>
+            <span class="n">filenames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">childName</span><span class="p">)</span>
+            <span class="n">population</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">misc</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span><span class="n">childName</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+            <span class="n">debug</span><span class="p">(</span><span class="s">&#39;created {}&#39;</span><span class="p">,</span> <span class="n">childName</span><span class="p">)</span>
+
+        <span class="c"># make a copy of the files to be re-scored</span>
+        <span class="n">rescore_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">filenames</span><span class="p">)</span>
+
+        <span class="c"># Copy over the parents to the new generation (for mutation)</span>
+        <span class="c"># keep track of their old scores.. if they don&#39;t mutate</span>
+        <span class="c">#  .. we&#39;ll re-use it, rather than re-computing</span>
+        <span class="n">oldScores</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">oldFiles</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">):</span>
+            <span class="n">fileScore</span><span class="p">,</span> <span class="n">handle</span> <span class="o">=</span> <span class="n">heapq</span><span class="o">.</span><span class="n">heappop</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+            <span class="c"># copy the existing files before mutations</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+            <span class="n">newName</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">/</span><span class="si">%d</span><span class="s">.png&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">population</span><span class="p">)</span>
+            <span class="n">filenames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newName</span><span class="p">)</span>
+            <span class="c"># save the score and the new name</span>
+            <span class="n">oldScores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fileScore</span><span class="p">)</span>
+            <span class="n">oldFiles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newName</span><span class="p">)</span>
+            <span class="n">population</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">misc</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span><span class="n">newName</span><span class="p">,</span> <span class="n">image</span><span class="p">)</span>
+
+        <span class="n">debug</span><span class="p">(</span><span class="s">&#39;mutating&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">opts</span><span class="o">.</span><span class="n">mutability</span><span class="p">):</span>
+            <span class="n">handle</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">filenames</span><span class="p">)</span>
+
+            <span class="c"># if this is in oldscores, remove it.. need to rescore</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="n">oldFiles</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+                <span class="k">del</span> <span class="n">oldFiles</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+                <span class="k">del</span> <span class="n">oldScores</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="c"># add this to the list to rescore</span>
+            <span class="k">if</span> <span class="n">handle</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rescore_list</span><span class="p">:</span>
+                <span class="n">rescore_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+
+            <span class="c"># this works around a weird bug in scipy with 1-bit images</span>
+            <span class="n">pil</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">fromimage</span><span class="p">(</span><span class="n">pil</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s">&quot;L&quot;</span><span class="p">))</span>
+
+            <span class="n">mutation</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+            <span class="n">debug</span><span class="p">(</span><span class="s">&#39;mutation={} path={}&#39;</span><span class="p">,</span> <span class="n">mutation</span><span class="p">,</span> <span class="n">handle</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">mutation</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c"># gaussian blur</span>
+                <span class="n">image</span> <span class="o">=</span> <span class="n">modify</span><span class="o">.</span><span class="n">gblur_and_threshold</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]))</span>
+            <span class="k">elif</span> <span class="n">mutation</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c"># uniform blur</span>
+                <span class="n">image</span> <span class="o">=</span> <span class="n">modify</span><span class="o">.</span><span class="n">ublur_and_threshold</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]))</span>
+            <span class="k">elif</span> <span class="n">mutation</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="c"># invert</span>
+                <span class="n">inverted</span> <span class="o">=</span> <span class="p">(</span><span class="n">image</span> <span class="o">&lt;</span> <span class="n">image</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+                <span class="n">image</span> <span class="o">=</span> <span class="n">inverted</span>
+            <span class="k">elif</span> <span class="n">mutation</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="c"># add image-wide noise</span>
+                <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span> <span class="p">)</span>
+                <span class="n">child</span> <span class="o">=</span> <span class="n">modify</span><span class="o">.</span><span class="n">blend_and_threshold</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">noise</span><span class="p">)</span>
+                <span class="n">image</span> <span class="o">=</span> <span class="n">child</span>
+            <span class="k">elif</span> <span class="n">mutation</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="c"># roughen the edges</span>
+                <span class="n">image</span> <span class="o">=</span> <span class="n">modify</span><span class="o">.</span><span class="n">roughen</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">mutation</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+                <span class="c"># rescale larger</span>
+                <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">(</span><span class="n">record</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">warns</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s">&#39;ignore&#39;</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
+                    <span class="n">image</span> <span class="o">=</span> <span class="n">modify</span><span class="o">.</span><span class="n">enlarge</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">mutation</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
+                <span class="c"># rescale smaller</span>
+                <span class="n">image</span> <span class="o">=</span> <span class="n">modify</span><span class="o">.</span><span class="n">shrink</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+            <span class="c"># disabled for now</span>
+            <span class="k">elif</span> <span class="n">mutation</span> <span class="o">==</span> <span class="mi">7</span><span class="p">:</span>
+                <span class="c"># grow edges up to 50:50 mix</span>
+                <span class="n">nonzero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+                <span class="n">phase</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">if</span> <span class="n">nonzero</span> <span class="o">&gt;</span> <span class="n">image</span><span class="o">.</span><span class="n">size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">phase</span> <span class="o">=</span> <span class="mi">255</span>
+                <span class="n">child</span> <span class="o">=</span> <span class="n">modify</span><span class="o">.</span><span class="n">grow_ndimage</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">phase</span><span class="p">)</span>
+                <span class="n">image</span> <span class="o">=</span> <span class="n">child</span>
+            <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">):</span>
+                <span class="n">error</span><span class="p">(</span><span class="s">&#39;shape invalid! {} {}&#39;</span><span class="p">,</span> <span class="n">handle</span><span class="p">,</span> <span class="n">mutation</span><span class="p">)</span>
+                <span class="c"># don&#39;t save this mutation, or we&#39;ll die later</span>
+                <span class="k">continue</span>
+            <span class="c"># shift? - not useful</span>
+            <span class="c"># swap slices? - not sure if this is useful</span>
+            <span class="n">misc</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">image</span><span class="p">)</span>
+
+        <span class="c"># create a new batch of scores</span>
+        <span class="n">debug</span><span class="p">(</span><span class="s">&#39;scoring gen={}&#39;</span><span class="p">,</span> <span class="n">generation</span><span class="p">)</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="n">score_filenames</span><span class="p">(</span><span class="n">rescore_list</span><span class="p">,</span> <span class="n">pool</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">oldFiles</span><span class="p">)):</span>
+            <span class="n">scores</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="p">(</span><span class="n">oldScores</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">oldFiles</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="p">)</span>
+
+        <span class="n">scores</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">summarize_scores</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+
+        <span class="c"># We need to prune out non-diverse files</span>
+        <span class="c"># In this case, rather than  removing them entirely, we&#39;ll set the score to negative :-)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">debug</span><span class="p">(</span><span class="s">&#39;diversity check&#39;</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">):</span>
+            <span class="p">(</span><span class="n">score1</span><span class="p">,</span> <span class="n">name1</span><span class="p">)</span> <span class="o">=</span> <span class="n">scores</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">pil_img</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">name1</span><span class="p">)</span>
+            <span class="n">image1</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">fromimage</span><span class="p">(</span><span class="n">pil_img</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s">&quot;L&quot;</span><span class="p">))</span>
+            <span class="n">j</span> <span class="o">=</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span>
+            <span class="k">while</span> <span class="n">j</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">):</span>
+                <span class="p">(</span><span class="n">score2</span><span class="p">,</span> <span class="n">name2</span><span class="p">)</span> <span class="o">=</span> <span class="n">scores</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+                <span class="n">pil_img</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">name2</span><span class="p">)</span>
+                <span class="n">image2</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">fromimage</span><span class="p">(</span><span class="n">pil_img</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s">&quot;L&quot;</span><span class="p">))</span>
+                <span class="n">difference</span> <span class="o">=</span> <span class="n">diversity_check</span><span class="p">(</span><span class="n">image1</span><span class="p">,</span> <span class="n">image2</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">difference</span> <span class="o">&lt;</span> <span class="n">opts</span><span class="o">.</span><span class="n">diversity</span><span class="p">:</span>
+                    <span class="n">score2</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">score2</span><span class="p">)</span>
+                    <span class="n">scores</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">score2</span><span class="p">,</span> <span class="n">name2</span><span class="p">)</span>
+                    <span class="n">debug</span><span class="p">(</span><span class="s">&#39;score: (val) {:8.3f} path={} diversity={} (inverted)&#39;</span><span class="p">,</span>
+                        <span class="n">score2</span><span class="p">,</span> <span class="n">name2</span><span class="p">,</span> <span class="n">difference</span><span class="p">)</span>
+                <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">scores</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Adam Gagorik.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

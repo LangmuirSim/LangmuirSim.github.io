@@ -1,0 +1,357 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>vtkutils &mdash; Langmuir Python 2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <link rel="top" title="Langmuir Python 2.0 documentation" href="../index.html" />
+    <link rel="next" title="grid" href="grid.html" />
+    <link rel="prev" title="surface" href="surface.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="grid.html" title="grid"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="surface.html" title="surface"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="surface.html"
+                        title="previous chapter">surface</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="grid.html"
+                        title="next chapter">grid</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../sources/modules/vtkutils.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-vtkutils">
+<span id="vtkutils"></span><h1>vtkutils<a class="headerlink" href="#module-vtkutils" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Functions for working with vtk</p>
+</div>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+<dl class="function">
+<dt id="vtkutils.create_image_data">
+<tt class="descclassname">vtkutils.</tt><tt class="descname">create_image_data</tt><big>(</big><em>nx</em>, <em>ny</em>, <em>nz</em>, <em>dx=1.0</em>, <em>dy=1.0</em>, <em>dz=1.0</em>, <em>ox=0</em>, <em>oy=0</em>, <em>oz=0</em><big>)</big><a class="reference internal" href="../modules/vtkutils.html#create_image_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vtkutils.create_image_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct an empty vtkImageData.  This data structure is a regular grid
+with constant spacing.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nx</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; number of grid points along x-axis</li>
+<li><strong>ny</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; number of grid points along y-axis</li>
+<li><strong>nz</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; number of grid points along z-axis</li>
+<li><strong>dx</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; spacing along x-axis</li>
+<li><strong>dy</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; spacing along y-axis</li>
+<li><strong>dz</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; spacing along z-axis</li>
+<li><strong>ox</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; origin of x-axis</li>
+<li><strong>oy</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; origin of y-axis</li>
+<li><strong>oz</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; origin of z-axis</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">image_data</span> <span class="o">=</span> <span class="n">create_image_data</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="vtkutils.create_image_data_from_array">
+<tt class="descclassname">vtkutils.</tt><tt class="descname">create_image_data_from_array</tt><big>(</big><em>array</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/vtkutils.html#create_image_data_from_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vtkutils.create_image_data_from_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct an empty vtkImageData and fill it with the array&#8217;s values.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>array</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data with 3 dimensions.</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">image_data</span> <span class="o">=</span> <span class="n">create_image_data_from_array</span><span class="p">(</span><span class="n">surf</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#vtkutils.create_image_data" title="vtkutils.create_image_data"><tt class="xref py py-func docutils literal"><span class="pre">create_image_data()</span></tt></a></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="vtkutils.save_image_data">
+<tt class="descclassname">vtkutils.</tt><tt class="descname">save_image_data</tt><big>(</big><em>handle</em>, <em>image_data</em><big>)</big><a class="reference internal" href="../modules/vtkutils.html#save_image_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vtkutils.save_image_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save vtkImageData to XML file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>handle</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; file name</li>
+<li><strong>image_data</strong> (<tt class="xref py py-class docutils literal"><span class="pre">vtk.vtkImageData</span></tt>) &#8211; source</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">image_data</span> <span class="o">=</span> <span class="n">create_image_data</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">save_image_data</span><span class="p">(</span><span class="s">&#39;test.vit&#39;</span><span class="p">,</span> <span class="n">image_data</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="vtkutils.load_image_data">
+<tt class="descclassname">vtkutils.</tt><tt class="descname">load_image_data</tt><big>(</big><em>handle</em><big>)</big><a class="reference internal" href="../modules/vtkutils.html#load_image_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vtkutils.load_image_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load vtkImageData from XML file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>handle</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; file name</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="vtkutils.pipe">
+<tt class="descclassname">vtkutils.</tt><tt class="descname">pipe</tt><big>(</big><em>i</em>, <em>o</em><big>)</big><a class="reference internal" href="../modules/vtkutils.html#pipe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vtkutils.pipe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pipes one vtkObject into another.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>i</strong> (<tt class="xref py py-class docutils literal"><span class="pre">vtk.vtkObject</span></tt>) &#8211; input</li>
+<li><strong>o</strong> (<tt class="xref py py-class docutils literal"><span class="pre">vtk.vtkObject</span></tt>) &#8211; filter</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">vtkImageData</span> <span class="o">=</span> <span class="n">create_image_data</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vtkMarchingCubes</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkMarchingCubes</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pipe</span><span class="p">(</span><span class="n">vtkImageData</span><span class="p">,</span> <span class="n">vtkMarchingCubes</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="vtkutils.filter_marching_cubes">
+<tt class="descclassname">vtkutils.</tt><tt class="descname">filter_marching_cubes</tt><big>(</big><em>vtkObject</em>, <em>isovalue=1e-05</em><big>)</big><a class="reference internal" href="../modules/vtkutils.html#filter_marching_cubes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vtkutils.filter_marching_cubes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create vtkMarchingCubes filter on vtkObject.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>vtkObject</strong> (<tt class="xref py py-class docutils literal"><span class="pre">vtk.vtkObject</span></tt>) &#8211; input</li>
+<li><strong>isovalue</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; contour value</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">image_data</span> <span class="o">=</span> <span class="n">create_image_data_from_array</span><span class="p">(</span><span class="n">surf</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cubes</span> <span class="o">=</span> <span class="n">filter_marching_cubes</span><span class="p">(</span><span class="n">image_data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">show</span><span class="p">(</span><span class="n">cubes</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="vtkutils.filter_marching_squares">
+<tt class="descclassname">vtkutils.</tt><tt class="descname">filter_marching_squares</tt><big>(</big><em>vtkObject</em>, <em>isovalue=1e-05</em><big>)</big><a class="reference internal" href="../modules/vtkutils.html#filter_marching_squares"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vtkutils.filter_marching_squares" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create vtkMarchingSquares filter on vtkObject.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>vtkObject</strong> &#8211; input</li>
+<li><strong>isovalue</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; contour value</li>
+<li><strong>vtkObject</strong> &#8211; <tt class="xref py py-class docutils literal"><span class="pre">vtk.vtkObject</span></tt></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">image_data</span> <span class="o">=</span> <span class="n">create_image_data_from_array</span><span class="p">(</span><span class="n">surf</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">squares</span> <span class="o">=</span> <span class="n">filter_marching_cubes</span><span class="p">(</span><span class="n">image_data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">show</span><span class="p">(</span><span class="n">squares</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="vtkutils.filter_marching">
+<tt class="descclassname">vtkutils.</tt><tt class="descname">filter_marching</tt><big>(</big><em>vtkObject</em>, <em>isovalue=1e-05</em><big>)</big><a class="reference internal" href="../modules/vtkutils.html#filter_marching"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vtkutils.filter_marching" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies marching cubes or squares based on number of dimensions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>vtkObject</strong> (<tt class="xref py py-class docutils literal"><span class="pre">vtk.vtkObject</span></tt>) &#8211; input</li>
+<li><strong>isovalue</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; contour value</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#vtkutils.filter_marching_squares" title="vtkutils.filter_marching_squares"><tt class="xref py py-func docutils literal"><span class="pre">filter_marching_squares()</span></tt></a>, <a class="reference internal" href="#vtkutils.filter_marching_cubes" title="vtkutils.filter_marching_cubes"><tt class="xref py py-func docutils literal"><span class="pre">filter_marching_cubes()</span></tt></a></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="vtkutils.filter_curvature">
+<tt class="descclassname">vtkutils.</tt><tt class="descname">filter_curvature</tt><big>(</big><em>vtkObject</em>, <em>mode='gaussian'</em><big>)</big><a class="reference internal" href="../modules/vtkutils.html#filter_curvature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vtkutils.filter_curvature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create vtkCurvatures filter on vtkObject.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>vtkObject</strong> (<tt class="xref py py-class docutils literal"><span class="pre">vtk.vtkObject</span></tt>) &#8211; input</li>
+<li><strong>mode</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; gaussian or mean</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">image_data</span> <span class="o">=</span> <span class="n">create_image_data_from_array</span><span class="p">(</span><span class="n">surf</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cubes</span> <span class="o">=</span> <span class="n">filter_marching_cubes</span><span class="p">(</span><span class="n">image_data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">curve</span> <span class="o">=</span> <span class="n">filter_curvature</span><span class="p">(</span><span class="n">cubes</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">show</span><span class="p">(</span><span class="n">curve</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="vtkutils.show">
+<tt class="descclassname">vtkutils.</tt><tt class="descname">show</tt><big>(</big><em>vtkObject</em>, <em>w=512</em>, <em>h=512</em><big>)</big><a class="reference internal" href="../modules/vtkutils.html#show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vtkutils.show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show result of pipeline.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>vtkObject</strong> (<a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><em>None</em></a>) &#8211; anything VTK</li>
+<li><strong>w</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; window width</li>
+<li><strong>h</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; window height</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">image_data</span> <span class="o">=</span> <span class="n">create_image_data_from_array</span><span class="p">(</span><span class="n">surf</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cubes</span> <span class="o">=</span> <span class="n">filter_marching_cubes</span><span class="p">(</span><span class="n">image_data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">show</span><span class="p">(</span><span class="n">cubes</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="grid.html" title="grid"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="surface.html" title="surface"
+             >previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Adam Gagorik.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

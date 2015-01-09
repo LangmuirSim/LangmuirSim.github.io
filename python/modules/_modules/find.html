@@ -1,0 +1,606 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>find &mdash; Langmuir Python 2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <link rel="top" title="Langmuir Python 2.0 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for find</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. note::</span>
+<span class="sd">    Functions for performing file searching.</span>
+
+<span class="sd">.. moduleauthor:: Adam Gagorik &lt;adam.gagorik@gmail.com&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">langmuir</span> <span class="kn">as</span> <span class="nn">lm</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<div class="viewcode-block" id="depth"><a class="viewcode-back" href="../modules/find.html#find.depth">[docs]</a><span class="k">def</span> <span class="nf">depth</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">relpath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate depth of path relative to relpath.</span>
+
+<span class="sd">    :param path: a path</span>
+<span class="sd">    :param relpath: another path</span>
+
+<span class="sd">    :type path: str</span>
+<span class="sd">    :type relpath: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">relpath</span><span class="p">))</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+</div>
+<div class="viewcode-block" id="find"><a class="viewcode-back" href="../modules/find.html#find.find">[docs]</a><span class="k">def</span> <span class="nf">find</span><span class="p">(</span><span class="n">work</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">single</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">absolute</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">stub</span><span class="o">=</span><span class="s">&#39;*&#39;</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+         <span class="n">exclude_dirs</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">exclude_files</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">sort_by</span><span class="o">=</span><span class="n">lm</span><span class="o">.</span><span class="n">regex</span><span class="o">.</span><span class="n">numbers</span><span class="p">,</span>
+         <span class="n">at_least_one</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">follow_links</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A method for searching for files and directories using patterns.</span>
+
+<span class="sd">    :param work: path to search</span>
+<span class="sd">    :param r: perform the search recursivly</span>
+<span class="sd">    :param single: do not return a list</span>
+<span class="sd">    :param absolute: return absolute paths</span>
+<span class="sd">    :param stub: the wildcard-able search pattern (star is the wildcard)</span>
+<span class="sd">    :param ext: the filename extension</span>
+<span class="sd">    :param exclude_dirs: do not include directories in the search</span>
+<span class="sd">    :param exclude_files: do not include files in the search</span>
+<span class="sd">    :param sort_by: a function (applied to paths) used to sort the results</span>
+<span class="sd">    :param at_least_one: make sure at least one thing was found</span>
+<span class="sd">    :param follow_links: do not follow symbolic links</span>
+
+<span class="sd">    :type work: str</span>
+<span class="sd">    :type r: bool</span>
+<span class="sd">    :type single: bool</span>
+<span class="sd">    :type absolute: bool</span>
+<span class="sd">    :type stub: str</span>
+<span class="sd">    :type ext: str</span>
+<span class="sd">    :type exclude_dirs: bool</span>
+<span class="sd">    :type exclude_files: bool</span>
+<span class="sd">    :type sort_by: func</span>
+<span class="sd">    :type at_least_one: bool</span>
+<span class="sd">    :type follow_links: bool</span>
+
+<span class="sd">    &gt;&gt;&gt; import os</span>
+<span class="sd">    &gt;&gt;&gt; work = os.getcwd()</span>
+<span class="sd">    &gt;&gt;&gt; pkls = find(work, ext=&#39;txt*&#39;) # find all txt files in work</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">work</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">work</span><span class="p">)</span>
+
+    <span class="n">search</span> <span class="o">=</span> <span class="n">stub</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ext</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">search</span> <span class="o">+=</span> <span class="s">&#39;.</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">ext</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+
+    <span class="n">result</span>  <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">r</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">work</span><span class="p">,</span> <span class="n">followlinks</span><span class="o">=</span><span class="n">follow_links</span><span class="p">):</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span><span class="n">search</span><span class="p">))</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">match</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">work</span><span class="p">,</span><span class="n">search</span><span class="p">))</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">match</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">exclude_files</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">result</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span>
+
+    <span class="k">if</span> <span class="n">exclude_dirs</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">result</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">absolute</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">work</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">sort_by</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">sort_by</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">single</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">at_least_one</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&#39;can not find </span><span class="si">%s</span><span class="s"> in directory:</span><span class="se">\n\t</span><span class="si">%s</span><span class="s">&#39;</span>
+                    <span class="o">%</span> <span class="p">(</span><span class="n">search</span><span class="p">,</span><span class="n">work</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">None</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&#39;found multiple </span><span class="si">%s</span><span class="s"> in directory:</span><span class="se">\n\t</span><span class="si">%s</span><span class="se">\n\t\t</span><span class="si">%s</span><span class="s">&#39;</span>
+                <span class="o">%</span><span class="p">(</span><span class="n">search</span><span class="p">,</span><span class="n">work</span><span class="p">,</span><span class="s">&#39;</span><span class="se">\n\t\t</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">work</span><span class="p">)</span>
+                                                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">result</span><span class="p">])))</span>
+        <span class="k">return</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">at_least_one</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&#39;can not find </span><span class="si">%s</span><span class="s"> in directory:</span><span class="se">\n\t</span><span class="si">%s</span><span class="s">&#39;</span>
+                <span class="o">%</span> <span class="p">(</span><span class="n">search</span><span class="p">,</span> <span class="n">work</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+</div>
+<div class="viewcode-block" id="systems"><a class="viewcode-back" href="../modules/find.html#find.systems">[docs]</a><span class="k">def</span> <span class="nf">systems</span><span class="p">(</span><span class="n">work</span><span class="p">,</span> <span class="n">stub</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search for directories that contain &quot;runs&quot;.</span>
+
+<span class="sd">    :param args: see :func:`runs`</span>
+<span class="sd">    :param kwargs: see :func:`runs`</span>
+
+<span class="sd">    &gt;&gt;&gt; systems = lm.find.systems(r&#39;/home/adam/simulations&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; print &#39;\\n&#39;.join(systems)</span>
+<span class="sd">    &#39;/home/adam/simulations/systemA&#39;</span>
+<span class="sd">    &#39;/home/adam/simulations/systemB&#39;</span>
+<span class="sd">    &#39;/home/adam/simulations/systemC&#39;</span>
+<span class="sd">    &#39;/home/adam/simulations/systemD&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">work</span>  <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">work</span><span class="p">)</span>
+    <span class="n">runs</span>  <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">find</span><span class="o">.</span><span class="n">runs</span><span class="p">(</span><span class="n">work</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">stub</span><span class="p">:</span>
+        <span class="n">stub</span> <span class="o">=</span> <span class="s">&#39;*&#39;</span>
+
+    <span class="n">stub</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">r&#39;\*&#39;</span><span class="p">,</span> <span class="s">&#39;.*&#39;</span><span class="p">,</span> <span class="n">stub</span><span class="p">)</span>
+    <span class="n">stub</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">stub</span><span class="p">)</span>
+
+    <span class="n">found</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">runs</span><span class="p">:</span>
+        <span class="n">dirname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">stub</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">dirname</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">dirname</span> <span class="ow">in</span> <span class="n">found</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">samefile</span><span class="p">(</span><span class="n">work</span><span class="p">,</span> <span class="n">dirname</span><span class="p">):</span>
+                <span class="n">found</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dirname</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">found</span>
+</div>
+<div class="viewcode-block" id="sims"><a class="viewcode-back" href="../modules/find.html#find.sims">[docs]</a><span class="k">def</span> <span class="nf">sims</span><span class="p">(</span><span class="n">work</span><span class="p">,</span> <span class="n">stub</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search for directories that contain &quot;parts&quot;.</span>
+
+<span class="sd">    :param args: see :func:`parts`</span>
+<span class="sd">    :param kwargs: see :func:`parts`</span>
+
+<span class="sd">    &gt;&gt;&gt; work = r&#39;/home/adam/simulations/systemA/run.0&#39;</span>
+<span class="sd">    &gt;&gt;&gt; sims = lm.find.sims(work, stub=&#39;voltage.right&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; print &#39;\\n&#39;.join(systems)</span>
+<span class="sd">    &#39;/home/adam/simulations/systemA/run.0/voltage.right_+0.0&#39;</span>
+<span class="sd">    &#39;/home/adam/simulations/systemA/run.0/voltage.right_+0.2&#39;</span>
+<span class="sd">    &#39;/home/adam/simulations/systemA/run.0/voltage.right_+0.4&#39;</span>
+<span class="sd">    &#39;/home/adam/simulations/systemA/run.0/voltage.right_+0.8&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">work</span>  <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">work</span><span class="p">)</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">find</span><span class="o">.</span><span class="n">parts</span><span class="p">(</span><span class="n">work</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">stub</span><span class="p">:</span>
+        <span class="n">stub</span> <span class="o">=</span> <span class="s">&#39;*&#39;</span>
+
+    <span class="n">stub</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">r&#39;\*&#39;</span><span class="p">,</span> <span class="s">&#39;.*&#39;</span><span class="p">,</span> <span class="n">stub</span><span class="p">)</span>
+    <span class="n">stub</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">stub</span><span class="p">)</span>
+
+    <span class="n">found</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">:</span>
+        <span class="n">dirname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">stub</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">dirname</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">dirname</span> <span class="ow">in</span> <span class="n">found</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">samefile</span><span class="p">(</span><span class="n">work</span><span class="p">,</span> <span class="n">dirname</span><span class="p">):</span>
+                <span class="n">found</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dirname</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">found</span>
+</div>
+<div class="viewcode-block" id="runs"><a class="viewcode-back" href="../modules/find.html#find.runs">[docs]</a><span class="k">def</span> <span class="nf">runs</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search for directories of the form run*.</span>
+
+<span class="sd">    :param args: see :func:`find`</span>
+<span class="sd">    :param kwargs: see :func:`find`</span>
+
+<span class="sd">    &gt;&gt;&gt; runs = lm.find.runs(r&#39;/home/adam/simulations/systemA/&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; print &#39;\\n&#39;.join(runs)</span>
+<span class="sd">    &#39;/home/adam/simulations/systemA/run.0/&#39;</span>
+<span class="sd">    &#39;/home/adam/simulations/systemA/run.1/&#39;</span>
+<span class="sd">    &#39;/home/adam/simulations/systemA/run.2/&#39;</span>
+<span class="sd">    &#39;/home/adam/simulations/systemA/run.3/&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">stub</span><span class="o">=</span><span class="s">&#39;run*&#39;</span><span class="p">,</span> <span class="n">exclude_files</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">single</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">find</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="run"><a class="viewcode-back" href="../modules/find.html#find.run">[docs]</a><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search for a single directory of the form run*.</span>
+
+<span class="sd">    :param args: see :func:`find`</span>
+<span class="sd">    :param kwargs: see :func:`find`</span>
+
+<span class="sd">    &gt;&gt;&gt; run = lm.find.run(r&#39;/home/adam/simulations/systemA&#39;)</span>
+<span class="sd">    RuntimeError: found multiple run* in directory:</span>
+<span class="sd">        /home/adam/simulations/systemA</span>
+<span class="sd">            run.0</span>
+<span class="sd">            run.1</span>
+<span class="sd">            run.2</span>
+<span class="sd">            run.3</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">stub</span><span class="o">=</span><span class="s">&#39;run*&#39;</span><span class="p">,</span> <span class="n">exclude_files</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">single</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">find</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="parts"><a class="viewcode-back" href="../modules/find.html#find.parts">[docs]</a><span class="k">def</span> <span class="nf">parts</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search for directories of the form part*.</span>
+
+<span class="sd">    :param args: see :func:`find`</span>
+<span class="sd">    :param kwargs: see :func:`find`</span>
+
+<span class="sd">    &gt;&gt;&gt; prts = lm.find.parts(r&#39;~/simulations/systemA/run.0/voltage.right_+0.0&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; print &#39;\\n&#39;.join(prts)</span>
+<span class="sd">    &#39;/home/adam/simulations/systemA/run.0/voltage.right_+0.0/part.0/&#39;</span>
+<span class="sd">    &#39;/home/adam/simulations/systemA/run.0/voltage.right_+0.0/part.1/&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">stub</span><span class="o">=</span><span class="s">&#39;part*&#39;</span><span class="p">,</span> <span class="n">exclude_files</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">single</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">find</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="part"><a class="viewcode-back" href="../modules/find.html#find.part">[docs]</a><span class="k">def</span> <span class="nf">part</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search for a single directory of the form part*.</span>
+
+<span class="sd">    :param args: see :func:`find`</span>
+<span class="sd">    :param kwargs: see :func:`find`</span>
+
+<span class="sd">    &gt;&gt;&gt; part = lm.find.parts(r&#39;~/simulations/systemA/run.0/voltage.right_+0.0&#39;)</span>
+<span class="sd">    RuntimeError: found multiple part* in directory:</span>
+<span class="sd">        /home/adam/simulations/systemA/run.0/voltage.right_+0.0</span>
+<span class="sd">            part.0</span>
+<span class="sd">            part.1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">stub</span><span class="o">=</span><span class="s">&#39;part*&#39;</span><span class="p">,</span> <span class="n">exclude_files</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">single</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">find</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="inps"><a class="viewcode-back" href="../modules/find.html#find.inps">[docs]</a><span class="k">def</span> <span class="nf">inps</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search for files of the form *.inp*.</span>
+
+<span class="sd">    :param args: see :func:`find`</span>
+<span class="sd">    :param kwargs: see :func:`find`</span>
+
+<span class="sd">    &gt;&gt;&gt; inps = lm.find.inps(&#39;.&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ext</span><span class="o">=</span><span class="s">&#39;inp*&#39;</span><span class="p">,</span> <span class="n">exclude_dirs</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">single</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">find</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="inp"><a class="viewcode-back" href="../modules/find.html#find.inp">[docs]</a><span class="k">def</span> <span class="nf">inp</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search for a single file of the form *.inp*.</span>
+
+<span class="sd">    :param args: see :func:`find`</span>
+<span class="sd">    :param kwargs: see :func:`find`</span>
+
+<span class="sd">    &gt;&gt;&gt; inp = lm.find.inp(&#39;.&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ext</span><span class="o">=</span><span class="s">&#39;inp*&#39;</span><span class="p">,</span> <span class="n">exclude_dirs</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">single</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">find</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="chks"><a class="viewcode-back" href="../modules/find.html#find.chks">[docs]</a><span class="k">def</span> <span class="nf">chks</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search for files of the form *.chk*.</span>
+
+<span class="sd">    :param args: see :func:`find`</span>
+<span class="sd">    :param kwargs: see :func:`find`</span>
+
+<span class="sd">    &gt;&gt;&gt; chks = lm.find.chks(&#39;.&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ext</span><span class="o">=</span><span class="s">&#39;chk*&#39;</span><span class="p">,</span> <span class="n">exclude_dirs</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">single</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">find</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="chk"><a class="viewcode-back" href="../modules/find.html#find.chk">[docs]</a><span class="k">def</span> <span class="nf">chk</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search for a single file of the form *.chk*.</span>
+
+<span class="sd">    :param args: see :func:`find`</span>
+<span class="sd">    :param kwargs: see :func:`find`</span>
+
+<span class="sd">    &gt;&gt;&gt; chk = lm.find.chk(&#39;.&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ext</span><span class="o">=</span><span class="s">&#39;chk*&#39;</span><span class="p">,</span> <span class="n">exclude_dirs</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">single</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">find</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="parms"><a class="viewcode-back" href="../modules/find.html#find.parms">[docs]</a><span class="k">def</span> <span class="nf">parms</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search for files of the form *.parm*.</span>
+
+<span class="sd">    :param args: see :func:`find`</span>
+<span class="sd">    :param kwargs: see :func:`find`</span>
+
+<span class="sd">    &gt;&gt;&gt; parms = lm.find.parms(&#39;.&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ext</span><span class="o">=</span><span class="s">&#39;parm*&#39;</span><span class="p">,</span> <span class="n">exclude_dirs</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">single</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">find</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="parm"><a class="viewcode-back" href="../modules/find.html#find.parm">[docs]</a><span class="k">def</span> <span class="nf">parm</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search for a single file of the form *.parm*.</span>
+
+<span class="sd">    :param args: see :func:`find`</span>
+<span class="sd">    :param kwargs: see :func:`find`</span>
+
+<span class="sd">    &gt;&gt;&gt; parm = lm.find.parm(&#39;.&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ext</span><span class="o">=</span><span class="s">&#39;parm*&#39;</span><span class="p">,</span> <span class="n">exclude_dirs</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">single</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">find</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="dats"><a class="viewcode-back" href="../modules/find.html#find.dats">[docs]</a><span class="k">def</span> <span class="nf">dats</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search for files of the form *.dat*.</span>
+
+<span class="sd">    :param args: see :func:`find`</span>
+<span class="sd">    :param kwargs: see :func:`find`</span>
+
+<span class="sd">    &gt;&gt;&gt; dats = lm.find.dats(&#39;.&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ext</span><span class="o">=</span><span class="s">&#39;dat*&#39;</span><span class="p">,</span> <span class="n">exclude_dirs</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">single</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">find</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="dat"><a class="viewcode-back" href="../modules/find.html#find.dat">[docs]</a><span class="k">def</span> <span class="nf">dat</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search for a single file of the form *.dat*.</span>
+
+<span class="sd">    :param args: see :func:`find`</span>
+<span class="sd">    :param kwargs: see :func:`find`</span>
+
+<span class="sd">    &gt;&gt;&gt; dat = lm.find.dat(&#39;.&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ext</span><span class="o">=</span><span class="s">&#39;dat*&#39;</span><span class="p">,</span> <span class="n">exclude_dirs</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">single</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">find</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="txts"><a class="viewcode-back" href="../modules/find.html#find.txts">[docs]</a><span class="k">def</span> <span class="nf">txts</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search for files of the form *.txt*.</span>
+
+<span class="sd">    :param args: see :func:`find`</span>
+<span class="sd">    :param kwargs: see :func:`find`</span>
+
+<span class="sd">    &gt;&gt;&gt; txts = lm.find.txts(&#39;.&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ext</span><span class="o">=</span><span class="s">&#39;txt*&#39;</span><span class="p">,</span> <span class="n">exclude_dirs</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">single</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">find</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="txt"><a class="viewcode-back" href="../modules/find.html#find.txt">[docs]</a><span class="k">def</span> <span class="nf">txt</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search for a single file of the form *.txt*.</span>
+
+<span class="sd">    :param args: see :func:`find`</span>
+<span class="sd">    :param kwargs: see :func:`find`</span>
+
+<span class="sd">    &gt;&gt;&gt; txt = lm.find.txt(&#39;.&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ext</span><span class="o">=</span><span class="s">&#39;txt*&#39;</span><span class="p">,</span> <span class="n">exclude_dirs</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">single</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">find</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="pkls"><a class="viewcode-back" href="../modules/find.html#find.pkls">[docs]</a><span class="k">def</span> <span class="nf">pkls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search for files of the form *.pkl*.</span>
+
+<span class="sd">    :param args: see :func:`find`</span>
+<span class="sd">    :param kwargs: see :func:`find`</span>
+
+<span class="sd">    &gt;&gt;&gt; pkls = lm.find.pkls(&#39;.&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ext</span><span class="o">=</span><span class="s">&#39;pkl*&#39;</span><span class="p">,</span> <span class="n">exclude_dirs</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">single</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">find</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="pkl"><a class="viewcode-back" href="../modules/find.html#find.pkl">[docs]</a><span class="k">def</span> <span class="nf">pkl</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search for a single file of the form *.pkl*.</span>
+
+<span class="sd">    :param args: see :func:`find`</span>
+<span class="sd">    :param kwargs: see :func:`find`</span>
+
+<span class="sd">    &gt;&gt;&gt; pkl = lm.find.pkl(&#39;.&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ext</span><span class="o">=</span><span class="s">&#39;pkl*&#39;</span><span class="p">,</span> <span class="n">exclude_dirs</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">single</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">find</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="pngs"><a class="viewcode-back" href="../modules/find.html#find.pngs">[docs]</a><span class="k">def</span> <span class="nf">pngs</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search for files of the form *.png*.</span>
+
+<span class="sd">    :param args: see :func:`find`</span>
+<span class="sd">    :param kwargs: see :func:`find`</span>
+
+<span class="sd">    &gt;&gt;&gt; pngs = lm.find.pngs(&#39;.&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ext</span><span class="o">=</span><span class="s">&#39;png*&#39;</span><span class="p">,</span> <span class="n">exclude_dirs</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">single</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">find</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="png"><a class="viewcode-back" href="../modules/find.html#find.png">[docs]</a><span class="k">def</span> <span class="nf">png</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search for a single file of the form *.png*.</span>
+
+<span class="sd">    :param args: see :func:`find`</span>
+<span class="sd">    :param kwargs: see :func:`find`</span>
+
+<span class="sd">    &gt;&gt;&gt; png = lm.find.png(&#39;.&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ext</span><span class="o">=</span><span class="s">&#39;png*&#39;</span><span class="p">,</span> <span class="n">exclude_dirs</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">single</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">find</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="slice_path"><a class="viewcode-back" href="../modules/find.html#find.slice_path">[docs]</a><span class="k">def</span> <span class="nf">slice_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">regex</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return dirname of path where the regex matches.</span>
+
+<span class="sd">    :param path: path to parse</span>
+<span class="sd">    :param regex: regex to match</span>
+
+<span class="sd">    :type path: str</span>
+<span class="sd">    :type regex: str</span>
+
+<span class="sd">    &gt;&gt;&gt; print slice_path(&#39;r/home/adam/Desktop&#39;, &#39;adam&#39;)</span>
+<span class="sd">    &#39;/home/adam&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">regex</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">path</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">,</span> <span class="o">*</span><span class="n">path</span><span class="p">[:</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&#39;can not slice path on run&#39;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="slice_part"><a class="viewcode-back" href="../modules/find.html#find.slice_part">[docs]</a><span class="k">def</span> <span class="nf">slice_part</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return dirname of path where run directory is.</span>
+
+<span class="sd">    :param path: path to parse</span>
+<span class="sd">    :type path: str</span>
+
+<span class="sd">    &gt;&gt;&gt; print slice_path(&#39;r/system/run/sim/part&#39;)</span>
+<span class="sd">    &#39;/system/run/sim/part&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">slice_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s">&#39;part&#39;</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="slice_sim"><a class="viewcode-back" href="../modules/find.html#find.slice_sim">[docs]</a><span class="k">def</span> <span class="nf">slice_sim</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return dirname of path where sim directory is.</span>
+
+<span class="sd">    :param path: path to parse</span>
+<span class="sd">    :type path: str</span>
+
+<span class="sd">    &gt;&gt;&gt; print slice_path(&#39;r/system/run/sim/part&#39;)</span>
+<span class="sd">    &#39;/system/run/sim&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">slice_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s">&#39;sim&#39;</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="slice_run"><a class="viewcode-back" href="../modules/find.html#find.slice_run">[docs]</a><span class="k">def</span> <span class="nf">slice_run</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return dirname of path where run directory is.</span>
+
+<span class="sd">    :param path: path to parse</span>
+<span class="sd">    :type path: str</span>
+
+<span class="sd">    &gt;&gt;&gt; print slice_path(&#39;r/system/run/sim/part&#39;)</span>
+<span class="sd">    &#39;/system/run&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">slice_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s">&#39;run&#39;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="slice_system"><a class="viewcode-back" href="../modules/find.html#find.slice_system">[docs]</a><span class="k">def</span> <span class="nf">slice_system</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return dirname of path where system directory is.</span>
+
+<span class="sd">    :param path: path to parse</span>
+<span class="sd">    :type path: str</span>
+
+<span class="sd">    &gt;&gt;&gt; print slice_path(&#39;r/system/run/sim/part&#39;)</span>
+<span class="sd">    &#39;/system&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">slice_run</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="extract_system"><a class="viewcode-back" href="../modules/find.html#find.extract_system">[docs]</a><span class="k">def</span> <span class="nf">extract_system</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract system name from path.</span>
+
+<span class="sd">    :param path: path to parse</span>
+<span class="sd">    :type path: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">slice_system</span><span class="p">(</span><span class="n">path</span><span class="p">))</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Adam Gagorik.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

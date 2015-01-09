@@ -1,0 +1,819 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>surface &mdash; Langmuir Python 2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <link rel="top" title="Langmuir Python 2.0 documentation" href="../index.html" />
+    <link rel="next" title="vtkutils" href="vtkutils.html" />
+    <link rel="prev" title="datfile" href="datfile.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="vtkutils.html" title="vtkutils"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="datfile.html" title="datfile"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="datfile.html"
+                        title="previous chapter">datfile</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="vtkutils.html"
+                        title="next chapter">vtkutils</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../sources/modules/surface.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-surface">
+<span id="surface"></span><h1>surface<a class="headerlink" href="#module-surface" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Functions for calculating surfaces and analyzing them.</p>
+</div>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+<dl class="function">
+<dt id="surface.make_3D">
+<tt class="descclassname">surface.</tt><tt class="descname">make_3D</tt><big>(</big><em>array</em><big>)</big><a class="reference internal" href="../modules/surface.html#make_3D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.make_3D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Force the numpy array passed to be 3D via <tt class="xref py py-func docutils literal"><span class="pre">np.expand_dims()</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>array</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; numpy array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="surface.load_ascii">
+<tt class="descclassname">surface.</tt><tt class="descname">load_ascii</tt><big>(</big><em>handle</em>, <em>square=False</em>, <em>cube=False</em>, <em>shape=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/surface.html#load_ascii"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.load_ascii" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around np.loadtxt.  Forces data to be at least 3 dimensions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>square</strong> &#8211; reshape as if data is NxN</li>
+<li><strong>cube</strong> &#8211; reshape as if data is NxNxN</li>
+<li><strong>square</strong> &#8211; bool</li>
+<li><strong>cube</strong> &#8211; bool</li>
+<li><strong>shape</strong> &#8211; list</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Parm shape:</th><td class="field-body"><p class="first last">reshape data</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="surface.load_chk">
+<tt class="descclassname">surface.</tt><tt class="descname">load_chk</tt><big>(</big><em>handle</em><big>)</big><a class="reference internal" href="../modules/surface.html#load_chk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.load_chk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load checkpoint file and convert traps into a surface.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surface.load">
+<tt class="descclassname">surface.</tt><tt class="descname">load</tt><big>(</big><em>handle</em>, <em>rot90=-1</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/surface.html#load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load surface from file.  Takes into account the file extension.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="14%" />
+<col width="86%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head"><em>ext</em></th>
+<th class="head"><em>func</em></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>pkl</td>
+<td><a class="reference internal" href="common.html#common.load_pkl" title="common.load_pkl"><tt class="xref py py-meth docutils literal"><span class="pre">common.load_pkl()</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td>npy</td>
+<td><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.load.html#numpy.load" title="(in NumPy v1.9)"><tt class="xref py py-func docutils literal"><span class="pre">numpy.load()</span></tt></a></td>
+</tr>
+<tr class="row-even"><td>chk</td>
+<td><a class="reference internal" href="#surface.load_chk" title="surface.load_chk"><tt class="xref py py-meth docutils literal"><span class="pre">surface.load_chk()</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td>inp</td>
+<td><a class="reference internal" href="#surface.load_chk" title="surface.load_chk"><tt class="xref py py-meth docutils literal"><span class="pre">surface.load_chk()</span></tt></a></td>
+</tr>
+<tr class="row-even"><td>csv</td>
+<td><a class="reference internal" href="#surface.load_ascii" title="surface.load_ascii"><tt class="xref py py-meth docutils literal"><span class="pre">surface.load_ascii()</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td>txt</td>
+<td><a class="reference internal" href="#surface.load_ascii" title="surface.load_ascii"><tt class="xref py py-meth docutils literal"><span class="pre">surface.load_ascii()</span></tt></a></td>
+</tr>
+<tr class="row-even"><td>dat</td>
+<td><a class="reference internal" href="#surface.load_ascii" title="surface.load_ascii"><tt class="xref py py-meth docutils literal"><span class="pre">surface.load_ascii()</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td>png</td>
+<td><tt class="xref py py-meth docutils literal"><span class="pre">scipy.ndimage.imread()</span></tt></td>
+</tr>
+<tr class="row-even"><td>jpg</td>
+<td><tt class="xref py py-meth docutils literal"><span class="pre">scipy.ndimage.imread()</span></tt></td>
+</tr>
+<tr class="row-odd"><td>jpeg</td>
+<td><tt class="xref py py-meth docutils literal"><span class="pre">scipy.ndimage.imread()</span></tt></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>handle</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; filename</li>
+<li><strong>rot90</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; number of times to rotate image by 90 degrees</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">image</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">image file (png, jpg, etc) data is forced into range [0,255].</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">data is always made 3D via <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.expand_dims.html#numpy.expand_dims" title="(in NumPy v1.9)"><tt class="xref py py-func docutils literal"><span class="pre">numpy.expand_dims()</span></tt></a></p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">image data is rotated by -90 degrees.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="surface.save_vti">
+<tt class="descclassname">surface.</tt><tt class="descname">save_vti</tt><big>(</big><em>handle</em>, <em>array</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/surface.html#save_vti"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.save_vti" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save numpy array to vtkImageData XML file.  You can open it in paraview.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>handle</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; filename</li>
+<li><strong>array</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="surface.save_chk">
+<tt class="descclassname">surface.</tt><tt class="descname">save_chk</tt><big>(</big><em>handle</em>, <em>array</em><big>)</big><a class="reference internal" href="../modules/surface.html#save_chk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.save_chk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save numpy array to Langmuir checkpoint file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>handle</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; filename</li>
+<li><strong>array</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="surface.save">
+<tt class="descclassname">surface.</tt><tt class="descname">save</tt><big>(</big><em>handle</em>, <em>obj</em>, <em>zlevel=0</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/surface.html#save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save object to a file.  Takes into account the file extension.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="88%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head"><em>ext</em></th>
+<th class="head"><em>func</em></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>pkl</td>
+<td><a class="reference internal" href="common.html#common.load_pkl" title="common.load_pkl"><tt class="xref py py-meth docutils literal"><span class="pre">common.load_pkl()</span></tt></a></td>
+</tr>
+<tr class="row-odd"><td>npy</td>
+<td><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.load.html#numpy.load" title="(in NumPy v1.9)"><tt class="xref py py-func docutils literal"><span class="pre">numpy.load()</span></tt></a></td>
+</tr>
+<tr class="row-even"><td>vti</td>
+<td><tt class="xref py py-meth docutils literal"><span class="pre">surface.save_cti()</span></tt></td>
+</tr>
+<tr class="row-odd"><td>csv</td>
+<td><tt class="xref py py-meth docutils literal"><span class="pre">np.savetxt()</span></tt></td>
+</tr>
+<tr class="row-even"><td>txt</td>
+<td><tt class="xref py py-meth docutils literal"><span class="pre">np.savetxt()</span></tt></td>
+</tr>
+<tr class="row-odd"><td>dat</td>
+<td><tt class="xref py py-meth docutils literal"><span class="pre">np.savetxt()</span></tt></td>
+</tr>
+<tr class="row-even"><td>png</td>
+<td><tt class="xref py py-meth docutils literal"><span class="pre">scipy.misc.imsave()</span></tt></td>
+</tr>
+<tr class="row-odd"><td>jpg</td>
+<td><tt class="xref py py-meth docutils literal"><span class="pre">scipy.misc.imsave()</span></tt></td>
+</tr>
+<tr class="row-even"><td>jpeg</td>
+<td><tt class="xref py py-meth docutils literal"><span class="pre">scipy.misc.imsave()</span></tt></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>handle</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; filename</li>
+<li><strong>obj</strong> &#8211; object to save</li>
+<li><strong>zlevel</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; slice z-index</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">image file (png, jpg, etc) data is forced into range [0,255].</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">if ndims is 3 and an image file is being saved, only a slice is saved.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="surface.threshold">
+<tt class="descclassname">surface.</tt><tt class="descname">threshold</tt><big>(</big><em>a</em>, <em>v=0</em>, <em>v0=0</em>, <em>v1=1</em>, <em>copy=False</em><big>)</big><a class="reference internal" href="../modules/surface.html#threshold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set values in array above {v} to {v1}, and below {v} to {v0}.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>v</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; threshold value</li>
+<li><strong>v0</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; lower value</li>
+<li><strong>v1</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; upper value</li>
+<li><strong>copy</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; copy array</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="surface.linear_mapping">
+<tt class="descclassname">surface.</tt><tt class="descname">linear_mapping</tt><big>(</big><em>array</em>, <em>n=0.0</em>, <em>m=1.0</em><big>)</big><a class="reference internal" href="../modules/surface.html#linear_mapping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.linear_mapping" title="Permalink to this definition">¶</a></dt>
+<dd><p>Map values in array to fall in the range [n,m].</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>array</strong> &#8211; array like object</li>
+<li><strong>n</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; lower bound</li>
+<li><strong>m</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; upper bound</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="surface.rfunc">
+<tt class="descclassname">surface.</tt><tt class="descname">rfunc</tt><big>(</big><em>size=None</em><big>)</big><a class="reference internal" href="../modules/surface.html#rfunc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.rfunc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces numbers in the range [-0.5, 0.5].</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>size</strong> &#8211; shape of output</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Type:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="surface.WaveDimensions">
+<em class="property">class </em><tt class="descclassname">surface.</tt><tt class="descname">WaveDimensions</tt><big>(</big><em>L=6.283185307179586</em>, <em>n=1</em><big>)</big><a class="reference internal" href="../modules/surface.html#WaveDimensions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.WaveDimensions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute wavelength, wavenumber, etc from an interval length (L)
+and number of waves (n).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>L</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; interval length</li>
+<li><strong>n</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; number of waves in interval</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">wx</span> <span class="o">=</span> <span class="n">WaveDimensions</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">wx</span>
+<span class="go">[Wave Dimensions]</span>
+<span class="go">    L      = 10</span>
+<span class="go">    n      = 2</span>
+<span class="go">    lambda = 5.00000e+00</span>
+<span class="go">    nubar  = 2.00000e-01</span>
+<span class="go">    k      = 1.25664e+00</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="surface.WaveDimensions.calc">
+<tt class="descname">calc</tt><big>(</big><em>L=None</em>, <em>n=None</em><big>)</big><a class="reference internal" href="../modules/surface.html#WaveDimensions.calc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.WaveDimensions.calc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform calculations to compute wavelength, wavenumber, etc.
+Called automatically in constructor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>L</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; interval length</li>
+<li><strong>n</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; number of waves in interval</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="surface.f_gyroid">
+<tt class="descclassname">surface.</tt><tt class="descname">f_gyroid</tt><big>(</big><em>x</em>, <em>y</em>, <em>z</em>, <em>kx</em>, <em>ky</em>, <em>kz</em><big>)</big><a class="reference internal" href="../modules/surface.html#f_gyroid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.f_gyroid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Surface function f(x,y,z) for gyroid.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; x-value(s)</li>
+<li><strong>y</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; y-value(s)</li>
+<li><strong>z</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; z-value(s)</li>
+<li><strong>kx</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; 2 pi nx / Lx</li>
+<li><strong>ky</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; 2 pi ny / Ly</li>
+<li><strong>kz</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; 2 pi nz / Lz</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">WaveDimensions</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">100j</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">100j</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">100j</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gyroid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="surface.gyroid">
+<tt class="descclassname">surface.</tt><tt class="descname">gyroid</tt><big>(</big><em>x</em>, <em>y</em>, <em>z</em>, <em>wx</em>, <em>wy</em>, <em>wz</em><big>)</big><a class="reference internal" href="../modules/surface.html#gyroid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.gyroid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around f_* that uses WaveDimensions.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surface.f_scherk_first_surface">
+<tt class="descclassname">surface.</tt><tt class="descname">f_scherk_first_surface</tt><big>(</big><em>x</em>, <em>y</em>, <em>z</em>, <em>kx</em>, <em>ky</em>, <em>kz</em><big>)</big><a class="reference internal" href="../modules/surface.html#f_scherk_first_surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.f_scherk_first_surface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Surface function f(x,y,z) for scherk.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; x-value(s)</li>
+<li><strong>y</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; y-value(s)</li>
+<li><strong>z</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; z-value(s)</li>
+<li><strong>kx</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; 2 pi nx / Lx</li>
+<li><strong>ky</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; 2 pi ny / Ly</li>
+<li><strong>kz</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; 2 pi nz / Lz</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">WaveDimensions</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">100j</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">100j</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">100j</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">scherk_first_surface</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="surface.scherk_first_surface">
+<tt class="descclassname">surface.</tt><tt class="descname">scherk_first_surface</tt><big>(</big><em>x</em>, <em>y</em>, <em>z</em>, <em>wx</em>, <em>wy</em>, <em>wz</em><big>)</big><a class="reference internal" href="../modules/surface.html#scherk_first_surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.scherk_first_surface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around f_* that uses WaveDimensions.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surface.f_schwarz_p_surface">
+<tt class="descclassname">surface.</tt><tt class="descname">f_schwarz_p_surface</tt><big>(</big><em>x</em>, <em>y</em>, <em>z</em>, <em>kx</em>, <em>ky</em>, <em>kz</em><big>)</big><a class="reference internal" href="../modules/surface.html#f_schwarz_p_surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.f_schwarz_p_surface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Surface function f(x,y,z) for psurface.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; x-value(s)</li>
+<li><strong>y</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; y-value(s)</li>
+<li><strong>z</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; z-value(s)</li>
+<li><strong>kx</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; 2 pi nx / Lx</li>
+<li><strong>ky</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; 2 pi ny / Ly</li>
+<li><strong>kz</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; 2 pi nz / Lz</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">WaveDimensions</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">100j</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">100j</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">100j</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">schwarz_p_surface</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="surface.schwarz_p_surface">
+<tt class="descclassname">surface.</tt><tt class="descname">schwarz_p_surface</tt><big>(</big><em>x</em>, <em>y</em>, <em>z</em>, <em>wx</em>, <em>wy</em>, <em>wz</em><big>)</big><a class="reference internal" href="../modules/surface.html#schwarz_p_surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.schwarz_p_surface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around f_* that uses WaveDimensions.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surface.f_schwarz_d_surface">
+<tt class="descclassname">surface.</tt><tt class="descname">f_schwarz_d_surface</tt><big>(</big><em>x</em>, <em>y</em>, <em>z</em>, <em>kx</em>, <em>ky</em>, <em>kz</em><big>)</big><a class="reference internal" href="../modules/surface.html#f_schwarz_d_surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.f_schwarz_d_surface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Surface function f(x,y,z) for dsurface.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; x-value(s)</li>
+<li><strong>y</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; y-value(s)</li>
+<li><strong>z</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; z-value(s)</li>
+<li><strong>kx</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; 2 pi nx / Lx</li>
+<li><strong>ky</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; 2 pi ny / Ly</li>
+<li><strong>kz</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; 2 pi nz / Lz</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">WaveDimensions</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">100j</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">100j</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">100j</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">schwarz_d_surface</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="surface.schwarz_d_surface">
+<tt class="descclassname">surface.</tt><tt class="descname">schwarz_d_surface</tt><big>(</big><em>x</em>, <em>y</em>, <em>z</em>, <em>wx</em>, <em>wy</em>, <em>wz</em><big>)</big><a class="reference internal" href="../modules/surface.html#schwarz_d_surface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.schwarz_d_surface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around f_* that uses WaveDimensions.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surface.f_bandXY">
+<tt class="descclassname">surface.</tt><tt class="descname">f_bandXY</tt><big>(</big><em>x</em>, <em>y</em>, <em>z</em>, <em>kx</em>, <em>ky</em>, <em>kz</em><big>)</big><a class="reference internal" href="../modules/surface.html#f_bandXY"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.f_bandXY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Surface function f(x,y,z) for bands that run along z-direction.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; x-value(s)</li>
+<li><strong>y</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; y-value(s)</li>
+<li><strong>z</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; z-value(s)</li>
+<li><strong>kx</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; 2 pi nx / Lx</li>
+<li><strong>ky</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; 2 pi ny / Ly</li>
+<li><strong>kz</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; 2 pi nz / Lz</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">WaveDimensions</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">100j</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">100j</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">100j</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bandXY</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="surface.bandXY">
+<tt class="descclassname">surface.</tt><tt class="descname">bandXY</tt><big>(</big><em>x</em>, <em>y</em>, <em>z</em>, <em>wx</em>, <em>wy</em>, <em>wz</em><big>)</big><a class="reference internal" href="../modules/surface.html#bandXY"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.bandXY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around f_* that uses WaveDimensions.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surface.f_bandXZ">
+<tt class="descclassname">surface.</tt><tt class="descname">f_bandXZ</tt><big>(</big><em>x</em>, <em>y</em>, <em>z</em>, <em>kx</em>, <em>ky</em>, <em>kz</em><big>)</big><a class="reference internal" href="../modules/surface.html#f_bandXZ"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.f_bandXZ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Surface function f(x,y,z) for bands that run along y-direction.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; x-value(s)</li>
+<li><strong>y</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; y-value(s)</li>
+<li><strong>z</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; z-value(s)</li>
+<li><strong>kx</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; 2 pi nx / Lx</li>
+<li><strong>ky</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; 2 pi ny / Ly</li>
+<li><strong>kz</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; 2 pi nz / Lz</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">WaveDimensions</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">100j</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">100j</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">100j</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bandXZ</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="surface.bandXZ">
+<tt class="descclassname">surface.</tt><tt class="descname">bandXZ</tt><big>(</big><em>x</em>, <em>y</em>, <em>z</em>, <em>wx</em>, <em>wy</em>, <em>wz</em><big>)</big><a class="reference internal" href="../modules/surface.html#bandXZ"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.bandXZ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around f_* that uses WaveDimensions.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="surface.f_bandYZ">
+<tt class="descclassname">surface.</tt><tt class="descname">f_bandYZ</tt><big>(</big><em>x</em>, <em>y</em>, <em>z</em>, <em>kx</em>, <em>ky</em>, <em>kz</em><big>)</big><a class="reference internal" href="../modules/surface.html#f_bandYZ"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.f_bandYZ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Surface function f(x,y,z) for bands that run along x-direction.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; x-value(s)</li>
+<li><strong>y</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; y-value(s)</li>
+<li><strong>z</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; z-value(s)</li>
+<li><strong>kx</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; 2 pi nx / Lx</li>
+<li><strong>ky</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; 2 pi ny / Ly</li>
+<li><strong>kz</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; 2 pi nz / Lz</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">w</span> <span class="o">=</span> <span class="n">WaveDimensions</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">100j</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">100j</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">100j</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bandYZ</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="n">w</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="surface.bandYZ">
+<tt class="descclassname">surface.</tt><tt class="descname">bandYZ</tt><big>(</big><em>x</em>, <em>y</em>, <em>z</em>, <em>wx</em>, <em>wy</em>, <em>wz</em><big>)</big><a class="reference internal" href="../modules/surface.html#bandYZ"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.bandYZ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around f_* that uses WaveDimensions.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="surface.Kernel">
+<em class="property">class </em><tt class="descclassname">surface.</tt><tt class="descname">Kernel</tt><big>(</big><em>xmin</em>, <em>xmax</em>, <em>ymin</em>, <em>ymax</em>, <em>zmin</em>, <em>zmax</em>, <em>spacing=1.0</em><big>)</big><a class="reference internal" href="../modules/surface.html#Kernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.Kernel" title="Permalink to this definition">¶</a></dt>
+<dd><p>An x, y, z, v mgrid.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>xmin</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; lower x</li>
+<li><strong>xmax</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; upper x</li>
+<li><strong>ymin</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; lower y</li>
+<li><strong>ymax</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; upper y</li>
+<li><strong>zmin</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; lower z</li>
+<li><strong>zmax</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; upper z</li>
+<li><strong>spacing</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; grid spacing</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="surface.FuncKernel">
+<em class="property">class </em><tt class="descclassname">surface.</tt><tt class="descname">FuncKernel</tt><big>(</big><em>func</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/surface.html#FuncKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.FuncKernel" title="Permalink to this definition">¶</a></dt>
+<dd><p>An x, y, z, v mgrid.  Computes v using the function = f(x, y, z) passed.
+See Kernel for more parameters.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="surface.SimpleKernel">
+<em class="property">class </em><tt class="descclassname">surface.</tt><tt class="descname">SimpleKernel</tt><big>(</big><em>func</em>, <em>nx=3</em>, <em>ny=3</em>, <em>nz=3</em>, <em>spacing=1.0</em><big>)</big><a class="reference internal" href="../modules/surface.html#SimpleKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.SimpleKernel" title="Permalink to this definition">¶</a></dt>
+<dd><p>An x, y, z, v mgrid.  Computes v using the function = f(x, y, z) passed.
+Creates x, y, z domain using spacing and number of points.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>func</strong> (<em>func</em>) &#8211; function of x, y, z</li>
+<li><strong>nx</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; x-direction has 2*nx + 1 points</li>
+<li><strong>ny</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; y-direction has 2*ny + 1 points</li>
+<li><strong>nz</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; z-direction has 2*nz + 1 points</li>
+<li><strong>spacing</strong> (<em>double</em>) &#8211; grid spacing</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="surface.RandomKernel">
+<em class="property">class </em><tt class="descclassname">surface.</tt><tt class="descname">RandomKernel</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/surface.html#RandomKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.RandomKernel" title="Permalink to this definition">¶</a></dt>
+<dd><p>An x, y, z, v mgrid.  Computes v using random noise. Creates x, y, z domain
+using spacing and number of points.  See SimpleKernel for more parameters.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="surface.GaussianKernel">
+<em class="property">class </em><tt class="descclassname">surface.</tt><tt class="descname">GaussianKernel</tt><big>(</big><em>sx</em>, <em>sy</em>, <em>sz</em>, <em>mx=0.0</em>, <em>my=0.0</em>, <em>mz=0.0</em>, <em>spacing=1.0</em><big>)</big><a class="reference internal" href="../modules/surface.html#GaussianKernel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.GaussianKernel" title="Permalink to this definition">¶</a></dt>
+<dd><p>An x, y, z, v mgrid.  The size of the grid is determined using the stdev
+of the Gaussian PDF.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>sx</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; sigma x</li>
+<li><strong>sy</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; sigma y</li>
+<li><strong>sz</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; sigma z</li>
+<li><strong>mx</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; mean x</li>
+<li><strong>my</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; mean y</li>
+<li><strong>mz</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; mean z</li>
+<li><strong>spacing</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; grid spacing</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="surface.Isotropic">
+<em class="property">class </em><tt class="descclassname">surface.</tt><tt class="descname">Isotropic</tt><big>(</big><em>grid</em>, <em>kernel</em>, <em>rfunc=&lt;function rfunc at 0x7fef9ab9dc80&gt;</em>, <em>v=0.0</em>, <em>mode='same'</em>, <em>verbose=False</em><big>)</big><a class="reference internal" href="../modules/surface.html#Isotropic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.Isotropic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs convolution of random noise with a kernel to make morphology.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>grid</strong> (<tt class="xref py py-class docutils literal"><span class="pre">surface.Grid</span></tt>) &#8211; grid</li>
+<li><strong>kernel</strong> (<em>Kernel</em>) &#8211; Kernel instance</li>
+<li><strong>rfunc</strong> (<em>func</em>) &#8211; function that produces random numbers in range [-0.5,0.5]</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="surface.f_isotropic">
+<tt class="descclassname">surface.</tt><tt class="descname">f_isotropic</tt><big>(</big><em>x</em>, <em>y</em>, <em>z</em>, <em>sx</em>, <em>sy</em>, <em>sz</em>, <em>full=False</em><big>)</big><a class="reference internal" href="../modules/surface.html#f_isotropic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#surface.f_isotropic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Surface function f(x,y,z) for isotropic morphology according to Jake.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>x</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; x-value(s)</li>
+<li><strong>y</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; y-value(s)</li>
+<li><strong>z</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; z-value(s)</li>
+<li><strong>sx</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; sigma x</li>
+<li><strong>sy</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; sigma y</li>
+<li><strong>sz</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; sigma z</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">100j</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">100j</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">100j</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">isotropic</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="vtkutils.html" title="vtkutils"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="datfile.html" title="datfile"
+             >previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Adam Gagorik.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

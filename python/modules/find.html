@@ -1,0 +1,738 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>find &mdash; Langmuir Python 2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <link rel="top" title="Langmuir Python 2.0 documentation" href="../index.html" />
+    <link rel="next" title="checkpoint" href="checkpoint.html" />
+    <link rel="prev" title="regex" href="regex.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="checkpoint.html" title="checkpoint"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="regex.html" title="regex"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="regex.html"
+                        title="previous chapter">regex</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="checkpoint.html"
+                        title="next chapter">checkpoint</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../sources/modules/find.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-find">
+<span id="find"></span><h1>find<a class="headerlink" href="#module-find" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Functions for performing file searching.</p>
+</div>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+<dl class="function">
+<dt id="find.depth">
+<tt class="descclassname">find.</tt><tt class="descname">depth</tt><big>(</big><em>path</em>, <em>relpath</em><big>)</big><a class="reference internal" href="../modules/find.html#depth"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#find.depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate depth of path relative to relpath.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; a path</li>
+<li><strong>relpath</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; another path</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="find.find">
+<tt class="descclassname">find.</tt><tt class="descname">find</tt><big>(</big><em>work</em>, <em>r=False</em>, <em>single=True</em>, <em>absolute=True</em>, <em>stub='*'</em>, <em>ext=None</em>, <em>exclude_dirs=False</em>, <em>exclude_files=False</em>, <em>sort_by=&lt;function numbers at 0x7fefedd48230&gt;</em>, <em>at_least_one=False</em>, <em>follow_links=False</em><big>)</big><a class="reference internal" href="../modules/find.html#find"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#find.find" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method for searching for files and directories using patterns.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>work</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; path to search</li>
+<li><strong>r</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; perform the search recursivly</li>
+<li><strong>single</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; do not return a list</li>
+<li><strong>absolute</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; return absolute paths</li>
+<li><strong>stub</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the wildcard-able search pattern (star is the wildcard)</li>
+<li><strong>ext</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the filename extension</li>
+<li><strong>exclude_dirs</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; do not include directories in the search</li>
+<li><strong>exclude_files</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; do not include files in the search</li>
+<li><strong>sort_by</strong> (<em>func</em>) &#8211; a function (applied to paths) used to sort the results</li>
+<li><strong>at_least_one</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; make sure at least one thing was found</li>
+<li><strong>follow_links</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><em>bool</em></a>) &#8211; do not follow symbolic links</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">os</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">work</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pkls</span> <span class="o">=</span> <span class="n">find</span><span class="p">(</span><span class="n">work</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s">&#39;txt*&#39;</span><span class="p">)</span> <span class="c"># find all txt files in work</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="find.systems">
+<tt class="descclassname">find.</tt><tt class="descname">systems</tt><big>(</big><em>work</em>, <em>stub=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/find.html#systems"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#find.systems" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for directories that contain &#8220;runs&#8221;.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> &#8211; see <a class="reference internal" href="#find.runs" title="find.runs"><tt class="xref py py-func docutils literal"><span class="pre">runs()</span></tt></a></li>
+<li><strong>kwargs</strong> &#8211; see <a class="reference internal" href="#find.runs" title="find.runs"><tt class="xref py py-func docutils literal"><span class="pre">runs()</span></tt></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">systems</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">find</span><span class="o">.</span><span class="n">systems</span><span class="p">(</span><span class="s">r&#39;/home/adam/simulations&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">systems</span><span class="p">)</span>
+<span class="go">&#39;/home/adam/simulations/systemA&#39;</span>
+<span class="go">&#39;/home/adam/simulations/systemB&#39;</span>
+<span class="go">&#39;/home/adam/simulations/systemC&#39;</span>
+<span class="go">&#39;/home/adam/simulations/systemD&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="find.sims">
+<tt class="descclassname">find.</tt><tt class="descname">sims</tt><big>(</big><em>work</em>, <em>stub=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/find.html#sims"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#find.sims" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for directories that contain &#8220;parts&#8221;.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> &#8211; see <a class="reference internal" href="#find.parts" title="find.parts"><tt class="xref py py-func docutils literal"><span class="pre">parts()</span></tt></a></li>
+<li><strong>kwargs</strong> &#8211; see <a class="reference internal" href="#find.parts" title="find.parts"><tt class="xref py py-func docutils literal"><span class="pre">parts()</span></tt></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">work</span> <span class="o">=</span> <span class="s">r&#39;/home/adam/simulations/systemA/run.0&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sims</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">find</span><span class="o">.</span><span class="n">sims</span><span class="p">(</span><span class="n">work</span><span class="p">,</span> <span class="n">stub</span><span class="o">=</span><span class="s">&#39;voltage.right&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">systems</span><span class="p">)</span>
+<span class="go">&#39;/home/adam/simulations/systemA/run.0/voltage.right_+0.0&#39;</span>
+<span class="go">&#39;/home/adam/simulations/systemA/run.0/voltage.right_+0.2&#39;</span>
+<span class="go">&#39;/home/adam/simulations/systemA/run.0/voltage.right_+0.4&#39;</span>
+<span class="go">&#39;/home/adam/simulations/systemA/run.0/voltage.right_+0.8&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="find.runs">
+<tt class="descclassname">find.</tt><tt class="descname">runs</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/find.html#runs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#find.runs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for directories of the form run*.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+<li><strong>kwargs</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">runs</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">find</span><span class="o">.</span><span class="n">runs</span><span class="p">(</span><span class="s">r&#39;/home/adam/simulations/systemA/&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">runs</span><span class="p">)</span>
+<span class="go">&#39;/home/adam/simulations/systemA/run.0/&#39;</span>
+<span class="go">&#39;/home/adam/simulations/systemA/run.1/&#39;</span>
+<span class="go">&#39;/home/adam/simulations/systemA/run.2/&#39;</span>
+<span class="go">&#39;/home/adam/simulations/systemA/run.3/&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="find.run">
+<tt class="descclassname">find.</tt><tt class="descname">run</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/find.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#find.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for a single directory of the form run*.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+<li><strong>kwargs</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">run</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">find</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s">r&#39;/home/adam/simulations/systemA&#39;</span><span class="p">)</span>
+<span class="go">RuntimeError: found multiple run* in directory:</span>
+<span class="go">    /home/adam/simulations/systemA</span>
+<span class="go">        run.0</span>
+<span class="go">        run.1</span>
+<span class="go">        run.2</span>
+<span class="go">        run.3</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="find.parts">
+<tt class="descclassname">find.</tt><tt class="descname">parts</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/find.html#parts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#find.parts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for directories of the form part*.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+<li><strong>kwargs</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">prts</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">find</span><span class="o">.</span><span class="n">parts</span><span class="p">(</span><span class="s">r&#39;~/simulations/systemA/run.0/voltage.right_+0.0&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">prts</span><span class="p">)</span>
+<span class="go">&#39;/home/adam/simulations/systemA/run.0/voltage.right_+0.0/part.0/&#39;</span>
+<span class="go">&#39;/home/adam/simulations/systemA/run.0/voltage.right_+0.0/part.1/&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="find.part">
+<tt class="descclassname">find.</tt><tt class="descname">part</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/find.html#part"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#find.part" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for a single directory of the form part*.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+<li><strong>kwargs</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">part</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">find</span><span class="o">.</span><span class="n">parts</span><span class="p">(</span><span class="s">r&#39;~/simulations/systemA/run.0/voltage.right_+0.0&#39;</span><span class="p">)</span>
+<span class="go">RuntimeError: found multiple part* in directory:</span>
+<span class="go">    /home/adam/simulations/systemA/run.0/voltage.right_+0.0</span>
+<span class="go">        part.0</span>
+<span class="go">        part.1</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="find.inps">
+<tt class="descclassname">find.</tt><tt class="descname">inps</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/find.html#inps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#find.inps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for files of the form <em>.inp</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+<li><strong>kwargs</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">inps</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">find</span><span class="o">.</span><span class="n">inps</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="find.inp">
+<tt class="descclassname">find.</tt><tt class="descname">inp</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/find.html#inp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#find.inp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for a single file of the form <em>.inp</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+<li><strong>kwargs</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">inp</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">find</span><span class="o">.</span><span class="n">inp</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="find.chks">
+<tt class="descclassname">find.</tt><tt class="descname">chks</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/find.html#chks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#find.chks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for files of the form <em>.chk</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+<li><strong>kwargs</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">chks</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">find</span><span class="o">.</span><span class="n">chks</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="find.chk">
+<tt class="descclassname">find.</tt><tt class="descname">chk</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/find.html#chk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#find.chk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for a single file of the form <em>.chk</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+<li><strong>kwargs</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">chk</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">find</span><span class="o">.</span><span class="n">chk</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="find.parms">
+<tt class="descclassname">find.</tt><tt class="descname">parms</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/find.html#parms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#find.parms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for files of the form <em>.parm</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+<li><strong>kwargs</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">parms</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">find</span><span class="o">.</span><span class="n">parms</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="find.parm">
+<tt class="descclassname">find.</tt><tt class="descname">parm</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/find.html#parm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#find.parm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for a single file of the form <em>.parm</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+<li><strong>kwargs</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">parm</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">find</span><span class="o">.</span><span class="n">parm</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="find.dats">
+<tt class="descclassname">find.</tt><tt class="descname">dats</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/find.html#dats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#find.dats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for files of the form <em>.dat</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+<li><strong>kwargs</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">dats</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">find</span><span class="o">.</span><span class="n">dats</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="find.dat">
+<tt class="descclassname">find.</tt><tt class="descname">dat</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/find.html#dat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#find.dat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for a single file of the form <em>.dat</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+<li><strong>kwargs</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">dat</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">find</span><span class="o">.</span><span class="n">dat</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="find.txts">
+<tt class="descclassname">find.</tt><tt class="descname">txts</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/find.html#txts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#find.txts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for files of the form <em>.txt</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+<li><strong>kwargs</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">txts</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">find</span><span class="o">.</span><span class="n">txts</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="find.txt">
+<tt class="descclassname">find.</tt><tt class="descname">txt</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/find.html#txt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#find.txt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for a single file of the form <em>.txt</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+<li><strong>kwargs</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">txt</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">find</span><span class="o">.</span><span class="n">txt</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="find.pkls">
+<tt class="descclassname">find.</tt><tt class="descname">pkls</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/find.html#pkls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#find.pkls" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for files of the form <em>.pkl</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+<li><strong>kwargs</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">pkls</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">find</span><span class="o">.</span><span class="n">pkls</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="find.pkl">
+<tt class="descclassname">find.</tt><tt class="descname">pkl</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/find.html#pkl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#find.pkl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for a single file of the form <em>.pkl</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+<li><strong>kwargs</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">pkl</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">find</span><span class="o">.</span><span class="n">pkl</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="find.pngs">
+<tt class="descclassname">find.</tt><tt class="descname">pngs</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/find.html#pngs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#find.pngs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for files of the form <em>.png</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+<li><strong>kwargs</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">pngs</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">find</span><span class="o">.</span><span class="n">pngs</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="find.png">
+<tt class="descclassname">find.</tt><tt class="descname">png</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/find.html#png"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#find.png" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for a single file of the form <em>.png</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>args</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+<li><strong>kwargs</strong> &#8211; see <a class="reference internal" href="#module-find" title="find"><tt class="xref py py-func docutils literal"><span class="pre">find()</span></tt></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">png</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">find</span><span class="o">.</span><span class="n">png</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="find.slice_path">
+<tt class="descclassname">find.</tt><tt class="descname">slice_path</tt><big>(</big><em>path</em>, <em>regex</em><big>)</big><a class="reference internal" href="../modules/find.html#slice_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#find.slice_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return dirname of path where the regex matches.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; path to parse</li>
+<li><strong>regex</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; regex to match</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">slice_path</span><span class="p">(</span><span class="s">&#39;r/home/adam/Desktop&#39;</span><span class="p">,</span> <span class="s">&#39;adam&#39;</span><span class="p">)</span>
+<span class="go">&#39;/home/adam&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="find.slice_part">
+<tt class="descclassname">find.</tt><tt class="descname">slice_part</tt><big>(</big><em>path</em><big>)</big><a class="reference internal" href="../modules/find.html#slice_part"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#find.slice_part" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return dirname of path where run directory is.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; path to parse</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">slice_path</span><span class="p">(</span><span class="s">&#39;r/system/run/sim/part&#39;</span><span class="p">)</span>
+<span class="go">&#39;/system/run/sim/part&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="find.slice_sim">
+<tt class="descclassname">find.</tt><tt class="descname">slice_sim</tt><big>(</big><em>path</em><big>)</big><a class="reference internal" href="../modules/find.html#slice_sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#find.slice_sim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return dirname of path where sim directory is.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; path to parse</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">slice_path</span><span class="p">(</span><span class="s">&#39;r/system/run/sim/part&#39;</span><span class="p">)</span>
+<span class="go">&#39;/system/run/sim&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="find.slice_run">
+<tt class="descclassname">find.</tt><tt class="descname">slice_run</tt><big>(</big><em>path</em><big>)</big><a class="reference internal" href="../modules/find.html#slice_run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#find.slice_run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return dirname of path where run directory is.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; path to parse</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">slice_path</span><span class="p">(</span><span class="s">&#39;r/system/run/sim/part&#39;</span><span class="p">)</span>
+<span class="go">&#39;/system/run&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="find.slice_system">
+<tt class="descclassname">find.</tt><tt class="descname">slice_system</tt><big>(</big><em>path</em><big>)</big><a class="reference internal" href="../modules/find.html#slice_system"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#find.slice_system" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return dirname of path where system directory is.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; path to parse</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">slice_path</span><span class="p">(</span><span class="s">&#39;r/system/run/sim/part&#39;</span><span class="p">)</span>
+<span class="go">&#39;/system&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="find.extract_system">
+<tt class="descclassname">find.</tt><tt class="descname">extract_system</tt><big>(</big><em>path</em><big>)</big><a class="reference internal" href="../modules/find.html#extract_system"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#find.extract_system" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract system name from path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; path to parse</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="checkpoint.html" title="checkpoint"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="regex.html" title="regex"
+             >previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Adam Gagorik.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

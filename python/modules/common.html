@@ -1,0 +1,458 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>common &mdash; Langmuir Python 2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <link rel="top" title="Langmuir Python 2.0 documentation" href="../index.html" />
+    <link rel="next" title="regex" href="regex.html" />
+    <link rel="prev" title="Langmuir Python" href="../index.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="regex.html" title="regex"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Langmuir Python"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../index.html"
+                        title="previous chapter">Langmuir Python</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="regex.html"
+                        title="next chapter">regex</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../sources/modules/common.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-common">
+<span id="common"></span><h1>common<a class="headerlink" href="#module-common" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Utility functions.</p>
+</div>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+<dl class="function">
+<dt id="common.zhandle">
+<tt class="descclassname">common.</tt><tt class="descname">zhandle</tt><big>(</big><em>handle</em>, <em>mode='rb'</em><big>)</big><a class="reference internal" href="../modules/common.html#zhandle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.zhandle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open a file using gzip if necessary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>handle</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; filename</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">file handle</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.python.org/library/functions.html#file" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">file</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">handle</span> <span class="o">=</span> <span class="n">zhandle</span><span class="p">(</span><span class="s">&#39;out.dat.gz&#39;</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="common.tail">
+<tt class="descclassname">common.</tt><tt class="descname">tail</tt><big>(</big><em>handle</em>, <em>n=1</em>, <em>mode='python'</em><big>)</big><a class="reference internal" href="../modules/common.html#tail"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.tail" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return last n lines of a file.  The python version is much faster than
+a system call.  The python version works on gzipped files.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>handle</strong> &#8211; filename</li>
+<li><strong>n</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; lines</li>
+<li><strong>mode</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; python or subprocess</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of lines</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">list</span></tt></a> of <a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">str</span></tt></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">lines</span> <span class="o">=</span> <span class="n">tail</span><span class="p">(</span><span class="s">&#39;out.dat&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="common.splitext">
+<tt class="descclassname">common.</tt><tt class="descname">splitext</tt><big>(</big><em>handle</em><big>)</big><a class="reference internal" href="../modules/common.html#splitext"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.splitext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract stub and extension from a file object or string.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>handle</strong> &#8211; filename</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">stub and ext</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">str</span></tt></a>, <a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">str</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">stub</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">splitext</span><span class="p">(</span><span class="s">&#39;out.dat&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">stub</span><span class="p">,</span> <span class="n">ext</span>
+<span class="go">(&#39;out&#39;, &#39;.dat&#39;)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="common.load_pkl">
+<tt class="descclassname">common.</tt><tt class="descname">load_pkl</tt><big>(</big><em>handle</em>, <em>max_objs=256</em><big>)</big><a class="reference internal" href="../modules/common.html#load_pkl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.load_pkl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load max objs from a pkl file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>handle</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; filename</li>
+<li><strong>max_objs</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; max number of objects to load</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of data</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">list</span></tt></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">load_pkl</span><span class="p">(</span><span class="s">&#39;combined.pkl&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="common.load_pkls">
+<tt class="descclassname">common.</tt><tt class="descname">load_pkls</tt><big>(</big><em>pkls</em><big>)</big><a class="reference internal" href="../modules/common.html#load_pkls"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.load_pkls" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a set of pkls into a list.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pkls</strong> (<em>list of str</em>) &#8211; list of filenames</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">nested list of loaded data</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">list</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">pkls</span> <span class="o">=</span> <span class="n">load_pkls</span><span class="p">([</span><span class="s">&#39;a.pkl&#39;</span><span class="p">,</span> <span class="s">&#39;b.pkl&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="common.save_pkl">
+<tt class="descclassname">common.</tt><tt class="descname">save_pkl</tt><big>(</big><em>obj</em>, <em>handle</em><big>)</big><a class="reference internal" href="../modules/common.html#save_pkl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.save_pkl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save obj to a pkl file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>obj</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><em>object</em></a>) &#8211; python object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the file handle</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.python.org/library/functions.html#file" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">file</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">handle</span> <span class="o">=</span> <span class="n">save_pkl</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;test.pkl&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">handle</span> <span class="o">=</span> <span class="n">save_pkl</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">handle</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="common.format_string">
+<tt class="descclassname">common.</tt><tt class="descname">format_string</tt><big>(</big><em>s</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/common.html#format_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.format_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format a string using <tt class="xref py py-func docutils literal"><span class="pre">str.format()</span></tt> and process with regex.
+kwargs are passed to the format function.</p>
+<p>The following regex are used:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="44%" />
+<col width="56%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head"><em>match</em></th>
+<th class="head"><em>replace</em></th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>&#8216;^_&#8217;</td>
+<td>&#8216;&#8217;</td>
+</tr>
+<tr class="row-odd"><td>&#8216;_$&#8217;</td>
+<td>&#8216;&#8217;</td>
+</tr>
+<tr class="row-even"><td>&#8216;_.&#8217;</td>
+<td>&#8216;.&#8217;</td>
+</tr>
+</tbody>
+</table>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>s</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; string to process</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the formatted string</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">str</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">format_string</span><span class="p">(</span><span class="s">&#39;_{name}.{ext}&#39;</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s">&#39;dat&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;adam&#39;</span><span class="p">)</span>
+<span class="go">adam.dat</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">format_string</span><span class="p">(</span><span class="s">&#39;adam_.{ext}&#39;</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s">&#39;dat&#39;</span><span class="p">)</span>
+<span class="go">adam.dat</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="common.format_output">
+<tt class="descclassname">common.</tt><tt class="descname">format_output</tt><big>(</big><em>s='{stub}_{name}.{ext}'</em>, <em>stub=''</em>, <em>name='out'</em>, <em>ext='dat'</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/common.html#format_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.format_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format an output file name and then process with regex.  If stub is empty,
+the leading underscore is striped.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>stub</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; a unique string to identify the file</li>
+<li><strong>name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; a common string to identify the file</li>
+<li><strong>ext</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; the filename extention without a &#8216;.&#8217;</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">formatted filename</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">str</span></tt></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">format_output</span><span class="p">(</span><span class="n">stub</span><span class="o">=</span><span class="s">&#39;systemA&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;fft&#39;</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s">&#39;txt&#39;</span><span class="p">)</span>
+<span class="go">systemA_fft.txt</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="#common.format_string" title="common.format_string"><tt class="xref py py-func docutils literal"><span class="pre">format_string()</span></tt></a></p>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="common.compare_dicts">
+<tt class="descclassname">common.</tt><tt class="descname">compare_dicts</tt><big>(</big><em>dict1</em>, <em>dict2</em><big>)</big><a class="reference internal" href="../modules/common.html#compare_dicts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.compare_dicts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compare two dictionaries.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dict1</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; dict like object</li>
+<li><strong>dict2</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; dict like object</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a results dictionary with the output of set operations</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://docs.python.org/library/collections.html#collections.OrderedDict" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">collections.OrderedDict</span></tt></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">compare_dicts</span><span class="p">({</span><span class="s">&#39;A&#39;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">},</span> <span class="p">{</span><span class="s">&#39;A&#39;</span> <span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;B&#39;</span> <span class="p">:</span> <span class="mi">3</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span>
+<span class="go">size1 1      # size of dict1</span>
+<span class="go">size2 2      # size of dict2</span>
+<span class="go">union 2      # union of keys        (A, B)</span>
+<span class="go">inter 1      # intersection of keys (A)</span>
+<span class="go">valid False  # are they the same?</span>
+<span class="go">A (1, 2)     # keys that are different and and their values</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="common.compare_lists">
+<tt class="descclassname">common.</tt><tt class="descname">compare_lists</tt><big>(</big><em>list1</em>, <em>list2</em><big>)</big><a class="reference internal" href="../modules/common.html#compare_lists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.compare_lists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compare two lists.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>list1</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; list like object</li>
+<li><strong>list2</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; list like object</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a results dictionary with the output of set operations</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://docs.python.org/library/collections.html#collections.OrderedDict" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">collections.OrderedDict</span></tt></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">compare_lists</span><span class="p">([</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="k">print</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span>
+<span class="go">size1 1      # size of list1</span>
+<span class="go">size2 2      # size of list2</span>
+<span class="go">union 2      # union of items        (1, 2)</span>
+<span class="go">inter 1      # intersection of items (1)</span>
+<span class="go">valid False  # are they the same?</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="common.command_script">
+<tt class="descclassname">common.</tt><tt class="descname">command_script</tt><big>(</big><em>paths</em>, <em>name=None</em>, <em>cwd=None</em>, <em>batch='run.batch'</em>, <em>batch_dir='~/templates'</em>, <em>inp='sim.inp'</em>, <em>comment=True</em>, <em>stub='{relpath}'</em>, <em>stub_func=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/common.html#command_script"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.command_script" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a handy script.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>paths</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; list of paths</li>
+<li><strong>name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; output file name</li>
+<li><strong>cwd</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; working directory</li>
+<li><strong>batch</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; batch file name</li>
+<li><strong>batch_dir</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; batch file directory</li>
+<li><strong>inp</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; input file name</li>
+<li><strong>comment</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; comment out custom command?</li>
+<li><strong>stub</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; job stub string</li>
+<li><strong>stub_func</strong> (<em>func</em>) &#8211; post-process stub</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="common.ColorCodes">
+<em class="property">class </em><tt class="descclassname">common.</tt><tt class="descname">ColorCodes</tt><a class="reference internal" href="../modules/common.html#ColorCodes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#common.ColorCodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides ANSI terminal color codes which are gathered via the <tt class="docutils literal"><span class="pre">tput</span></tt>
+utility. That way, they are portable. If there occurs any error with
+<tt class="docutils literal"><span class="pre">tput</span></tt>, all codes are initialized as an empty string.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="regex.html" title="regex"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Langmuir Python"
+             >previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Adam Gagorik.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

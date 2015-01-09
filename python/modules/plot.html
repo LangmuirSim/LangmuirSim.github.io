@@ -1,0 +1,298 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>plot &mdash; Langmuir Python 2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <link rel="top" title="Langmuir Python 2.0 documentation" href="../index.html" />
+    <link rel="next" title="fit" href="fit.html" />
+    <link rel="prev" title="ivcurve" href="ivcurve.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="fit.html" title="fit"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="ivcurve.html" title="ivcurve"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="ivcurve.html"
+                        title="previous chapter">ivcurve</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="fit.html"
+                        title="next chapter">fit</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../sources/modules/plot.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-plot">
+<span id="plot"></span><h1>plot<a class="headerlink" href="#module-plot" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Functions for plotting.</p>
+</div>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+<dl class="function">
+<dt id="plot.convert">
+<tt class="descclassname">plot.</tt><tt class="descname">convert</tt><big>(</big><em>ifile</em>, <em>ofile</em>, <em>density=300</em><big>)</big><a class="reference internal" href="../modules/plot.html#convert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plot.convert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="plot.crop">
+<tt class="descclassname">plot.</tt><tt class="descname">crop</tt><big>(</big><em>name</em>, <em>border=10</em><big>)</big><a class="reference internal" href="../modules/plot.html#crop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plot.crop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Crop a file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="plot.save">
+<tt class="descclassname">plot.</tt><tt class="descname">save</tt><big>(</big><em>name</em>, <em>border=10</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/plot.html#save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plot.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save a file and crop it.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="plot.subplots">
+<tt class="descclassname">plot.</tt><tt class="descname">subplots</tt><big>(</big><em>nrows=1</em>, <em>ncols=1</em>, <em>w=6</em>, <em>h=6</em>, <em>l=1.0</em>, <em>r=1.0</em>, <em>t=1.0</em>, <em>b=1.0</em>, <em>ws=1.0</em>, <em>hs=1.0</em>, <em>units='in'</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/plot.html#subplots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plot.subplots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrapper around <a class="reference external" href="http://matplotlib.sourceforge.net/api/pyplot_api.html#matplotlib.pyplot.subplots" title="(in Matplotlib v1.4.2)"><tt class="xref py py-func docutils literal"><span class="pre">matplotlib.pyplot.subplots()</span></tt></a> that uses absolute (instead of relative) lengths.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>nrows</strong> &#8211; number of rows</li>
+<li><strong>ncols</strong> &#8211; number of cols</li>
+<li><strong>w</strong> &#8211; width of each subplot</li>
+<li><strong>h</strong> &#8211; height of each subplot</li>
+<li><strong>l</strong> &#8211; left margin</li>
+<li><strong>r</strong> &#8211; right margin</li>
+<li><strong>t</strong> &#8211; top margin</li>
+<li><strong>b</strong> &#8211; bottom margin</li>
+<li><strong>ws</strong> &#8211; horizontal space between subplots</li>
+<li><strong>hs</strong> &#8211; vertical space between subplots</li>
+<li><strong>units</strong> &#8211; units of length (default=in, cm)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="plot.multiple_locator">
+<tt class="descclassname">plot.</tt><tt class="descname">multiple_locator</tt><big>(</big><em>axis=None</em>, <em>x=None</em>, <em>y=None</em>, <em>s=None</em>, <em>which='major'</em><big>)</big><a class="reference internal" href="../modules/plot.html#multiple_locator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plot.multiple_locator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Easier way to set mpl.ticker.MultipleLocator.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="plot.maxn_locator">
+<tt class="descclassname">plot.</tt><tt class="descname">maxn_locator</tt><big>(</big><em>axis=None</em>, <em>x=None</em>, <em>y=None</em>, <em>s=None</em>, <em>which='major'</em><big>)</big><a class="reference internal" href="../modules/plot.html#maxn_locator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plot.maxn_locator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Easier way to set mpl.ticker.MaxNLocator.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="plot.scilimits">
+<tt class="descclassname">plot.</tt><tt class="descname">scilimits</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/plot.html#scilimits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plot.scilimits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Easier way to set scilimits.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="plot.zoom">
+<tt class="descclassname">plot.</tt><tt class="descname">zoom</tt><big>(</big><em>axis=None</em>, <em>factor=0.05</em>, <em>l=None</em>, <em>r=None</em>, <em>t=None</em>, <em>b=None</em><big>)</big><a class="reference internal" href="../modules/plot.html#zoom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plot.zoom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Zoom out.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="plot.shift_subplots">
+<tt class="descclassname">plot.</tt><tt class="descname">shift_subplots</tt><big>(</big><em>fig=None</em>, <em>horizontal=0.0</em>, <em>vertical=0.0</em><big>)</big><a class="reference internal" href="../modules/plot.html#shift_subplots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plot.shift_subplots" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shift center of subplots.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="plot.create_colorbar_axes">
+<tt class="descclassname">plot.</tt><tt class="descname">create_colorbar_axes</tt><big>(</big><em>axis=None</em>, <em>shift=0.01</em>, <em>width=0.05</em><big>)</big><a class="reference internal" href="../modules/plot.html#create_colorbar_axes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plot.create_colorbar_axes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create colorbar axis next to subplot.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="plot.fix_colorbar_labels">
+<tt class="descclassname">plot.</tt><tt class="descname">fix_colorbar_labels</tt><big>(</big><em>cax</em><big>)</big><a class="reference internal" href="../modules/plot.html#fix_colorbar_labels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plot.fix_colorbar_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Align colorbar labels.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="plot.fake_alpha">
+<tt class="descclassname">plot.</tt><tt class="descname">fake_alpha</tt><big>(</big><em>rgb</em>, <em>alpha</em><big>)</big><a class="reference internal" href="../modules/plot.html#fake_alpha"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plot.fake_alpha" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute color.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="plot.rectangle">
+<tt class="descclassname">plot.</tt><tt class="descname">rectangle</tt><big>(</big><em>x0</em>, <em>y0</em>, <em>x1</em>, <em>y1</em>, <em>axis=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/plot.html#rectangle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plot.rectangle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draw a rectangle.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="plot.contourf">
+<tt class="descclassname">plot.</tt><tt class="descname">contourf</tt><big>(</big><em>x</em>, <em>y</em>, <em>v</em>, <em>n</em>, <em>index=(slice(None</em>, <em>None</em>, <em>None)</em>, <em>slice(None</em>, <em>None</em>, <em>None)</em>, <em>0)</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/plot.html#contourf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plot.contourf" title="Permalink to this definition">¶</a></dt>
+<dd><p>wrapper around contourf</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="plot.contour">
+<tt class="descclassname">plot.</tt><tt class="descname">contour</tt><big>(</big><em>x</em>, <em>y</em>, <em>v</em>, <em>n</em>, <em>index=(slice(None</em>, <em>None</em>, <em>None)</em>, <em>slice(None</em>, <em>None</em>, <em>None)</em>, <em>0)</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/plot.html#contour"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plot.contour" title="Permalink to this definition">¶</a></dt>
+<dd><p>wrapper around contour</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="plot.errorbar">
+<tt class="descclassname">plot.</tt><tt class="descname">errorbar</tt><big>(</big><em>x</em>, <em>y</em>, <em>color='r'</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../modules/plot.html#errorbar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plot.errorbar" title="Permalink to this definition">¶</a></dt>
+<dd><p>wrapper around errorbar</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="plot.transformA">
+<tt class="descclassname">plot.</tt><tt class="descname">transformA</tt><big>(</big><em>x</em>, <em>y</em>, <em>a=None</em><big>)</big><a class="reference internal" href="../modules/plot.html#transformA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plot.transformA" title="Permalink to this definition">¶</a></dt>
+<dd><p>transform angle from data to screen coordinates</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="plot.transformX">
+<tt class="descclassname">plot.</tt><tt class="descname">transformX</tt><big>(</big><em>x</em>, <em>transform_from=None</em>, <em>transform_to=None</em><big>)</big><a class="reference internal" href="../modules/plot.html#transformX"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plot.transformX" title="Permalink to this definition">¶</a></dt>
+<dd><p>transform x from axes to data coords</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="plot.transformY">
+<tt class="descclassname">plot.</tt><tt class="descname">transformY</tt><big>(</big><em>y</em>, <em>transform_from=None</em>, <em>transform_to=None</em><big>)</big><a class="reference internal" href="../modules/plot.html#transformY"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plot.transformY" title="Permalink to this definition">¶</a></dt>
+<dd><p>transform y from axes to data coords</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="plot.scale_bars">
+<tt class="descclassname">plot.</tt><tt class="descname">scale_bars</tt><big>(</big><em>patches</em><big>)</big><a class="reference internal" href="../modules/plot.html#scale_bars"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plot.scale_bars" title="Permalink to this definition">¶</a></dt>
+<dd><p>scales bars of bar plot</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="plot.BarPlot">
+<em class="property">class </em><tt class="descclassname">plot.</tt><tt class="descname">BarPlot</tt><big>(</big><em>groups</em>, <em>members</em>, <em>rwidth=0.5</em>, <em>gshift=1.0</em><big>)</big><a class="reference internal" href="../modules/plot.html#BarPlot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plot.BarPlot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper for calculating x-values of bar plots.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">bar</span> <span class="o">=</span> <span class="n">BarPlot</span><span class="p">(</span><span class="n">groups</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">members</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bar</span><span class="o">.</span><span class="n">ydata</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="c">#group 0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bar</span><span class="o">.</span><span class="n">ydata</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="c">#group 1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bar</span><span class="o">.</span><span class="n">ydata</span><span class="p">[</span><span class="mi">2</span><span class="p">,:]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span> <span class="c">#group 2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bar</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="plot.PeakFinder">
+<em class="property">class </em><tt class="descclassname">plot.</tt><tt class="descname">PeakFinder</tt><big>(</big><em>figure=None</em>, <em>mode='fit'</em>, <em>handle=None</em>, <em>callback=None</em>, <em>savename='plot.pdf'</em><big>)</big><a class="reference internal" href="../modules/plot.html#PeakFinder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#plot.PeakFinder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interactive way to find peaks on a xy plot.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="s">&#39;r-&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">finder</span> <span class="o">=</span> <span class="n">PeakFinder</span><span class="p">(</span><span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="fit.html" title="fit"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="ivcurve.html" title="ivcurve"
+             >previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Adam Gagorik.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
