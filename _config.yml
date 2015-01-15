@@ -19,7 +19,7 @@ highlighter: pygments
 title:       "Langmuir"
 keywords:    "Langmuir, charge transport, Monte Carlo, OFETs, OPVs"
 description: "A Monte Carlo charge transport simulation framework written in c++ and python"
-source_link: "https://github.com/t413/SinglePaged"
+source_link: "https://github.com/LangmuirSim/langmuir"
 favicon:     #put a path like: "img/favicon.ico"
 touch_icon:  #put a path like: "img/apple-touch-icon.png"
 google_analytics_key: ## put YOUR key here to enable tracking! (blank to disable)
