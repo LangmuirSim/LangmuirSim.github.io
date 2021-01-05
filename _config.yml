@@ -10,9 +10,6 @@ exclude: [CNAME, README.md, .gitignore, Makefile, Gemfile, Gemfile.lock]
 permalink: / ## disables post output
 timezone: null
 lsi: false
-markdown: redcarpet
-redcarpet:
-  extensions: ["tables"]
 highlighter: pygments
 
 ### content configuration ###
