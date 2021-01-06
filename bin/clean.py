@@ -12,9 +12,10 @@ exclude_d = [
 exclude_d = list(map(lambda x: os.path.abspath(x), exclude_d))
 
 exclude_f = [
-    './index.html',
-    './Makefile',
+    './.gitignore',
     './.nojekyll',
+    './index.html',
+    './README.md',
 ]
 exclude_f = list(map(lambda x: os.path.abspath(x), exclude_f))
 
