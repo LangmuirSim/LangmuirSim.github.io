@@ -2,52 +2,42 @@
 
 * http://langmuirsim.github.io/
 
-## Upstream
+## About
 
-* The website is based on the SinglePaged jekyll theme.
-* https://github.com/t413/SinglePaged
+* The website is a Sphinx based document.
+* All source files for the document are in the `docs` folder.
+* The Python and Doxygen source code docs have been pregenerated.
 
-###### Add
+## Setup
 
-```bash
-git remote remove upstream
-git remote add upstream git@github.com:t413/SinglePaged.git
-```
+A Python environment with the following is required to build the website.
 
-###### Update
+- sphinx
+- sphinx_rtd_theme
+- pandoc
 
-```bash
-git fetch upstream publish
-git merge upstream/publish master
-```
-
-## Jekyll
-
-* The website uses jekyll, a ruby based static site generator.
-* http://jekyllrb.com/
-
-###### Install
-
-* It is useful to have jekyll installed locally to preview changes before pushing them.
+The following conda environment can be used.
 
 ```bash
-# Ubuntu
-sudo apt-get install ruby
-sudo gem install bundler
-
-# Gemfile needed
-cd ./path/to/LangmuirSim.github.io
-bundle install
+cd ./bin
+conda remove --name langmuirdocs --all --yes
+conda create --name langmuirdocs --file environment.txt
 ```
 
-###### Update
+## Update
 
- ```bash
-bundle update
+To update the website, perform the following steps.
+
+```bash
+# install some dependencies or the required activate conda environment
+conda activate langmuirdocs
+
+# run Sphinx
+cd ./bin
+./build.sh
+
+# If successful, publish the new content 
+cd ..
+git add .
+git commit -m "Update website content"
 ```
-
-###### Preview
-
- ```bash
-bundle exec jekyll serve
- ```
