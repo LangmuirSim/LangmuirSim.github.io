@@ -1,7 +1,5 @@
 # About
 
-![image](../_static/bhj.png)
-
 Academic use should cite relevant papers.
 
  * Marcus D. Hanwell, Tamika A. Madison, Geoffrey R. Hutchison.
@@ -28,3 +26,5 @@ Academic use should cite relevant papers.
  “Effects of Delocalized Charges on Organic Photovoltaics: Nanoscale 3D Monte Carlo Simulations.”
  *Adv. Func. Mater.* 2014.
  [http://dx.doi.org/10.1002/adfm.201402332](http://dx.doi.org/10.1002/adfm.201402332)
+
+![image](../_static/bhj.png)
