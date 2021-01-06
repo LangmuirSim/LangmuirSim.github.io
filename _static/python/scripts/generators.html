@@ -1,0 +1,491 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>block.py &mdash; Langmuir Python 2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <link rel="top" title="Langmuir Python 2.0 documentation" href="../index.html" />
+    <link rel="prev" title="ga_analyze.py" href="ga2d.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="ga2d.html" title="ga_analyze.py"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">block.py</a></li>
+<li><a class="reference internal" href="#tristripe-py">tristripe.py</a></li>
+<li><a class="reference internal" href="#triangle-py">triangle.py</a></li>
+<li><a class="reference internal" href="#curves-py">curves.py</a></li>
+<li><a class="reference internal" href="#lines-py">lines.py</a></li>
+<li><a class="reference internal" href="#iso-py">iso.py</a></li>
+<li><a class="reference internal" href="#dla-py">dla.py</a></li>
+<li><a class="reference internal" href="#npytopng-py">npyToPng.py</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="ga2d.html"
+                        title="previous chapter">ga_analyze.py</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../sources/scripts/generators.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <span class="target" id="module-block"></span><div class="section" id="block-py">
+<h1>block.py<a class="headerlink" href="#block-py" title="Permalink to this headline">¶</a></h1>
+<p>
+Add blocking layer(s) to an existing image.
+
+Use &#8211;left &lt;pixel value&gt; and/or &#8211;right &lt;pixel value&gt; to paint each side.
+The &#8211;size &lt;pixels&gt; controls the width of the blocking layer.
+
+By default, the blocking layer is painted up the entire image.
+However, you can control the y-values of where the layer starts and stops with &#8211;lyi, &#8211;lyf, &#8211;ryi, and &#8211;ryf.
+Please note that the image origin is in the upper left corner.
+You may use negative indexing.  However, make sure the equivalent (positive) final pixel index is larger than the
+equivalent (positive) initial pixel index, or nothing with be painted.
+</p>
+<pre class="literal-block">
+usage: block.py [-h] [--size pixels] [--left color] [--right color]
+                [--lyi int] [--lyf int] [--ryi int] [--ryf int] [--show]
+                ifile.png [ofile.png]
+
+</pre>
+<dl class="docutils">
+<dt>Positional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd>ifile</kbd></td>
+<td>input</td></tr>
+<tr><td class="option-group">
+<kbd>ofile</kbd></td>
+<td>output</td></tr>
+</tbody>
+</table>
+</dd>
+<dt>Options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--size=16</span></kbd></td>
+<td>size of blocking layer(s)</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--left</span></kbd></td>
+<td>pixel value (0, 1 == 255) of left side</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--right</span></kbd></td>
+<td>pixel value (0, 1 == 255) of right side</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--lyi</span></kbd></td>
+<td>y-index to start painting at on left side</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--lyf</span></kbd></td>
+<td>y-index to stop painting at on left side</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--ryi</span></kbd></td>
+<td>y-index to start painting at on right side</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--ryf</span></kbd></td>
+<td>y-index to stop painting at on right side</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--show=False</span></kbd></td>
+<td>instead of saving, show result in a matplotlib window</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+<dl class="function">
+<dt id="block.makeBlock">
+<tt class="descclassname">block.</tt><tt class="descname">makeBlock</tt><big>(</big><em>image</em>, <em>left=None</em>, <em>right=None</em>, <em>size=16</em>, <em>lyi=None</em>, <em>lyf=None</em>, <em>ryi=None</em>, <em>ryf=None</em><big>)</big><a class="reference internal" href="../modules/block.html#makeBlock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#block.makeBlock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Paint blocking layer(s) over image on left and right side.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>image</strong> (<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a>) &#8211; data</li>
+<li><strong>left</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; pixel value to paint on left side (None, 0, 1=255)</li>
+<li><strong>right</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; pixel value to paint on right side (None, 0, 1=255)</li>
+<li><strong>size</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; width of blocking layer (x-direction)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">modified image data</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<span class="target" id="module-tristripe"></span><div class="section" id="tristripe-py">
+<h1>tristripe.py<a class="headerlink" href="#tristripe-py" title="Permalink to this headline">¶</a></h1>
+<p>
+make triangle stripes (horizontal triangles)
+</p>
+<pre class="literal-block">
+usage: tristripe.py [-h] [output] [dim.x] [dim.y] [period]
+
+</pre>
+<dl class="docutils">
+<dt>Positional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd>ofile</kbd></td>
+<td>output file</td></tr>
+<tr><td class="option-group">
+<kbd>width</kbd></td>
+<td>dim.x</td></tr>
+<tr><td class="option-group">
+<kbd>height</kbd></td>
+<td>dim.y</td></tr>
+<tr><td class="option-group">
+<kbd>period</kbd></td>
+<td>number of triangles along the image</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p><em>Module author: Geoff Hutchison &lt;<a class="reference external" href="mailto:geoffh&#37;&#52;&#48;pitt&#46;edu">geoffh<span>&#64;</span>pitt<span>&#46;</span>edu</a>&gt;</em></p>
+</div>
+<span class="target" id="module-triangle"></span><div class="section" id="triangle-py">
+<h1>triangle.py<a class="headerlink" href="#triangle-py" title="Permalink to this headline">¶</a></h1>
+<p>
+make triangle waves (for fractal roughening)
+</p>
+<pre class="literal-block">
+usage: triangle.py [-h] output dim.x dim.y spacing amplitude period
+
+</pre>
+<dl class="docutils">
+<dt>Positional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd>ofile</kbd></td>
+<td>output file</td></tr>
+<tr><td class="option-group">
+<kbd>width</kbd></td>
+<td>dim.x</td></tr>
+<tr><td class="option-group">
+<kbd>height</kbd></td>
+<td>dim.y</td></tr>
+<tr><td class="option-group">
+<kbd>spacing</kbd></td>
+<td>spacing between waves, in pixels</td></tr>
+<tr><td class="option-group">
+<kbd>amplitude</kbd></td>
+<td>amplitude of the waves, in pixels</td></tr>
+<tr><td class="option-group">
+<kbd>period</kbd></td>
+<td>number of waves along the image</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p><em>Module author: Geoff Hutchison &lt;<a class="reference external" href="mailto:geoffh&#37;&#52;&#48;pitt&#46;edu">geoffh<span>&#64;</span>pitt<span>&#46;</span>edu</a>&gt;</em></p>
+</div>
+<span class="target" id="module-curves"></span><div class="section" id="curves-py">
+<h1>curves.py<a class="headerlink" href="#curves-py" title="Permalink to this headline">¶</a></h1>
+<p>
+make sine curves (for fractal roughening)
+</p>
+<pre class="literal-block">
+usage: curves.py [-h] [dim.x] [dim.y] [spacing] [amplitude] [period] [output]
+
+</pre>
+<dl class="docutils">
+<dt>Positional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd>width</kbd></td>
+<td>dim.x</td></tr>
+<tr><td class="option-group">
+<kbd>height</kbd></td>
+<td>dim.y</td></tr>
+<tr><td class="option-group">
+<kbd>spacing</kbd></td>
+<td>spacing between waves, in pixels</td></tr>
+<tr><td class="option-group">
+<kbd>amplitude</kbd></td>
+<td>amplitude of the waves, in pixels</td></tr>
+<tr><td class="option-group">
+<kbd>period</kbd></td>
+<td>number of waves along the image</td></tr>
+<tr><td class="option-group">
+<kbd>ofile</kbd></td>
+<td>output file</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p><em>Module author: Geoff Hutchison &lt;<a class="reference external" href="mailto:geoffh&#37;&#52;&#48;pitt&#46;edu">geoffh<span>&#64;</span>pitt<span>&#46;</span>edu</a>&gt;</em></p>
+</div>
+<span class="target" id="module-lines"></span><div class="section" id="lines-py">
+<h1>lines.py<a class="headerlink" href="#lines-py" title="Permalink to this headline">¶</a></h1>
+<p>
+make simple lines (for fractal growing)
+</p>
+<pre class="literal-block">
+usage: lines.py [-h] [dim.x] [dim.y] [spacing] [thickness] [output]
+
+</pre>
+<dl class="docutils">
+<dt>Positional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd>width</kbd></td>
+<td>dim.x</td></tr>
+<tr><td class="option-group">
+<kbd>height</kbd></td>
+<td>dim.y</td></tr>
+<tr><td class="option-group">
+<kbd>spacing</kbd></td>
+<td>spacing between waves, in pixels</td></tr>
+<tr><td class="option-group">
+<kbd>thickness</kbd></td>
+<td>thickness of the bands, in pixels</td></tr>
+<tr><td class="option-group">
+<kbd>ofile</kbd></td>
+<td>output file</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p><em>Module author: Geoff Hutchison &lt;<a class="reference external" href="mailto:geoffh&#37;&#52;&#48;pitt&#46;edu">geoffh<span>&#64;</span>pitt<span>&#46;</span>edu</a>&gt;</em></p>
+</div>
+<span class="target" id="module-iso"></span><div class="section" id="iso-py">
+<h1>iso.py<a class="headerlink" href="#iso-py" title="Permalink to this headline">¶</a></h1>
+<p>
+Generate isotropic two-phase 2D systems using Gaussian noise
+</p>
+<pre class="literal-block">
+usage: iso.py [-h] [--seed int] [dim.x] [dim.y] [sigma] [output]
+
+</pre>
+<dl class="docutils">
+<dt>Positional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd>width</kbd></td>
+<td>dim.x</td></tr>
+<tr><td class="option-group">
+<kbd>height</kbd></td>
+<td>dim.y</td></tr>
+<tr><td class="option-group">
+<kbd>radius</kbd></td>
+<td>radius of Gaussian blur</td></tr>
+<tr><td class="option-group">
+<kbd>ofile</kbd></td>
+<td>output file</td></tr>
+</tbody>
+</table>
+</dd>
+<dt>Options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--seed</span></kbd></td>
+<td>random number seed</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p><em>Module author: Geoff Hutchison &lt;<a class="reference external" href="mailto:geoffh&#37;&#52;&#48;pitt&#46;edu">geoffh<span>&#64;</span>pitt<span>&#46;</span>edu</a>&gt;</em></p>
+<dl class="function">
+<dt id="iso.makeIsotropic">
+<tt class="descclassname">iso.</tt><tt class="descname">makeIsotropic</tt><big>(</big><em>width</em>, <em>height</em>, <em>radius=4</em><big>)</big><a class="reference internal" href="../modules/iso.html#makeIsotropic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#iso.makeIsotropic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a 2D isotropic two-phase system using Gaussian random noise.
+Before thresholding, the random noise is convoluted using a Gaussian blur
+kernel of sigma &#8220;radius&#8221;. The resulting data will have a 50:50 mixture as
+a binary array (0, 1)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>width</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; width of the resulting data</li>
+<li><strong>height</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; height of the resulting data</li>
+<li><strong>radius</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><em>float</em></a>) &#8211; size of the Gaussian blur kernel</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">morphology data</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<span class="target" id="module-dla"></span><div class="section" id="dla-py">
+<h1>dla.py<a class="headerlink" href="#dla-py" title="Permalink to this headline">¶</a></h1>
+<p>
+diffusion limited aggregation fractal images
+</p>
+<pre class="literal-block">
+usage: dla.py [-h] [spacing]
+
+</pre>
+<dl class="docutils">
+<dt>Positional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd>sticky</kbd></td>
+<td>gooeyness</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p><em>Module author: Geoff Hutchison &lt;<a class="reference external" href="mailto:geoffh&#37;&#52;&#48;pitt&#46;edu">geoffh<span>&#64;</span>pitt<span>&#46;</span>edu</a>&gt;</em></p>
+</div>
+<span class="target" id="module-npyToPng"></span><div class="section" id="npytopng-py">
+<h1>npyToPng.py<a class="headerlink" href="#npytopng-py" title="Permalink to this headline">¶</a></h1>
+<p>
+convert from *.npy numpy binary files to PNG
+</p>
+<pre class="literal-block">
+usage: npyToPng.py [-h] input [output]
+
+</pre>
+<dl class="docutils">
+<dt>Positional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd>ifile</kbd></td>
+<td>input file</td></tr>
+<tr><td class="option-group">
+<kbd>ofile</kbd></td>
+<td>output file</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p><em>Module author: Geoff Hutchison &lt;<a class="reference external" href="mailto:geoffh&#37;&#52;&#48;pitt&#46;edu">geoffh<span>&#64;</span>pitt<span>&#46;</span>edu</a>&gt;</em></p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="ga2d.html" title="ga_analyze.py"
+             >previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Adam Gagorik.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,433 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>compare.py &mdash; Langmuir Python 2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <link rel="top" title="Langmuir Python 2.0 documentation" href="../index.html" />
+    <link rel="next" title="ga_analyze.py" href="ga2d.html" />
+    <link rel="prev" title="image2chk.py" href="convert.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="ga2d.html" title="ga_analyze.py"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="convert.html" title="image2chk.py"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">compare.py</a></li>
+<li><a class="reference internal" href="#extend-py">extend.py</a></li>
+<li><a class="reference internal" href="#script-py">script.py</a></li>
+<li><a class="reference internal" href="#reset-py">reset.py</a></li>
+<li><a class="reference internal" href="#scan-py">scan.py</a></li>
+<li><a class="reference internal" href="#done-py">done.py</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="convert.html"
+                        title="previous chapter">image2chk.py</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="ga2d.html"
+                        title="next chapter">ga_analyze.py</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../sources/scripts/utils.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <span class="target" id="module-compare"></span><div class="section" id="compare-py">
+<h1>compare.py<a class="headerlink" href="#compare-py" title="Permalink to this headline">¶</a></h1>
+<p>
+Compare two checkpoint files.
+</p>
+<pre class="literal-block">
+usage: compare.py [-h] [--reset] chk1 chk1
+
+</pre>
+<dl class="docutils">
+<dt>Positional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd>chk1</kbd></td>
+<td>checkpoint file 1</td></tr>
+<tr><td class="option-group">
+<kbd>chk2</kbd></td>
+<td>checkpoint file 2</td></tr>
+</tbody>
+</table>
+</dd>
+<dt>Options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--reset=False</span></kbd></td>
+<td>reset checkpoint files first</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</div>
+<span class="target" id="module-extend"></span><div class="section" id="extend-py">
+<h1>extend.py<a class="headerlink" href="#extend-py" title="Permalink to this headline">¶</a></h1>
+<p>
+Extend a set of simulations.
+</p>
+<pre class="literal-block">
+usage: extend [-h] [--ok] [-r] [--add ADD] [--set SET] [--print PSTEP]
+              [--stub STUB]
+              [name]
+
+</pre>
+<dl class="docutils">
+<dt>Positional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd>name</kbd></td>
+<td>output file name</td></tr>
+</tbody>
+</table>
+</dd>
+<dt>Options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--ok=False</span></kbd></td>
+<td>turn off dry run</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-r=False</span></kbd></td>
+<td>search recursivly</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--add=0</span></kbd></td>
+<td>steps to add to iterations.real</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--set</span></kbd></td>
+<td>set iterations.real to new value</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--print</span></kbd></td>
+<td>set iterations.print to new value</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--stub=ext.{i}</span></kbd></td>
+<td>simulation job name stub</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</div>
+<span class="target" id="module-script"></span><div class="section" id="script-py">
+<h1>script.py<a class="headerlink" href="#script-py" title="Permalink to this headline">¶</a></h1>
+<p>
+Create a bash script for submitting simulations.
+</p>
+<pre class="literal-block">
+usage: script [-h] [--stub STUB] [--mode {runs,parts,all}] [--depth DEPTH]
+              [--comment]
+              [name]
+
+</pre>
+<dl class="docutils">
+<dt>Positional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd>name</kbd></td>
+<td>output file name</td></tr>
+</tbody>
+</table>
+</dd>
+<dt>Options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--stub={relpath}</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>simulation job name stub</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--mode=all</span></kbd></td>
+<td>directory search mode</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--depth</span></kbd></td>
+<td>search depth</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--comment=False</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>comment custom command</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</div>
+<span class="target" id="module-reset"></span><div class="section" id="reset-py">
+<h1>reset.py<a class="headerlink" href="#reset-py" title="Permalink to this headline">¶</a></h1>
+<p>
+Reset a checkpoint file to be more like a new simulation.
+</p>
+<pre class="literal-block">
+usage: reset.py [-h] [--elecs] [--holes] [--notraps] [--nodefects] [--nofix]
+                [input] [output]
+
+</pre>
+<dl class="docutils">
+<dt>Positional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd>ifile</kbd></td>
+<td>input file</td></tr>
+<tr><td class="option-group">
+<kbd>ofile</kbd></td>
+<td>output file</td></tr>
+</tbody>
+</table>
+</dd>
+<dt>Options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--elecs=False</span></kbd></td>
+<td>keep electrons</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--holes=False</span></kbd></td>
+<td>keep holes</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--notraps=False</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>delete traps</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--nodefects=False</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>delete defects</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--nofix=False</span></kbd></td>
+<td>do not fix traps</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</div>
+<span class="target" id="module-scan"></span><div class="section" id="scan-py">
+<h1>scan.py<a class="headerlink" href="#scan-py" title="Permalink to this headline">¶</a></h1>
+<p>
+scan a working variable - simply set a parameter in the input file equal to
+a python list or numpy array.  For example, voltage.right = [-1, -2, -3]
+</p>
+<pre class="literal-block">
+usage: scan.py [-h] [--real int] [--fresh int] [--equil int] [--print int]
+               [--sort] [--key {None,abs}] [--reverse] [--mode str]
+               [--job JOB] [--stub STUB] [--fmt FMT]
+               [template]
+
+</pre>
+<dl class="docutils">
+<dt>Positional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd>template</kbd></td>
+<td>template input file name</td></tr>
+</tbody>
+</table>
+</dd>
+<dt>Options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">--real</span></kbd></td>
+<td>iterations.real when &#8211;fresh or &#8211;equil are not set</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--fresh</span></kbd></td>
+<td>override iterations.real for fresh runs</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--equil</span></kbd></td>
+<td>override iterations.real for equilibrated runs</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--print=1000</span></kbd></td>
+<td>iterations.print</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--sort=False</span></kbd></td>
+<td>sort the working variable values</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--key</span></kbd></td>
+<td>key for sorting working variable values (None or abs)</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--reverse=False</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>reverse the working variable values</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--mode</span></kbd></td>
+<td>what to do (gen or scan)</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--job=run</span></kbd></td>
+<td>stub to use in command script</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--stub={working}_{value}</span></kbd></td>
+</tr>
+<tr><td>&nbsp;</td><td>stub to use for directories; you can use {working}, {value}, {i} in the string</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--fmt</span></kbd></td>
+<td>value format string in stub</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</div>
+<span class="target" id="module-done"></span><div class="section" id="done-py">
+<h1>done.py<a class="headerlink" href="#done-py" title="Permalink to this headline">¶</a></h1>
+<p>
+Search for dat files and report on their progress.
+</p>
+<pre class="literal-block">
+usage: done [-h] [-r] [-d] [stub]
+
+</pre>
+<dl class="docutils">
+<dt>Positional arguments:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd>stub</kbd></td>
+<td>regex for system searching</td></tr>
+</tbody>
+</table>
+</dd>
+<dt>Options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-r=False</span></kbd></td>
+<td>search recursivly</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-d=False</span></kbd></td>
+<td>show which simulations are not done</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p><em>Module author: Adam Gagorik &lt;<a class="reference external" href="mailto:adam&#46;gagorik&#37;&#52;&#48;gmail&#46;com">adam<span>&#46;</span>gagorik<span>&#64;</span>gmail<span>&#46;</span>com</a>&gt;</em></p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="ga2d.html" title="ga_analyze.py"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="convert.html" title="image2chk.py"
+             >previous</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Adam Gagorik.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,382 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>vtkutils &mdash; Langmuir Python 2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <link rel="top" title="Langmuir Python 2.0 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for vtkutils</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. note::</span>
+<span class="sd">    Functions for working with vtk</span>
+
+<span class="sd">.. moduleauthor:: Adam Gagorik &lt;adam.gagorik@gmail.com&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">langmuir</span> <span class="kn">as</span> <span class="nn">lm</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">vtk</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<div class="viewcode-block" id="create_image_data"><a class="viewcode-back" href="../modules/vtkutils.html#vtkutils.create_image_data">[docs]</a><span class="k">def</span> <span class="nf">create_image_data</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">dy</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">dz</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">ox</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">oy</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">oz</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Construct an empty vtkImageData.  This data structure is a regular grid</span>
+<span class="sd">    with constant spacing.</span>
+
+<span class="sd">    :param nx: number of grid points along x-axis</span>
+<span class="sd">    :param ny: number of grid points along y-axis</span>
+<span class="sd">    :param nz: number of grid points along z-axis</span>
+<span class="sd">    :param dx: spacing along x-axis</span>
+<span class="sd">    :param dy: spacing along y-axis</span>
+<span class="sd">    :param dz: spacing along z-axis</span>
+<span class="sd">    :param ox: origin of x-axis</span>
+<span class="sd">    :param oy: origin of y-axis</span>
+<span class="sd">    :param oz: origin of z-axis</span>
+
+<span class="sd">    :type nx: int</span>
+<span class="sd">    :type ny: int</span>
+<span class="sd">    :type nz: int</span>
+<span class="sd">    :type dx: float</span>
+<span class="sd">    :type dy: float</span>
+<span class="sd">    :type dz: float</span>
+<span class="sd">    :type ox: float</span>
+<span class="sd">    :type oy: float</span>
+<span class="sd">    :type oz: float</span>
+
+<span class="sd">    &gt;&gt;&gt; image_data = create_image_data(32, 32, 32)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">image_data</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkImageData</span><span class="p">()</span>
+    <span class="n">image_data</span><span class="o">.</span><span class="n">SetDimensions</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span><span class="p">)</span>
+    <span class="n">image_data</span><span class="o">.</span><span class="n">SetExtent</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">nx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ny</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">nz</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">image_data</span><span class="o">.</span><span class="n">SetOrigin</span><span class="p">(</span><span class="n">ox</span><span class="p">,</span> <span class="n">oy</span><span class="p">,</span> <span class="n">oz</span><span class="p">)</span>
+    <span class="n">image_data</span><span class="o">.</span><span class="n">SetSpacing</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">dz</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">image_data</span>
+</div>
+<div class="viewcode-block" id="create_image_data_from_array"><a class="viewcode-back" href="../modules/vtkutils.html#vtkutils.create_image_data_from_array">[docs]</a><span class="k">def</span> <span class="nf">create_image_data_from_array</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Construct an empty vtkImageData and fill it with the array&#39;s values.</span>
+
+<span class="sd">    :param array: data with 3 dimensions.</span>
+<span class="sd">    :type array: :py:class:`numpy.ndarray`</span>
+
+<span class="sd">    &gt;&gt;&gt; image_data = create_image_data_from_array(surf)</span>
+
+<span class="sd">    .. seealso:: :py:func:`create_image_data`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ndims</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">ndims</span> <span class="o">&gt;</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">ndims</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="s">&#39;data dimension(</span><span class="si">%d</span><span class="s">) not supported&#39;</span> <span class="o">%</span> <span class="n">ndims</span>
+
+    <span class="k">if</span> <span class="n">ndims</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="k">if</span> <span class="n">ndims</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">nz</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">ndims</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">nx</span><span class="p">,</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+        <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">image_data</span> <span class="o">=</span> <span class="n">create_image_data</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">vtk</span><span class="o">.</span><span class="n">VTK_MAJOR_VERSION</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="p">:</span>
+        <span class="n">image_data</span><span class="o">.</span><span class="n">SetNumberOfScalarComponents</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">image_data</span><span class="o">.</span><span class="n">SetScalarTypeToDouble</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">image_data</span><span class="o">.</span><span class="n">AllocateScalars</span><span class="p">(</span><span class="n">vtk</span><span class="o">.</span><span class="n">VTK_DOUBLE</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">((</span><span class="n">xi</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">zi</span><span class="p">),</span> <span class="n">vi</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndenumerate</span><span class="p">(</span><span class="n">array</span><span class="p">)):</span>
+        <span class="n">image_data</span><span class="o">.</span><span class="n">SetScalarComponentFromFloat</span><span class="p">(</span><span class="n">xi</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">zi</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">vi</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">image_data</span>
+</div>
+<div class="viewcode-block" id="save_image_data"><a class="viewcode-back" href="../modules/vtkutils.html#vtkutils.save_image_data">[docs]</a><span class="k">def</span> <span class="nf">save_image_data</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">image_data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save vtkImageData to XML file.</span>
+
+<span class="sd">    :param handle: file name</span>
+<span class="sd">    :param image_data: source</span>
+
+<span class="sd">    :type handle: str</span>
+<span class="sd">    :type image_data: :py:class:`vtk.vtkImageData`</span>
+
+<span class="sd">    &gt;&gt;&gt; image_data = create_image_data(32, 32, 32)</span>
+<span class="sd">    &gt;&gt;&gt; save_image_data(&#39;test.vit&#39;, image_data)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">stub</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+    <span class="n">handle</span> <span class="o">=</span> <span class="n">stub</span> <span class="o">+</span> <span class="s">&#39;.vti&#39;</span>
+    <span class="n">writer</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkXMLImageDataWriter</span><span class="p">()</span>
+    <span class="n">writer</span><span class="o">.</span><span class="n">SetInput</span><span class="p">(</span><span class="n">image_data</span><span class="p">)</span>
+    <span class="n">writer</span><span class="o">.</span><span class="n">SetFileName</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+    <span class="n">writer</span><span class="o">.</span><span class="n">Write</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="load_image_data"><a class="viewcode-back" href="../modules/vtkutils.html#vtkutils.load_image_data">[docs]</a><span class="k">def</span> <span class="nf">load_image_data</span><span class="p">(</span><span class="n">handle</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load vtkImageData from XML file.</span>
+
+<span class="sd">    :param handle: file name</span>
+<span class="sd">    :type handle: str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkXMLImageDataReader</span><span class="p">()</span>
+    <span class="n">reader</span><span class="o">.</span><span class="n">SetFileName</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">reader</span><span class="o">.</span><span class="n">GetOutput</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="pipe"><a class="viewcode-back" href="../modules/vtkutils.html#vtkutils.pipe">[docs]</a><span class="k">def</span> <span class="nf">pipe</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">o</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pipes one vtkObject into another.</span>
+
+<span class="sd">    :param i: input</span>
+<span class="sd">    :param o: filter</span>
+
+<span class="sd">    :type i: :py:class:`vtk.vtkObject`</span>
+<span class="sd">    :type o: :py:class:`vtk.vtkObject`</span>
+
+<span class="sd">    &gt;&gt;&gt; vtkImageData = create_image_data(32, 32, 32)</span>
+<span class="sd">    &gt;&gt;&gt; vtkMarchingCubes = vtk.vtkMarchingCubes()</span>
+<span class="sd">    &gt;&gt;&gt; pipe(vtkImageData, vtkMarchingCubes)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">o</span><span class="o">.</span><span class="n">SetInputConnection</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">GetOutputPort</span><span class="p">())</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">vtk</span><span class="o">.</span><span class="n">VTK_MAJOR_VERSION</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="n">o</span><span class="o">.</span><span class="n">SetInput</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">o</span><span class="o">.</span><span class="n">SetInputData</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="filter_marching_cubes"><a class="viewcode-back" href="../modules/vtkutils.html#vtkutils.filter_marching_cubes">[docs]</a><span class="k">def</span> <span class="nf">filter_marching_cubes</span><span class="p">(</span><span class="n">vtkObject</span><span class="p">,</span> <span class="n">isovalue</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create vtkMarchingCubes filter on vtkObject.</span>
+
+<span class="sd">    :param vtkObject: input</span>
+<span class="sd">    :param isovalue: contour value</span>
+
+<span class="sd">    :type vtkObject: :py:class:`vtk.vtkObject`</span>
+<span class="sd">    :type isovalue: float</span>
+
+<span class="sd">    &gt;&gt;&gt; image_data = create_image_data_from_array(surf)</span>
+<span class="sd">    &gt;&gt;&gt; cubes = filter_marching_cubes(image_data)</span>
+<span class="sd">    &gt;&gt;&gt; show(cubes)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cubes</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkMarchingCubes</span><span class="p">()</span>
+    <span class="n">pipe</span><span class="p">(</span><span class="n">vtkObject</span><span class="p">,</span> <span class="n">cubes</span><span class="p">)</span>
+
+    <span class="n">cubes</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">isovalue</span><span class="p">)</span>
+    <span class="n">cubes</span><span class="o">.</span><span class="n">ComputeScalarsOn</span><span class="p">()</span>
+    <span class="n">cubes</span><span class="o">.</span><span class="n">ComputeNormalsOn</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">cubes</span>
+</div>
+<div class="viewcode-block" id="filter_marching_squares"><a class="viewcode-back" href="../modules/vtkutils.html#vtkutils.filter_marching_squares">[docs]</a><span class="k">def</span> <span class="nf">filter_marching_squares</span><span class="p">(</span><span class="n">vtkObject</span><span class="p">,</span> <span class="n">isovalue</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create vtkMarchingSquares filter on vtkObject.</span>
+
+<span class="sd">    :param vtkObject: input</span>
+<span class="sd">    :param isovalue: contour value</span>
+
+<span class="sd">    :param vtkObject: :py:class:`vtk.vtkObject`</span>
+<span class="sd">    :type isovalue: float</span>
+
+<span class="sd">    &gt;&gt;&gt; image_data = create_image_data_from_array(surf)</span>
+<span class="sd">    &gt;&gt;&gt; squares = filter_marching_cubes(image_data)</span>
+<span class="sd">    &gt;&gt;&gt; show(squares)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">squares</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkMarchingSquares</span><span class="p">()</span>
+    <span class="n">pipe</span><span class="p">(</span><span class="n">vtkObject</span><span class="p">,</span> <span class="n">squares</span><span class="p">)</span>
+
+    <span class="n">squares</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">isovalue</span><span class="p">)</span>
+    <span class="c">#squares.ComputeScalarsOn()</span>
+    <span class="c">#squares.ComputeNormalsOn()</span>
+
+    <span class="k">return</span> <span class="n">squares</span>
+</div>
+<div class="viewcode-block" id="filter_marching"><a class="viewcode-back" href="../modules/vtkutils.html#vtkutils.filter_marching">[docs]</a><span class="k">def</span> <span class="nf">filter_marching</span><span class="p">(</span><span class="n">vtkObject</span><span class="p">,</span> <span class="n">isovalue</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Applies marching cubes or squares based on number of dimensions.</span>
+
+<span class="sd">    :param vtkObject: input</span>
+<span class="sd">    :param isovalue: contour value</span>
+
+<span class="sd">    :type vtkObject: :py:class:`vtk.vtkObject`</span>
+<span class="sd">    :type isovalue: float</span>
+
+<span class="sd">    .. seealso:: :py:func:`filter_marching_squares`, :py:func:`filter_marching_cubes`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">vtkObject</span><span class="o">.</span><span class="n">GetDimensions</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">filter_marching_squares</span><span class="p">(</span><span class="n">vtkObject</span><span class="p">,</span> <span class="n">isovalue</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">filter_marching_cubes</span><span class="p">(</span><span class="n">vtkObject</span><span class="p">,</span> <span class="n">isovalue</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="filter_curvature"><a class="viewcode-back" href="../modules/vtkutils.html#vtkutils.filter_curvature">[docs]</a><span class="k">def</span> <span class="nf">filter_curvature</span><span class="p">(</span><span class="n">vtkObject</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;gaussian&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create vtkCurvatures filter on vtkObject.</span>
+
+<span class="sd">    :param vtkObject: input</span>
+<span class="sd">    :param mode: gaussian or mean</span>
+
+<span class="sd">    :type vtkObject: :py:class:`vtk.vtkObject`</span>
+<span class="sd">    :type mode: str</span>
+
+<span class="sd">    &gt;&gt;&gt; image_data = create_image_data_from_array(surf)</span>
+<span class="sd">    &gt;&gt;&gt; cubes = filter_marching_cubes(image_data)</span>
+<span class="sd">    &gt;&gt;&gt; curve = filter_curvature(cubes)</span>
+<span class="sd">    &gt;&gt;&gt; show(curve)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">curvature</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkCurvatures</span><span class="p">()</span>
+    <span class="n">pipe</span><span class="p">(</span><span class="n">vtkObject</span><span class="p">,</span> <span class="n">curvature</span><span class="p">)</span>
+    <span class="n">curvature</span><span class="o">.</span><span class="n">SetCurvatureTypeToMean</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s">&#39;gaussian&#39;</span><span class="p">:</span>
+        <span class="n">curvature</span><span class="o">.</span><span class="n">SetCurvatureTypeToGaussian</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">curvature</span>
+</div>
+<div class="viewcode-block" id="show"><a class="viewcode-back" href="../modules/vtkutils.html#vtkutils.show">[docs]</a><span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="n">vtkObject</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mi">512</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Show result of pipeline.</span>
+
+<span class="sd">    :param vtkObject: anything VTK</span>
+<span class="sd">    :param w: window width</span>
+<span class="sd">    :param h: window height</span>
+
+<span class="sd">    :type vtkObject: None</span>
+<span class="sd">    :type w: int</span>
+<span class="sd">    :type h: int</span>
+
+<span class="sd">    &gt;&gt;&gt; image_data = create_image_data_from_array(surf)</span>
+<span class="sd">    &gt;&gt;&gt; cubes = filter_marching_cubes(image_data)</span>
+<span class="sd">    &gt;&gt;&gt; show(cubes)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mapper</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkPolyDataMapper</span><span class="p">()</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">mapper</span><span class="o">.</span><span class="n">SetInputConnection</span><span class="p">(</span><span class="n">vtkObject</span><span class="o">.</span><span class="n">GetOutputPort</span><span class="p">())</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="n">mapper</span><span class="o">.</span><span class="n">SetInput</span><span class="p">(</span><span class="n">vtkObject</span><span class="p">)</span>
+
+    <span class="n">actor</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkLODActor</span><span class="p">()</span>
+    <span class="n">actor</span><span class="o">.</span><span class="n">SetMapper</span><span class="p">(</span><span class="n">mapper</span><span class="p">)</span>
+
+    <span class="n">renderer</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkRenderer</span><span class="p">()</span>
+    <span class="n">renderer</span><span class="o">.</span><span class="n">AddActor</span><span class="p">(</span><span class="n">actor</span><span class="p">)</span>
+
+    <span class="n">window</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkRenderWindow</span><span class="p">()</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">AddRenderer</span><span class="p">(</span><span class="n">renderer</span><span class="p">)</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">SetSize</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+
+    <span class="n">interactor</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkRenderWindowInteractor</span><span class="p">()</span>
+    <span class="n">interactor</span><span class="o">.</span><span class="n">SetRenderWindow</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
+
+    <span class="n">interactor</span><span class="o">.</span><span class="n">Initialize</span><span class="p">()</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">Render</span><span class="p">()</span>
+    <span class="n">interactor</span><span class="o">.</span><span class="n">Start</span><span class="p">()</span>
+</div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">Grid</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">32</span><span class="p">)</span>
+    <span class="n">wave</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">surface</span><span class="o">.</span><span class="n">WaveDimensions</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">lx</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">surf</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">surface</span><span class="o">.</span><span class="n">gyroid</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">mx</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">my</span><span class="p">,</span> <span class="n">grid</span><span class="o">.</span><span class="n">mz</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span> <span class="n">wave</span><span class="p">)</span>
+
+    <span class="c">#image_data = create_image_data_from_array(surf)</span>
+    <span class="c">#save_image_data(r&#39;/home/adam/Desktop/test.vti&#39;, image_data)</span>
+
+    <span class="n">image_data</span> <span class="o">=</span> <span class="n">load_image_data</span><span class="p">(</span><span class="s">r&#39;/home/adam/Desktop/test.vti&#39;</span><span class="p">)</span>
+    <span class="n">cubes</span> <span class="o">=</span> <span class="n">filter_marching_cubes</span><span class="p">(</span><span class="n">image_data</span><span class="p">)</span>
+    <span class="n">show</span><span class="p">(</span><span class="n">cubes</span><span class="p">)</span>
+    <span class="c">#curve = filter_curvature(cubes, mode=&#39;gaussian&#39;)</span>
+    <span class="c">#show(curve)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Adam Gagorik.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

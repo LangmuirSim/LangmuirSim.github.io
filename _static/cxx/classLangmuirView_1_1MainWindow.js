@@ -1,0 +1,25 @@
+var classLangmuirView_1_1MainWindow =
+[
+    [ "MainWindow", "classLangmuirView_1_1MainWindow.html#a8304d4bdb8337f55d6d84f6cd3ac5346", null ],
+    [ "~MainWindow", "classLangmuirView_1_1MainWindow.html#aaa39060c061c26635734a30de0a3077e", null ],
+    [ "closeEvent", "classLangmuirView_1_1MainWindow.html#a33b83e5ff0a96c7a8fe26aa60c427dd2", null ],
+    [ "init", "classLangmuirView_1_1MainWindow.html#aed541fe84f9e129e7afe627b26d1095d", null ],
+    [ "initAfter", "classLangmuirView_1_1MainWindow.html#ab466d366993ec33a9f960fb904b3fbcc", null ],
+    [ "on_actionChecker_triggered", "classLangmuirView_1_1MainWindow.html#a088ea4078151d1fe77c27a1856e74d14", null ],
+    [ "on_actionIsoSurface_triggered", "classLangmuirView_1_1MainWindow.html#a01f5fa46cf04ca5335fb52b5978d59bf", null ],
+    [ "on_actionLoadSettings_triggered", "classLangmuirView_1_1MainWindow.html#a7623ff19e0b2481feb8568e97966a3fd", null ],
+    [ "on_actionOpen_triggered", "classLangmuirView_1_1MainWindow.html#a47135998ee1d46102e3e01fa5fb3c954", null ],
+    [ "on_actionPoints_triggered", "classLangmuirView_1_1MainWindow.html#ae0c577361bc52e30be2828d9453a53a1", null ],
+    [ "on_actionResetSettings_triggered", "classLangmuirView_1_1MainWindow.html#a5e32852e806e1c59cf62f6676e023f8c", null ],
+    [ "on_actionSave_triggered", "classLangmuirView_1_1MainWindow.html#aae317c75c76e2618d1ee8f5566e93967", null ],
+    [ "on_actionSaveSettings_triggered", "classLangmuirView_1_1MainWindow.html#adaba2af24eab39e34a32a5e94fbb7d7c", null ],
+    [ "on_actionScreenshot_triggered", "classLangmuirView_1_1MainWindow.html#a6425e75f9b8fbc839db99cc27af054fc", null ],
+    [ "setIcon", "classLangmuirView_1_1MainWindow.html#a1fe98e714acf82f11a8181bae0ef2bb1", null ],
+    [ "setStopEnabled", "classLangmuirView_1_1MainWindow.html#a1998350bfefb40665d526616448bd0b5", null ],
+    [ "updateSpinBox", "classLangmuirView_1_1MainWindow.html#a6caf34df76a41a64cdd142c873096747", null ],
+    [ "m_currentDir", "classLangmuirView_1_1MainWindow.html#a5e13c1e965996996439e6fb568e2c2f5", null ],
+    [ "m_isosurfacedialog", "classLangmuirView_1_1MainWindow.html#aebe432047ca9bef6e91e93eeb43c948d", null ],
+    [ "m_pointdialog", "classLangmuirView_1_1MainWindow.html#a7b7ad686cdfce61bed0294c0e7492ec5", null ],
+    [ "m_viewer", "classLangmuirView_1_1MainWindow.html#a64faaccf58052e3917489629c02ee01b", null ],
+    [ "ui", "classLangmuirView_1_1MainWindow.html#a2dc9ab86754a934e975b84efe8759b82", null ]
+];

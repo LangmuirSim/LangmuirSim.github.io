@@ -1,0 +1,608 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>common &mdash; Langmuir Python 2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <link rel="top" title="Langmuir Python 2.0 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for common</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. note::</span>
+<span class="sd">    Utility functions.</span>
+
+<span class="sd">.. moduleauthor:: Adam Gagorik &lt;adam.gagorik@gmail.com&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">check_output</span><span class="p">,</span> <span class="n">CalledProcessError</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">textwrap</span>
+<span class="kn">import</span> <span class="nn">StringIO</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">gzip</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">scipy.misc</span> <span class="kn">import</span> <span class="n">comb</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">comb</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Combinations: N choose k</span>
+
+<span class="sd">        :param N: number of objects</span>
+<span class="sd">        :param k: number of objects to choose</span>
+
+<span class="sd">        :type N: int</span>
+<span class="sd">        :type k: int</span>
+
+<span class="sd">        :return: combinations</span>
+<span class="sd">        :rtype: :py:obj:`int`</span>
+
+<span class="sd">        &gt;&gt;&gt; print comb(10, 2)</span>
+<span class="sd">        45</span>
+
+<span class="sd">        .. seealso:: :py:func:`scipy.misc.comb`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bc</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">N</span> <span class="o">-</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">bc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">bc</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">bc</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+<div class="viewcode-block" id="zhandle"><a class="viewcode-back" href="../modules/common.html#common.zhandle">[docs]</a><span class="k">def</span> <span class="nf">zhandle</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;rb&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Open a file using gzip if necessary.</span>
+
+<span class="sd">    :param handle: filename</span>
+<span class="sd">    :type handle: str</span>
+
+<span class="sd">    :return: file handle</span>
+<span class="sd">    :rtype: :py:obj:`file`</span>
+
+<span class="sd">    &gt;&gt;&gt; handle = zhandle(&#39;out.dat.gz&#39;, &#39;rb&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">handle</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;.gz&#39;</span><span class="p">):</span>
+            <span class="n">handle</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">handle</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">return</span> <span class="n">handle</span>
+</div>
+<div class="viewcode-block" id="tail"><a class="viewcode-back" href="../modules/common.html#common.tail">[docs]</a><span class="k">def</span> <span class="nf">tail</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;python&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return last n lines of a file.  The python version is much faster than</span>
+<span class="sd">    a system call.  The python version works on gzipped files.</span>
+
+<span class="sd">    :param handle: filename</span>
+<span class="sd">    :param n: lines</span>
+<span class="sd">    :param mode: python or subprocess</span>
+
+<span class="sd">    :type n: int</span>
+<span class="sd">    :type mode: str</span>
+
+<span class="sd">    :return: list of lines</span>
+<span class="sd">    :rtype: :py:obj:`list` of :py:obj:`str`</span>
+
+<span class="sd">    &gt;&gt;&gt; lines = tail(&#39;out.dat&#39;, 1)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s">&#39;python&#39;</span><span class="p">:</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">l</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">collections</span><span class="o">.</span><span class="n">deque</span><span class="p">(</span>
+            <span class="n">zhandle</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">),</span> <span class="n">n</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">handle</span> <span class="o">=</span> <span class="n">handle</span><span class="o">.</span><span class="n">name</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+        <span class="n">command</span> <span class="o">=</span> <span class="s">&#39;tail -n {n:d} {handle}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">handle</span><span class="o">=</span><span class="n">handle</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="n">check_output</span><span class="p">(</span><span class="n">command</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">CalledProcessError</span><span class="p">,</span> <span class="ne">OSError</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">tail</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;python&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">lines</span>
+
+    <span class="k">return</span> <span class="bp">None</span>
+</div>
+<div class="viewcode-block" id="splitext"><a class="viewcode-back" href="../modules/common.html#common.splitext">[docs]</a><span class="k">def</span> <span class="nf">splitext</span><span class="p">(</span><span class="n">handle</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extract stub and extension from a file object or string.</span>
+
+<span class="sd">    :param handle: filename</span>
+
+<span class="sd">    :return: stub and ext</span>
+<span class="sd">    :rtype: :py:obj:`str`, :py:obj:`str`</span>
+
+<span class="sd">    &gt;&gt;&gt; stub, ext = splitext(&#39;out.dat&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; print stub, ext</span>
+<span class="sd">    (&#39;out&#39;, &#39;.dat&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">handle</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span>
+</div>
+<div class="viewcode-block" id="load_pkl"><a class="viewcode-back" href="../modules/common.html#common.load_pkl">[docs]</a><span class="k">def</span> <span class="nf">load_pkl</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">max_objs</span><span class="o">=</span><span class="mi">256</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load max objs from a pkl file.</span>
+
+<span class="sd">    :param handle: filename</span>
+<span class="sd">    :param max_objs: max number of objects to load</span>
+
+<span class="sd">    :type handle: str</span>
+<span class="sd">    :type max_objs: int</span>
+
+<span class="sd">    :return: list of data</span>
+<span class="sd">    :rtype: :py:obj:`list`</span>
+
+<span class="sd">    &gt;&gt;&gt; data = load_pkl(&#39;combined.pkl&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">handle</span> <span class="o">=</span> <span class="n">zhandle</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span>
+    <span class="n">objs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_objs</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">max_objs</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&#39;too many objects loaded from pkl file&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+            <span class="n">objs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">EOFError</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="n">objs</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">objs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">objs</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&#39;no objects in pkl file&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">objs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">objs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">objs</span>
+</div>
+<div class="viewcode-block" id="load_pkls"><a class="viewcode-back" href="../modules/common.html#common.load_pkls">[docs]</a><span class="k">def</span> <span class="nf">load_pkls</span><span class="p">(</span><span class="n">pkls</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load a set of pkls into a list.</span>
+
+<span class="sd">    :param pkls: list of filenames</span>
+<span class="sd">    :type pkls: list of str</span>
+
+<span class="sd">    :return: nested list of loaded data</span>
+<span class="sd">    :rtype: :py:obj:`list`</span>
+
+<span class="sd">    &gt;&gt;&gt; pkls = load_pkls([&#39;a.pkl&#39;, &#39;b.pkl&#39;])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pkls</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">pkls</span> <span class="o">=</span> <span class="p">[</span><span class="n">pkls</span><span class="p">]</span>
+    <span class="n">panel</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">pkl</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pkls</span><span class="p">):</span>
+        <span class="n">panel</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">load_pkl</span><span class="p">(</span><span class="n">pkl</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">panel</span>
+</div>
+<div class="viewcode-block" id="save_pkl"><a class="viewcode-back" href="../modules/common.html#common.save_pkl">[docs]</a><span class="k">def</span> <span class="nf">save_pkl</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">handle</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save obj to a pkl file.</span>
+
+<span class="sd">    :param obj: python object</span>
+<span class="sd">    :type obj: object</span>
+
+<span class="sd">    :return: the file handle</span>
+<span class="sd">    :rtype: :py:obj:`file`</span>
+
+<span class="sd">    &gt;&gt;&gt; handle = save_pkl(1, &#39;test.pkl&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; handle = save_pkl(2, handle)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">handle</span> <span class="o">=</span> <span class="n">zhandle</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s">&#39;wb&#39;</span><span class="p">)</span>
+    <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">handle</span><span class="p">,</span> <span class="n">pickle</span><span class="o">.</span><span class="n">HIGHEST_PROTOCOL</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">handle</span>
+</div>
+<div class="viewcode-block" id="format_string"><a class="viewcode-back" href="../modules/common.html#common.format_string">[docs]</a><span class="k">def</span> <span class="nf">format_string</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Format a string using :py:func:`str.format` and process with regex.</span>
+<span class="sd">    kwargs are passed to the format function.</span>
+
+<span class="sd">    The following regex are used:</span>
+
+<span class="sd">    ======= =========</span>
+<span class="sd">    *match* *replace*</span>
+<span class="sd">    ======= =========</span>
+<span class="sd">    &#39;^_&#39;    &#39;&#39;</span>
+<span class="sd">    &#39;_$&#39;    &#39;&#39;</span>
+<span class="sd">    &#39;_\.&#39;   &#39;.&#39;</span>
+<span class="sd">    ======= =========</span>
+
+<span class="sd">    :param s: string to process</span>
+<span class="sd">    :type s: str</span>
+
+<span class="sd">    :return: the formatted string</span>
+<span class="sd">    :rtype: :py:obj:`str`</span>
+
+<span class="sd">    &gt;&gt;&gt; print format_string(&#39;_{name}.{ext}&#39;, ext=&#39;dat&#39;, name=&#39;adam&#39;)</span>
+<span class="sd">    adam.dat</span>
+<span class="sd">    &gt;&gt;&gt; print format_string(&#39;adam_.{ext}&#39;, ext=&#39;dat&#39;)</span>
+<span class="sd">    adam.dat</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">&#39;_\.&#39;</span><span class="p">,</span> <span class="s">&#39;.&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;-_&#39;</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="format_output"><a class="viewcode-back" href="../modules/common.html#common.format_output">[docs]</a><span class="k">def</span> <span class="nf">format_output</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="s">&#39;{stub}_{name}.{ext}&#39;</span><span class="p">,</span> <span class="n">stub</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;out&#39;</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s">&#39;dat&#39;</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Format an output file name and then process with regex.  If stub is empty,</span>
+<span class="sd">    the leading underscore is striped.</span>
+
+<span class="sd">    :param stub: a unique string to identify the file</span>
+<span class="sd">    :param name: a common string to identify the file</span>
+<span class="sd">    :param ext: the filename extention without a &#39;.&#39;</span>
+
+<span class="sd">    :type stub: str</span>
+<span class="sd">    :type name: str</span>
+<span class="sd">    :type ext: str</span>
+
+<span class="sd">    :return: formatted filename</span>
+<span class="sd">    :rtype: :py:obj:`str`</span>
+
+<span class="sd">    &gt;&gt;&gt; print format_output(stub=&#39;systemA&#39;, name=&#39;fft&#39;, ext=&#39;txt&#39;)</span>
+<span class="sd">    systemA_fft.txt</span>
+
+<span class="sd">    .. seealso:: :py:func:`format_string`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="n">ext</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+    <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">stub</span><span class="o">=</span><span class="n">stub</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="n">ext</span><span class="p">)</span>
+    <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">format_string</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="compare_dicts"><a class="viewcode-back" href="../modules/common.html#common.compare_dicts">[docs]</a><span class="k">def</span> <span class="nf">compare_dicts</span><span class="p">(</span><span class="n">dict1</span><span class="p">,</span> <span class="n">dict2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compare two dictionaries.</span>
+
+<span class="sd">    :param dict1: dict like object</span>
+<span class="sd">    :param dict2: dict like object</span>
+
+<span class="sd">    :type dict1: dict</span>
+<span class="sd">    :type dict2: dict</span>
+
+<span class="sd">    :return: a results dictionary with the output of set operations</span>
+<span class="sd">    :rtype: :py:class:`collections.OrderedDict`</span>
+
+<span class="sd">    &gt;&gt;&gt; results = compare_dicts({&#39;A&#39; : 1}, {&#39;A&#39; : 2, &#39;B&#39; : 3})</span>
+<span class="sd">    &gt;&gt;&gt; for key, value in results.iteritems():</span>
+<span class="sd">    ...     print key, value</span>
+<span class="sd">    size1 1      # size of dict1</span>
+<span class="sd">    size2 2      # size of dict2</span>
+<span class="sd">    union 2      # union of keys        (A, B)</span>
+<span class="sd">    inter 1      # intersection of keys (A)</span>
+<span class="sd">    valid False  # are they the same?</span>
+<span class="sd">    A (1, 2)     # keys that are different and and their values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+
+    <span class="n">s1</span><span class="p">,</span> <span class="n">s2</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">dict1</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="nb">set</span><span class="p">(</span><span class="n">dict2</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">i</span><span class="p">,</span> <span class="n">u</span> <span class="o">=</span> <span class="n">s1</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">s2</span><span class="p">),</span> <span class="n">s1</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">s2</span><span class="p">)</span>
+
+    <span class="n">results</span><span class="p">[</span><span class="s">&#39;size1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span>
+    <span class="n">results</span><span class="p">[</span><span class="s">&#39;size2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">s2</span><span class="p">)</span>
+    <span class="n">results</span><span class="p">[</span><span class="s">&#39;union&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+    <span class="n">results</span><span class="p">[</span><span class="s">&#39;inter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">results</span><span class="p">[</span><span class="s">&#39;valid&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="n">changed</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">i</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dict1</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">!=</span> <span class="n">dict2</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">dict1</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">dict2</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">dict1</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">dict2</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                <span class="n">changed</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">s1</span> <span class="o">==</span> <span class="n">s2</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">changed</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">results</span><span class="p">[</span><span class="s">&#39;valid&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
+
+    <span class="k">return</span> <span class="n">results</span>
+</div>
+<div class="viewcode-block" id="compare_lists"><a class="viewcode-back" href="../modules/common.html#common.compare_lists">[docs]</a><span class="k">def</span> <span class="nf">compare_lists</span><span class="p">(</span><span class="n">list1</span><span class="p">,</span> <span class="n">list2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compare two lists.</span>
+
+<span class="sd">    :param list1: list like object</span>
+<span class="sd">    :param list2: list like object</span>
+
+<span class="sd">    :type list1: list</span>
+<span class="sd">    :type list2: list</span>
+
+<span class="sd">    :return: a results dictionary with the output of set operations</span>
+<span class="sd">    :rtype: :py:class:`collections.OrderedDict`</span>
+
+<span class="sd">    &gt;&gt;&gt; results = compare_lists([1], [1, 2])</span>
+<span class="sd">    &gt;&gt;&gt; for key, value in results.iteritems():</span>
+<span class="sd">    ...     print key, value</span>
+<span class="sd">    size1 1      # size of list1</span>
+<span class="sd">    size2 2      # size of list2</span>
+<span class="sd">    union 2      # union of items        (1, 2)</span>
+<span class="sd">    inter 1      # intersection of items (1)</span>
+<span class="sd">    valid False  # are they the same?</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+
+    <span class="n">s1</span><span class="p">,</span> <span class="n">s2</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">list1</span><span class="p">),</span> <span class="nb">set</span><span class="p">(</span><span class="n">list2</span><span class="p">)</span>
+    <span class="n">i</span><span class="p">,</span> <span class="n">u</span> <span class="o">=</span> <span class="n">s1</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">s2</span><span class="p">),</span> <span class="n">s1</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">s2</span><span class="p">)</span>
+
+    <span class="n">results</span><span class="p">[</span><span class="s">&#39;size1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span>
+    <span class="n">results</span><span class="p">[</span><span class="s">&#39;size2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">s2</span><span class="p">)</span>
+    <span class="n">results</span><span class="p">[</span><span class="s">&#39;union&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
+    <span class="n">results</span><span class="p">[</span><span class="s">&#39;inter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">results</span><span class="p">[</span><span class="s">&#39;valid&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">s1</span> <span class="o">==</span> <span class="n">s2</span><span class="p">:</span>
+        <span class="n">results</span><span class="p">[</span><span class="s">&#39;valid&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
+
+    <span class="k">return</span> <span class="n">results</span>
+</div>
+<div class="viewcode-block" id="command_script"><a class="viewcode-back" href="../modules/common.html#common.command_script">[docs]</a><span class="k">def</span> <span class="nf">command_script</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="s">&#39;run.batch&#39;</span><span class="p">,</span> <span class="n">batch_dir</span><span class="o">=</span><span class="s">r&#39;~/templates&#39;</span><span class="p">,</span> <span class="n">inp</span><span class="o">=</span><span class="s">&#39;sim.inp&#39;</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                   <span class="n">stub</span><span class="o">=</span><span class="s">&#39;{relpath}&#39;</span><span class="p">,</span> <span class="n">stub_func</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a handy script.</span>
+
+<span class="sd">    :param paths: list of paths</span>
+<span class="sd">    :param name: output file name</span>
+<span class="sd">    :param cwd: working directory</span>
+<span class="sd">    :param batch: batch file name</span>
+<span class="sd">    :param batch_dir: batch file directory</span>
+<span class="sd">    :param inp: input file name</span>
+<span class="sd">    :param comment: comment out custom command?</span>
+<span class="sd">    :param stub: job stub string</span>
+<span class="sd">    :param stub_func: post-process stub</span>
+
+<span class="sd">    :type paths: list</span>
+<span class="sd">    :type name: str</span>
+<span class="sd">    :type cwd: str</span>
+<span class="sd">    :type batch: str</span>
+<span class="sd">    :type batch_dir: str</span>
+<span class="sd">    :type inp: str</span>
+<span class="sd">    :type comment: str</span>
+<span class="sd">    :type stub: str</span>
+<span class="sd">    :type stub_func: func</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">cwd</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+
+    <span class="n">script</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">    #!/bin/bash</span>
+
+<span class="s">    FILE={batch_dir}/{batch}</span>
+
+<span class="s">    custom_command()</span>
+<span class="s">    {{</span>
+<span class="s">        echo &quot;&quot;</span>
+<span class="s">        echo &quot;--------------------------------------------------------------------------------&quot;</span>
+<span class="s">        echo `pwd`</span>
+<span class="s">        echo &quot;$1&quot;</span>
+<span class="s">        echo &quot;--------------------------------------------------------------------------------&quot;</span>
+
+<span class="s">        # submitLangmuir $1 {inp}</span>
+
+<span class="s">        # cp $FILE .</span>
+
+<span class="s">        # qsub -N $1 {batch}</span>
+
+<span class="s">        # langmuir {inp}</span>
+
+<span class="s">        # grep &quot;max.threads&quot; {inp}</span>
+
+<span class="s">        # sed -i &#39;s/\(grid\.z\s*=\s*\).*$/</span><span class="se">\\</span><span class="s">11/&#39; {inp}</span>
+
+<span class="s">        # lscan --real 10000000 --print 1000 --fmt &#39;</span><span class="si">%+.1f</span><span class="s">&#39; --stub &#39;{{working}}_{{value}}&#39; --mode gen --job &quot;$1_{{i}}&quot; {inp}</span>
+
+<span class="s">        # sed -i &#39;s/^\(\s*\)#\s*\.\/submit/</span><span class="se">\\</span><span class="s">1.\/submit/&#39; submit</span>
+
+<span class="s">        # sed -i &#39;s/^\(\s*\)#\s*cp/</span><span class="se">\\</span><span class="s">1cp/&#39; submit</span>
+
+<span class="s">        # sed -i &#39;s/^\(\s*\)#\s*qsub/</span><span class="se">\\</span><span class="s">1qsub/&#39; submit</span>
+
+<span class="s">        # sed -i &#39;s/^\(\s*\)#\s*cus/</span><span class="se">\\</span><span class="s">1cus/&#39; submit</span>
+
+<span class="s">        # ./submit</span>
+<span class="s">    }}</span>
+
+<span class="s">    {command}</span>
+<span class="s">    &quot;&quot;&quot;</span>
+
+    <span class="n">sub_command</span> <span class="o">=</span> <span class="n">StringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">path</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">paths</span><span class="p">):</span>
+
+        <span class="n">relpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">cwd</span><span class="p">)</span>
+        <span class="n">dirname</span><span class="p">,</span> <span class="n">basename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">relpath</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">relpath</span><span class="p">)</span>
+
+        <span class="n">_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">relpath</span><span class="o">=</span><span class="n">relpath</span><span class="p">,</span> <span class="n">dirname</span><span class="o">=</span><span class="n">dirname</span><span class="p">,</span> <span class="n">basename</span><span class="o">=</span><span class="n">basename</span><span class="p">)</span>
+        <span class="n">_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">sim</span> <span class="o">=</span> <span class="n">stub</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">_kwargs</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">sim</span> <span class="o">=</span> <span class="n">stub_func</span><span class="p">(</span><span class="n">sim</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">sub_command</span><span class="p">,</span> <span class="s">r&#39;cd {path}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">cwd</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">comment</span><span class="p">:</span>
+            <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">sub_command</span><span class="p">,</span> <span class="s">r&#39;# custom_command &quot;{sim}&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">sub_command</span><span class="p">,</span> <span class="s">r&#39;custom_command &quot;{sim}&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sim</span><span class="o">=</span><span class="n">sim</span><span class="p">)</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">sub_command</span><span class="p">,</span> <span class="s">r&#39;cd {path}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">cwd</span><span class="p">,</span> <span class="n">path</span><span class="p">))</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">sub_command</span><span class="p">,</span> <span class="s">r&#39;&#39;</span>
+
+    <span class="n">sub_command</span> <span class="o">=</span> <span class="n">sub_command</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+    <span class="n">script</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="n">script</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="n">sub_command</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span> <span class="n">batch_dir</span><span class="o">=</span><span class="n">batch_dir</span><span class="p">,</span> <span class="n">inp</span><span class="o">=</span><span class="n">inp</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">print</span> <span class="n">script</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+            <span class="n">handle</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">script</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">&#39;chmod +x {name}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="ColorCodes"><a class="viewcode-back" href="../modules/common.html#common.ColorCodes">[docs]</a><span class="k">class</span> <span class="nc">ColorCodes</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Provides ANSI terminal color codes which are gathered via the ``tput``</span>
+<span class="sd">    utility. That way, they are portable. If there occurs any error with</span>
+<span class="sd">    ``tput``, all codes are initialized as an empty string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bold</span>    <span class="o">=</span> <span class="n">check_output</span><span class="p">(</span><span class="s">&quot;tput bold&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_reset</span>   <span class="o">=</span> <span class="n">check_output</span><span class="p">(</span><span class="s">&quot;tput sgr0&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cyan</span>    <span class="o">=</span> <span class="n">check_output</span><span class="p">(</span><span class="s">&quot;tput setaf 6&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_magenta</span> <span class="o">=</span> <span class="n">check_output</span><span class="p">(</span><span class="s">&quot;tput setaf 5&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_blue</span>    <span class="o">=</span> <span class="n">check_output</span><span class="p">(</span><span class="s">&quot;tput setaf 4&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_yellow</span>  <span class="o">=</span> <span class="n">check_output</span><span class="p">(</span><span class="s">&quot;tput setaf 3&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_green</span>   <span class="o">=</span> <span class="n">check_output</span><span class="p">(</span><span class="s">&quot;tput setaf 2&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_red</span>     <span class="o">=</span> <span class="n">check_output</span><span class="p">(</span><span class="s">&quot;tput setaf 1&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+        <span class="k">except</span> <span class="n">CalledProcessError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bold</span>    <span class="o">=</span> <span class="s">&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_reset</span>   <span class="o">=</span> <span class="s">&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cyan</span>    <span class="o">=</span> <span class="s">&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_magenta</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_blue</span>    <span class="o">=</span> <span class="s">&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_yellow</span>  <span class="o">=</span> <span class="s">&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_green</span>   <span class="o">=</span> <span class="s">&quot;&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_red</span>     <span class="o">=</span> <span class="s">&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">red</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;{code}{string}{reset}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_red</span><span class="p">,</span>
+            <span class="n">string</span><span class="o">=</span><span class="n">string</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_reset</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">r</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">red</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">green</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;{code}{string}{reset}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_green</span><span class="p">,</span>
+            <span class="n">string</span><span class="o">=</span><span class="n">string</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_reset</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">green</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">yellow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;{code}{string}{reset}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_yellow</span><span class="p">,</span>
+            <span class="n">string</span><span class="o">=</span><span class="n">string</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_reset</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">yellow</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">blue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;{code}{string}{reset}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_blue</span><span class="p">,</span>
+            <span class="n">string</span><span class="o">=</span><span class="n">string</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_reset</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">b</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">blue</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">magenta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;{code}{string}{reset}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_magenta</span><span class="p">,</span>
+            <span class="n">string</span><span class="o">=</span><span class="n">string</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_reset</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">m</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">magenta</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">cyan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;{code}{string}{reset}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_cyan</span><span class="p">,</span>
+            <span class="n">string</span><span class="o">=</span><span class="n">string</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_reset</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">c</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cyan</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">bold</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;{code}{string}{reset}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_bold</span><span class="p">,</span>
+            <span class="n">string</span><span class="o">=</span><span class="n">string</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_reset</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bold</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+</div>
+<span class="n">ccodes</span> <span class="o">=</span> <span class="n">ColorCodes</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Adam Gagorik.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

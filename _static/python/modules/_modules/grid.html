@@ -1,0 +1,715 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>grid &mdash; Langmuir Python 2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../static/jquery.js"></script>
+    <script type="text/javascript" src="../static/underscore.js"></script>
+    <script type="text/javascript" src="../static/doctools.js"></script>
+    <link rel="top" title="Langmuir Python 2.0 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px">
+<a href="../index.html"><img src="../static/logo.png" border="0" alt="py4sci"/></a>
+</div>
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for grid</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. note::</span>
+<span class="sd">    Functions for performing calculations on grids.</span>
+
+<span class="sd">.. moduleauthor:: Adam Gagorik &lt;adam.gagorik@gmail.com&gt;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">langmuir</span> <span class="kn">as</span> <span class="nn">lm</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">StringIO</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<div class="viewcode-block" id="Grid"><a class="viewcode-back" href="../modules/grid.html#grid.Grid">[docs]</a><span class="k">class</span> <span class="nc">Grid</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to represent the Langmuir simulation lattice.  Alternate</span>
+<span class="sd">    contructors exist.</span>
+
+<span class="sd">    :param xsize: x points</span>
+<span class="sd">    :param ysize: y points</span>
+<span class="sd">    :param zsize: z points</span>
+
+<span class="sd">    :type xsize: int</span>
+<span class="sd">    :type ysize: int</span>
+<span class="sd">    :type zsize: int</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xsize</span><span class="p">,</span> <span class="n">ysize</span><span class="p">,</span> <span class="n">zsize</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x0</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y0</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_z0</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">xsize</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ysize</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_z1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">zsize</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lx</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_x1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ly</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lz</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_z1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_z0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dx</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dy</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dz</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hx</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hy</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hz</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dz</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">xsize</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ny</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ysize</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nz</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">zsize</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_xy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nx</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ny</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_xz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nx</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nz</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_yz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ny</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nz</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mx</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_my</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mz</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ox</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_oy</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_oz</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Grid.from_checkpoint"><a class="viewcode-back" href="../modules/grid.html#grid.Grid.from_checkpoint">[docs]</a>    <span class="k">def</span> <span class="nf">from_checkpoint</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">chk</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create grid instance from checkpoint file.</span>
+
+<span class="sd">        :param chk: checkpoint filename or object</span>
+
+<span class="sd">        &gt;&gt;&gt; grid = lm.grid.Grid.from_checkpoint(&#39;out.chk&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">chk</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">checkpoint</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">chk</span><span class="p">)</span>
+        <span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">chk</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s">&#39;grid.x&#39;</span><span class="p">):</span> <span class="n">nx</span> <span class="o">=</span> <span class="n">chk</span><span class="p">[</span><span class="s">&#39;grid.x&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">chk</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s">&#39;grid.y&#39;</span><span class="p">):</span> <span class="n">ny</span> <span class="o">=</span> <span class="n">chk</span><span class="p">[</span><span class="s">&#39;grid.y&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">chk</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="s">&#39;grid.z&#39;</span><span class="p">):</span> <span class="n">nz</span> <span class="o">=</span> <span class="n">chk</span><span class="p">[</span><span class="s">&#39;grid.z&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nz</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Grid.create_zeros"><a class="viewcode-back" href="../modules/grid.html#grid.Grid.create_zeros">[docs]</a>    <span class="k">def</span> <span class="nf">create_zeros</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute a grid of zeros.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Grid.parameters"><a class="viewcode-back" href="../modules/grid.html#grid.Grid.parameters">[docs]</a>    <span class="k">def</span> <span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a :class:`langmuir.parameters.Parameters`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">parm</span> <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">Parameters</span><span class="p">()</span>
+        <span class="n">parm</span><span class="p">[</span><span class="s">&#39;grid.x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nx</span>
+        <span class="n">parm</span><span class="p">[</span><span class="s">&#39;grid.y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ny</span>
+        <span class="n">parm</span><span class="p">[</span><span class="s">&#39;grid.z&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nz</span>
+        <span class="k">return</span> <span class="n">parm</span>
+</div>
+<div class="viewcode-block" id="Grid.refine"><a class="viewcode-back" href="../modules/grid.html#grid.Grid.refine">[docs]</a>    <span class="k">def</span> <span class="nf">refine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Refines the mesh.  If factor=0 or dx/factor &gt; 1.0, the mesh is reset</span>
+<span class="sd">        to the default spacing of 1.0.</span>
+
+<span class="sd">        :param factor: zoom factor; &gt; 0 refines the mesh, &lt; 0 zooms out.</span>
+<span class="sd">        :type factor: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">factor</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">factor</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">dx</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="n">dy</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="n">dz</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dx</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">factor</span><span class="p">)</span>
+            <span class="n">dy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dy</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">factor</span><span class="p">)</span>
+            <span class="n">dz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dz</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">factor</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">dx</span> <span class="o">&gt;=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">dy</span> <span class="o">&gt;=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">dz</span> <span class="o">&gt;=</span> <span class="mf">1.0</span><span class="p">]):</span>
+            <span class="n">dx</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="n">dy</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="n">dz</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+        <span class="k">assert</span> <span class="n">dx</span> <span class="o">==</span> <span class="n">dy</span>
+        <span class="k">assert</span> <span class="n">dy</span> <span class="o">==</span> <span class="n">dz</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dx</span> <span class="o">==</span> <span class="n">dx</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dx</span> <span class="o">=</span> <span class="n">dx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dy</span> <span class="o">=</span> <span class="n">dy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dz</span> <span class="o">=</span> <span class="n">dz</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hx</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hy</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hz</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dz</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lx</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dx</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ny</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ly</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dy</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nz</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lz</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dz</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_xy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nx</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ny</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_xz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nx</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nz</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n_yz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ny</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nz</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mx</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_my</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mz</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ox</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_oy</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_oz</span> <span class="o">=</span> <span class="bp">None</span>
+</div>
+    <span class="k">def</span> <span class="nf">_create_ogrid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ox</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_x0</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dx</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nx</span><span class="p">)])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_oy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_y0</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dy</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ny</span><span class="p">)])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_oz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_z0</span> <span class="o">+</span> <span class="n">i</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dz</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nz</span><span class="p">)])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hz</span>
+
+    <span class="k">def</span> <span class="nf">_create_mgrid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ox</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_create_ogrid</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_my</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mz</span> <span class="o">=</span> \
+            <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ox</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oz</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s">&#39;ij&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">x0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x0</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">y0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y0</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">z0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_z0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">x1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x1</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">y1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y1</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">z1</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_z1</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">nx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nx</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ny</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ny</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">nz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nz</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">n_xy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_xy</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">n_yz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_yz</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">n_xz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_xz</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dx</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dy</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dz</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">hx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hx</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">hy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hy</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">hz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hz</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lx</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ly</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ly</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lz</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mx</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_create_mgrid</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mx</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">my</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_my</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_create_mgrid</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_my</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mz</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_create_mgrid</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mz</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mgrid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mx</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">my</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mz</span>
+        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ox</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ox</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_create_ogrid</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ox</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">oy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oy</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_create_ogrid</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oy</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">oz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oz</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_create_ogrid</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_oz</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ogrid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ox</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">oy</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">oz</span>
+        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nx</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ny</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nz</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ny</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nz</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">extent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ny</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nz</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nx</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ny</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nz</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">origin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_z0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">spacing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dz</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">StringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="mi">9</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">s</span><span class="p">,</span> <span class="s">&#39;[Grid]&#39;</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">s</span><span class="p">,</span> <span class="s">&#39;{0:&gt;12} = {1:&gt;{w}.3e} {2:&gt;{w}.3e} {3:&gt;{w}.3e}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s">&#39;x0, y0, z0&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z0</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">)</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">s</span><span class="p">,</span> <span class="s">&#39;{0:&gt;12} = {1:&gt;{w}.3e} {2:&gt;{w}.3e} {3:&gt;{w}.3e}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s">&#39;x1, y1, z1&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z1</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">)</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">s</span><span class="p">,</span> <span class="s">&#39;{0:&gt;12} = {1:&gt;{w}.3e} {2:&gt;{w}.3e} {3:&gt;{w}.3e}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s">&#39;lx, ly, lz&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ly</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lz</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">)</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">s</span><span class="p">,</span> <span class="s">&#39;{0:&gt;12} = {1:&gt;{w}.3e} {2:&gt;{w}.3e} {3:&gt;{w}.3e}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s">&#39;dx, dy, dz&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dz</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">)</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">s</span><span class="p">,</span> <span class="s">&#39;{0:&gt;12} = {1:&gt;{w}} {2:&gt;{w}} {3:&gt;{w}}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s">&#39;nx, ny, nz&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ny</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nz</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">)</span>
+        <span class="k">print</span> <span class="o">&gt;&gt;</span> <span class="n">s</span><span class="p">,</span> <span class="s">&#39;{0:&gt;12} = {1:&gt;{w}}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">&#39;N&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="IndexMapper"><a class="viewcode-back" href="../modules/grid.html#grid.IndexMapper">[docs]</a><span class="k">class</span> <span class="nc">IndexMapper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class that maps between site indicies the Langmuir way.</span>
+
+<span class="sd">    &gt;&gt;&gt; grid = lm.grid.Grid(10, 10, 10)</span>
+<span class="sd">    &gt;&gt;&gt; imap = lm.grid.IndexMapper(grid)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grid</span> <span class="o">=</span> <span class="n">grid</span>
+
+<div class="viewcode-block" id="IndexMapper.indexS"><a class="viewcode-back" href="../modules/grid.html#grid.IndexMapper.indexS">[docs]</a>    <span class="k">def</span> <span class="nf">indexS</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_index</span><span class="p">,</span> <span class="n">y_index</span><span class="p">,</span> <span class="n">z_index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute (Langmuir&#39;s) site index from x, y, and z index</span>
+
+<span class="sd">        :param x_index: x-site</span>
+<span class="sd">        :param y_index: y-site</span>
+<span class="sd">        :param z_index: z-site</span>
+<span class="sd">        :type x_index: int</span>
+<span class="sd">        :type y_index: int</span>
+<span class="sd">        :type z_index: int</span>
+
+<span class="sd">        &gt;&gt;&gt; grid = lm.grid.Grid(10, 10, 10)</span>
+<span class="sd">        &gt;&gt;&gt; imap = lm.grid.IndexMapper(grid)</span>
+<span class="sd">        &gt;&gt;&gt; s = imap.indexS(0, 0, 0)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x_index</span><span class="p">)</span>
+        <span class="n">y_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y_index</span><span class="p">)</span>
+        <span class="n">z_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">z_index</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">nx</span> <span class="o">*</span> <span class="p">(</span><span class="n">y_index</span> <span class="o">+</span> <span class="n">z_index</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">ny</span><span class="p">)</span> <span class="o">+</span> <span class="n">x_index</span>
+</div>
+<div class="viewcode-block" id="IndexMapper.indexX"><a class="viewcode-back" href="../modules/grid.html#grid.IndexMapper.indexX">[docs]</a>    <span class="k">def</span> <span class="nf">indexX</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s_index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute (Langmuir&#39;s) x index from site index</span>
+
+<span class="sd">        :param s_index: site index</span>
+<span class="sd">        :type s_index: int</span>
+
+<span class="sd">        &gt;&gt;&gt; grid = lm.grid.Grid(10, 10, 10)</span>
+<span class="sd">        &gt;&gt;&gt; imap = lm.grid.IndexMapper(grid)</span>
+<span class="sd">        &gt;&gt;&gt; x = imap.indexX(10)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">s_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">s_index</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">s_index</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">nx</span>
+</div>
+<div class="viewcode-block" id="IndexMapper.indexY"><a class="viewcode-back" href="../modules/grid.html#grid.IndexMapper.indexY">[docs]</a>    <span class="k">def</span> <span class="nf">indexY</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s_index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute (Langmuir&#39;s) y index from site index</span>
+
+<span class="sd">        :param s_index: site index</span>
+<span class="sd">        :type s_index: int</span>
+
+<span class="sd">        &gt;&gt;&gt; grid = lm.grid.Grid(10, 10, 10)</span>
+<span class="sd">        &gt;&gt;&gt; imap = lm.grid.IndexMapper(grid)</span>
+<span class="sd">        &gt;&gt;&gt; y = imap.indexX(10)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">s_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">s_index</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">s_index</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">nx</span> <span class="o">-</span> \
+            <span class="p">(</span><span class="n">s_index</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">n_xy</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">ny</span>
+</div>
+<div class="viewcode-block" id="IndexMapper.indexZ"><a class="viewcode-back" href="../modules/grid.html#grid.IndexMapper.indexZ">[docs]</a>    <span class="k">def</span> <span class="nf">indexZ</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s_index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute (Langmuir&#39;s) z index from site index</span>
+
+<span class="sd">        :param s_index: site index</span>
+<span class="sd">        :type s_index: int</span>
+
+<span class="sd">        &gt;&gt;&gt; grid = lm.grid.Grid(10, 10, 10)</span>
+<span class="sd">        &gt;&gt;&gt; imap = lm.grid.IndexMapper(grid)</span>
+<span class="sd">        &gt;&gt;&gt; z = imap.indexX(10)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">s_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">s_index</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">s_index</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">n_xy</span>
+</div>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">map_mesh</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">mesh</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="n">imap</span>  <span class="o">=</span> <span class="n">IndexMapper</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+        <span class="n">mesh</span>  <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">surface</span><span class="o">.</span><span class="n">linear_mapping</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">traps</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">((</span><span class="n">xi</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">zi</span><span class="p">),</span> <span class="n">vi</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndenumerate</span><span class="p">(</span><span class="n">mesh</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">vi</span> <span class="o">==</span> <span class="n">value</span><span class="p">:</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="n">imap</span><span class="o">.</span><span class="n">indexS</span><span class="p">(</span><span class="n">xi</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">zi</span><span class="p">)</span>
+                <span class="n">traps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">traps</span>
+</div>
+<div class="viewcode-block" id="XYZV"><a class="viewcode-back" href="../modules/grid.html#grid.XYZV">[docs]</a><span class="k">class</span> <span class="nc">XYZV</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Put site values on a mesh using site ids.</span>
+
+<span class="sd">    :param grid: grid object</span>
+<span class="sd">    :param s: site indcies</span>
+<span class="sd">    :param v: site values</span>
+
+<span class="sd">    :type grid: :class:`Grid`</span>
+<span class="sd">    :type s: list</span>
+<span class="sd">    :type v: list or scalar</span>
+
+<span class="sd">    &gt;&gt;&gt; chk  = lm.checkpoint.load(&#39;out.chk&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; grid = lm.grid.Grid.from_checkpoint(chk)</span>
+<span class="sd">    &gt;&gt;&gt; xyzv = lm.grid.XYZV(grid, chk.electrons, -1)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">grid</span> <span class="o">=</span> <span class="n">grid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">imap</span> <span class="o">=</span> <span class="n">IndexMapper</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">v</span> <span class="o">*</span> <span class="n">v</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&#39;site ids and values are not the same size&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">xi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">imap</span><span class="o">.</span><span class="n">indexX</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">yi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">imap</span><span class="o">.</span><span class="n">indexY</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">imap</span><span class="o">.</span><span class="n">indexZ</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mx</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">mx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">my</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">my</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mz</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">mz</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mv</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">create_zeros</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mx</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">yi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">zi</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">my</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">yi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">zi</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mz</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">yi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">zi</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mv</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">yi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">zi</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">v</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xyz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">])</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">x_at_zi_equals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zlevel</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mx</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">yi</span><span class="p">,</span> <span class="n">zlevel</span><span class="p">]</span>
+    <span class="k">def</span> <span class="nf">y_at_zi_equals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zlevel</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">my</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">yi</span><span class="p">,</span> <span class="n">zlevel</span><span class="p">]</span>
+    <span class="k">def</span> <span class="nf">z_at_zi_equals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zlevel</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mz</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">yi</span><span class="p">,</span> <span class="n">zlevel</span><span class="p">]</span>
+    <span class="k">def</span> <span class="nf">v_at_zi_equals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zlevel</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mv</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">yi</span><span class="p">,</span> <span class="n">zlevel</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">mx_at_zi_equals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zlevel</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mx</span><span class="p">[:,:,</span> <span class="n">zlevel</span><span class="p">]</span>
+    <span class="k">def</span> <span class="nf">my_at_zi_equals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zlevel</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">my</span><span class="p">[:,:,</span> <span class="n">zlevel</span><span class="p">]</span>
+    <span class="k">def</span> <span class="nf">mz_at_zi_equals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zlevel</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mz</span><span class="p">[:,:,</span> <span class="n">zlevel</span><span class="p">]</span>
+    <span class="k">def</span> <span class="nf">mv_at_zi_equals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zlevel</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mv</span><span class="p">[:,:,</span> <span class="n">zlevel</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="PrecalculatedMesh"><a class="viewcode-back" href="../modules/grid.html#grid.PrecalculatedMesh">[docs]</a><span class="k">class</span> <span class="nc">PrecalculatedMesh</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform fast computation of Coulomb interactions and distances with a</span>
+<span class="sd">    precomputed mesh.</span>
+
+<span class="sd">    :param grid: grid object</span>
+<span class="sd">    :type grid: :class:`Grid`</span>
+
+<span class="sd">    &gt;&gt;&gt; grid = lm.grid.Grid(5, 5, 5)</span>
+<span class="sd">    &gt;&gt;&gt; mesh = lm.grid.PrecalculatedMesh(grid)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">grid</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grid</span> <span class="o">=</span> <span class="n">grid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mx</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">mx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">my</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">my</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mz</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">mz</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r2</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mx</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mx</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> \
+                  <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">my</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">my</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> \
+                  <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mz</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mz</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r2</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">RuntimeWarning</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ri</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">r1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ri</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mxi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">myi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mzi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">grid</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ids</span> <span class="o">=</span> <span class="p">[(</span><span class="n">x_id</span><span class="p">,</span> <span class="n">y_id</span><span class="p">,</span> <span class="n">z_id</span><span class="p">)</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">x_id</span><span class="p">,</span> <span class="n">y_id</span><span class="p">,</span> <span class="n">z_id</span><span class="p">),</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">ndenumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mx</span><span class="p">)]</span>
+
+<div class="viewcode-block" id="PrecalculatedMesh.coulomb"><a class="viewcode-back" href="../modules/grid.html#grid.PrecalculatedMesh.coulomb">[docs]</a>    <span class="k">def</span> <span class="nf">coulomb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi_ids</span><span class="p">,</span> <span class="n">yi_ids</span><span class="p">,</span> <span class="n">zi_ids</span><span class="p">,</span> <span class="n">xj_ids</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">yj_ids</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                <span class="n">zj_ids</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute coulomb interaction at j&#39;s due to charges at i&#39;s.  If no</span>
+<span class="sd">        j&#39;s are passed, then the answer will be computed at every mesh</span>
+<span class="sd">        point (expensive!)&#39;</span>
+
+<span class="sd">        :param xi_ids: charge x-position(s)</span>
+<span class="sd">        :param yi_ids: charge y-position(s)</span>
+<span class="sd">        :param zi_ids: charge z-position(s)</span>
+<span class="sd">        :param xj_ids: energy x-position(s)</span>
+<span class="sd">        :param yj_ids: energy y-position(s)</span>
+<span class="sd">        :param zj_ids: energy z-position(s)</span>
+<span class="sd">        :param q: charge</span>
+<span class="sd">        :type xi_ids: list, int</span>
+<span class="sd">        :type yi_ids: list, int</span>
+<span class="sd">        :type zi_ids: list, int</span>
+<span class="sd">        :type xi_ids: list, int</span>
+<span class="sd">        :type yi_ids: list, int</span>
+<span class="sd">        :type zi_ids: list, int</span>
+<span class="sd">        :type q: int, float</span>
+
+<span class="sd">        &gt;&gt;&gt; grid = lm.grid.Grid(10, 10, 10)</span>
+<span class="sd">        &gt;&gt;&gt; mesh = lm.grid.PrecalculatedMesh(grid)</span>
+<span class="sd">        &gt;&gt;&gt; coul = mesh.coulomb(0, 0, 0, 1, 1, 1, -1)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">xi_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">xi_ids</span><span class="p">)</span>
+        <span class="n">yi_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">yi_ids</span><span class="p">)</span>
+        <span class="n">zi_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">zi_ids</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">xi_ids</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="n">yi_ids</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="n">zi_ids</span><span class="o">.</span><span class="n">size</span>
+        <span class="n">zipper</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">xi_ids</span><span class="o">.</span><span class="n">flat</span><span class="p">,</span> <span class="n">yi_ids</span><span class="o">.</span><span class="n">flat</span><span class="p">,</span> <span class="n">zi_ids</span><span class="o">.</span><span class="n">flat</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">xj_ids</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">yj_ids</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">zj_ids</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">xj_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mxi</span>
+            <span class="n">yj_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">myi</span>
+            <span class="n">zj_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mzi</span>
+
+        <span class="n">xj_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">xj_ids</span><span class="p">)</span>
+        <span class="n">yj_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">yj_ids</span><span class="p">)</span>
+        <span class="n">zj_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">zj_ids</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">xj_ids</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="n">yj_ids</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="n">zj_ids</span><span class="o">.</span><span class="n">size</span>
+
+        <span class="n">potential</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">xj_ids</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">xi_id</span><span class="p">,</span> <span class="n">yi_id</span><span class="p">,</span> <span class="n">zi_id</span><span class="p">)</span> <span class="ow">in</span> <span class="n">zipper</span><span class="p">:</span>
+            <span class="n">dx_ids</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">xj_ids</span> <span class="o">-</span> <span class="n">xi_id</span><span class="p">)</span>
+            <span class="n">dy_ids</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">yj_ids</span> <span class="o">-</span> <span class="n">yi_id</span><span class="p">)</span>
+            <span class="n">dz_ids</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">zj_ids</span> <span class="o">-</span> <span class="n">zi_id</span><span class="p">)</span>
+            <span class="n">potential</span> <span class="o">=</span> <span class="n">potential</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ri</span><span class="p">[</span><span class="n">dx_ids</span><span class="p">,</span> <span class="n">dy_ids</span><span class="p">,</span> <span class="n">dz_ids</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">q</span> <span class="o">*</span> <span class="n">potential</span>
+</div>
+<div class="viewcode-block" id="PrecalculatedMesh.distances"><a class="viewcode-back" href="../modules/grid.html#grid.PrecalculatedMesh.distances">[docs]</a>    <span class="k">def</span> <span class="nf">distances</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi_ids</span><span class="p">,</span> <span class="n">yi_ids</span><span class="p">,</span> <span class="n">zi_ids</span><span class="p">,</span> <span class="n">xj_ids</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">yj_ids</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">zj_ids</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute all distances between i&#39;s, or compute all distances between</span>
+<span class="sd">        i&#39;s and j&#39;s</span>
+
+<span class="sd">        :param xi_ids: initial x-position(s)</span>
+<span class="sd">        :param yi_ids: initial y-position(s)</span>
+<span class="sd">        :param zi_ids: initial z-position(s)</span>
+<span class="sd">        :param xj_ids: final x-position(s)</span>
+<span class="sd">        :param yj_ids: final y-position(s)</span>
+<span class="sd">        :param zj_ids: final z-position(s)</span>
+<span class="sd">        :type xi_ids: list, int</span>
+<span class="sd">        :type yi_ids: list, int</span>
+<span class="sd">        :type zi_ids: list, int</span>
+<span class="sd">        :type xi_ids: list, int</span>
+<span class="sd">        :type yi_ids: list, int</span>
+<span class="sd">        :type zi_ids: list, int</span>
+
+<span class="sd">        &gt;&gt;&gt; grid = lm.grid.Grid(10, 10, 10)</span>
+<span class="sd">        &gt;&gt;&gt; mesh = lm.grid.PrecalculatedMesh(grid)</span>
+<span class="sd">        &gt;&gt;&gt; dist = mesh.distances(0, 0, 0, 1, 1, 1)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">xj_ids</span><span class="p">:</span>
+            <span class="n">xj_ids</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">yj_ids</span><span class="p">:</span>
+            <span class="n">yj_ids</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">zj_ids</span><span class="p">:</span>
+            <span class="n">zj_ids</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">xi_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">xi_ids</span><span class="p">)</span>
+        <span class="n">yi_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">yi_ids</span><span class="p">)</span>
+        <span class="n">zi_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">zi_ids</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">xi_ids</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="n">yi_ids</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="n">zi_ids</span><span class="o">.</span><span class="n">size</span>
+        <span class="n">sites1</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">xi_ids</span><span class="o">.</span><span class="n">flat</span><span class="p">,</span> <span class="n">yi_ids</span><span class="o">.</span><span class="n">flat</span><span class="p">,</span> <span class="n">zi_ids</span><span class="o">.</span><span class="n">flat</span><span class="p">)</span>
+
+        <span class="n">xj_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">xj_ids</span><span class="p">)</span>
+        <span class="n">yj_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">yj_ids</span><span class="p">)</span>
+        <span class="n">zj_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">zj_ids</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">xj_ids</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="n">yj_ids</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="n">zj_ids</span><span class="o">.</span><span class="n">size</span>
+
+        <span class="k">if</span> <span class="n">xj_ids</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="n">sites2</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">izip</span><span class="p">(</span><span class="n">xj_ids</span><span class="o">.</span><span class="n">flat</span><span class="p">,</span> <span class="n">yj_ids</span><span class="o">.</span><span class="n">flat</span><span class="p">,</span> <span class="n">zj_ids</span><span class="o">.</span><span class="n">flat</span><span class="p">)</span>
+            <span class="n">zipper</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">sites1</span><span class="p">,</span> <span class="n">sites2</span><span class="p">)</span>
+            <span class="n">size</span>   <span class="o">=</span> <span class="n">xi_ids</span><span class="o">.</span><span class="n">size</span> <span class="o">*</span> <span class="n">xj_ids</span><span class="o">.</span><span class="n">size</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">zipper</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">sites1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">size</span>   <span class="o">=</span> <span class="n">lm</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">comb</span><span class="p">(</span><span class="n">xi_ids</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">zipper</span><span class="p">):</span>
+            <span class="n">dx_id</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">p2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">dy_id</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">p2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">p1</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">dz_id</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">p2</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">p1</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+            <span class="n">distances</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">r1</span><span class="p">[</span><span class="n">dx_id</span><span class="p">,</span> <span class="n">dy_id</span><span class="p">,</span> <span class="n">dz_id</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">distances</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">home</a>|&nbsp;</li>
+        <li><a href="../search.html">search</a>|&nbsp;</li>
+
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Adam Gagorik.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
