@@ -1,0 +1,5 @@
+# Timing
+
+Langmuir uses threading on multiple CPU cores or OpenCL on the GPU to enable simulations of thousands of charge carriers across realistic device scale (i.e., microns) and realistic time scales (i.e., microseconds).
+
+![image](../_static/carriers.svg)
